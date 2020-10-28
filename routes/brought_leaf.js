@@ -8,8 +8,11 @@ const router = express.Router();
 //GET /bleaf/lots
 router.get('/lots',broughtLeafController.getLots);
 
-// POST /bleaf/lots
+// POST /bleaf/lot
 router.post('/lot', broughtLeafController.createLots);
+
+// DELETE /bleaf/lot
+router.delete('/lot/:lotid', broughtLeafController.deleteLot);
 
 //POST /bleaf/bulk
 router.post('/bulk', broughtLeafController.createBulks);

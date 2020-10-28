@@ -5,7 +5,10 @@ const User = require("../models/user");
 
 exports.getLots = async (req, res, next) => {
   const allLots = await Lot.findAll().catch((err) => {
-    console.log(err);
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
   });
 
   res.status(200).json({
@@ -34,7 +37,12 @@ exports.createLots = async (req, res, next) => {
     other: others,
     net_weight: netWeight,
     deduction: deductions,
-  }).catch((err) => console.log(err));
+  }).catch((err) => {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  });
 
   console.log("lot saved");
   res.status(200).json({
@@ -42,34 +50,42 @@ exports.createLots = async (req, res, next) => {
   });
 };
 
+exports.deleteLot = async (req, res, next) => {
+  const lotId = req.params.lotid;
+
+  let lot = await Lot.destroy({ where: { lot_id: lotId } }).catch((err) => {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  });
+  if (!lot) {
+    console.log("item not found");
+    res.status(500).json({ message: "item not found" });
+  } else {
+    res.status(200).json({
+      lots: "Deleted",
+    });
+  }
+};
+
 exports.createBulks = async (req, res, next) => {
   const bulkid = req.body.bulk_id;
   const userid = req.body.user_id;
   const supid = req.body.supplier_id;
-    await Bulk.create({
-        bulk_id: bulkid,
-        UserUserId: userid,
-        SupplierSupplierId: supid,
-    }).catch((err) => { 
-        if (!err.statusCode) {
-            err.statusCode = 500;
-        }
-        next(err);
-    });
-    res.status(200).json({
-        lots: "saved",
-      });
- 
-    console.log("bulk saved");
+  await Bulk.create({
+    bulk_id: bulkid,
+    UserUserId: userid,
+    SupplierSupplierId: supid,
+  }).catch((err) => {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  });
+  res.status(200).json({
+    lots: "saved",
+  });
+
+  console.log("bulk saved");
 };
-
-
-// exports.checkSuppliers = async (req, res, next) => { 
-//     const suppid = req.query.supplier_id;
-
-// };
-//   //   res.status(201).json({
-//   //     message: "lots created",
-//   //     lots: { title: title },
-//   //   });
-// };
