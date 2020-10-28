@@ -2,9 +2,9 @@ const Sequelize = require("sequelize");
 
 const sequelize = require('../database/db');
 
-const Container = sequelize.define('container', {
+module.exports= sequelize.define('Container', {
     container_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         primaryKey: true,
         
     },
@@ -12,5 +12,3 @@ const Container = sequelize.define('container', {
     container_deduction: Sequelize.INTEGER,
     capacity: Sequelize.INTEGER,
 });
-
-module.exports = Container;

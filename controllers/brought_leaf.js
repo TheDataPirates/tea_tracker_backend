@@ -1,3 +1,4 @@
+const Bulk = require("../models/bulk");
 const Lot = require("../models/lot");
 const Supplier = require("../models/supplier");
 const User = require("../models/user");
@@ -41,6 +42,32 @@ exports.createLots = async (req, res, next) => {
   });
 };
 
+exports.createBulks = async (req, res, next) => {
+  const bulkid = req.body.bulk_id;
+  const userid = req.body.user_id;
+  const supid = req.body.supplier_id;
+    await Bulk.create({
+        bulk_id: bulkid,
+        UserUserId: userid,
+        SupplierSupplierId: supid,
+    }).catch((err) => { 
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    });
+    res.status(200).json({
+        lots: "saved",
+      });
+ 
+    console.log("bulk saved");
+};
+
+
+// exports.checkSuppliers = async (req, res, next) => { 
+//     const suppid = req.query.supplier_id;
+
+// };
 //   //   res.status(201).json({
 //   //     message: "lots created",
 //   //     lots: { title: title },

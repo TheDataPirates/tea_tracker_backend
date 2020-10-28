@@ -8,12 +8,8 @@ const Bulk = sequelize.define('bulk', {
         primaryKey: true,
         
     },
-    user_id: {
-        type: Sequelize.INTEGER,
-        primaryKey:true
-    },
     date: Sequelize.DATE,
-    supplier_id: Sequelize.STRING,
+   
     method:Sequelize.STRING
 });
 

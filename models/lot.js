@@ -2,9 +2,9 @@ const Sequelize = require("sequelize");
 
 const sequelize = require('../database/db');
 
-module.exports = sequelize.define('Lot', {
+module.exports = sequelize.define('Lots', {
     lot_id: {
-        type: Sequelize.INTEGER,
+        type: Sequelize.STRING,
         primaryKey: true,
     },
     grade_GL: Sequelize.STRING,
@@ -14,7 +14,8 @@ module.exports = sequelize.define('Lot', {
     course_leaf: Sequelize.INTEGER,
     other: Sequelize.INTEGER,
     net_weight: Sequelize.INTEGER,
-    deduction:Sequelize.INTEGER
+    deduction: Sequelize.INTEGER,
+    
     
 });
 

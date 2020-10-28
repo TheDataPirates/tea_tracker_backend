@@ -1,19 +1,17 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 
-
 const broughtLeafRoutes = require("./routes/brought_leaf");
-
 
 const sequelize = require("./database/db");
 //define db models
-// require('./models');
-// const User = require('./models/user');
-// const Bulk = require('./models/bulk');
-// const Container = require('./models/container');
-// const Receipt = require('./models/receipt');
-// const Supplier = require('./models/supplier');
 
+const User = require("./models/user");
+const Bulk = require("./models/bulk");
+const Container = require('./models/container');
+// const Receipt = require('./models/receipt');
+const Supplier = require("./models/supplier");
+const Lot = require("./models/lot");
 
 const app = express();
 
@@ -33,6 +31,29 @@ app.use((req, res, next) => {
 //ROUTES
 app.use("/bleaf", broughtLeafRoutes);
 
+// ERROR HANDLING
+app.use((error, req, res, next) => { 
+    console.log(error);
+    const status = error.statusCode || 500;
+    const message = error.message;
+    res.status(status).json({ message: message });
+});
+
+//Relations
+Bulk.belongsTo(User); //1:M
+User.hasMany(Bulk);
+
+Bulk.belongsTo(Supplier);
+Supplier.hasMany(Bulk);
+
+Lot.belongsTo(Bulk);
+Bulk.hasMany(Lot);
+
+Lot.belongsToMany(Container, { through: "Lot_Container" });//M:N
+Container.belongsToMany(Lot, { through: "Lot_Container" });
+
+
+//CONNECTING MYSQL & SYNCING MODELS
 sequelize
   .sync()
   .then((results) => {
@@ -42,12 +63,3 @@ sequelize
   .catch((err) => {
     console.log(err);
   });
-// app.listen(8080);
-//   db.authenticate().then(() => {
-//       console.log('Connection established successfully.');
-//       app.listen(8080);
-//   }).catch(err => {
-//     console.error('Unable to connect to the database:', err);
-//   }).finally(() => {
-//     db.close();
-//   });
