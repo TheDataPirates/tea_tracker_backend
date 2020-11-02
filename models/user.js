@@ -8,6 +8,7 @@ module.exports= sequelize.define('User', {
         primaryKey: true,
         
     },
+    password:Sequelize.STRING,
     fname: Sequelize.STRING,
     lname: Sequelize.STRING,
     dob: Sequelize.STRING,

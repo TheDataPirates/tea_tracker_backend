@@ -25,7 +25,8 @@ exports.createLots = async (req, res, next) => {
   const cLeaf = req.body.course_leaf;
   const others = req.body.other;
   const netWeight = req.body.net_weight;
-  const deductions = req.body.deduction;
+    const deductions = req.body.deduction;
+    const bulk_id = req.body.bulkId;
 
   await Lot.create({
     lot_id: lotId,
@@ -36,7 +37,8 @@ exports.createLots = async (req, res, next) => {
     course_leaf: cLeaf,
     other: others,
     net_weight: netWeight,
-    deduction: deductions,
+      deduction: deductions,
+      bulkBulkId:bulk_id
   }).catch((err) => {
     if (!err.statusCode) {
       err.statusCode = 500;
