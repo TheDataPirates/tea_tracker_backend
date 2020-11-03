@@ -57,7 +57,7 @@ exports.login = async (req, res, next) => {
       next(error);
     } else {
       const token = jwt.sign(
-        //genarate token and send back to user
+        //genarate token and send back to user,token includes userid & fname
         { user_id: loadedUser.user_id, name: loadedUser.fname },
         "thisisatokenid",
         { expiresIn: "1h" }

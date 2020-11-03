@@ -1,23 +1,22 @@
-const express = require('express');
+const express = require("express");
 
-const broughtLeafController = require('../controllers/brought_leaf');
+const broughtLeafController = require("../controllers/brought_leaf");
+const isAuth = require("../middleware/is-auth");
 const router = express.Router();
 
-
-
 //GET /bleaf/lots
-router.get('/lots',broughtLeafController.getLots);
+router.get("/lots", isAuth, broughtLeafController.getLots);
 
 // POST /bleaf/lot
-router.post('/lot', broughtLeafController.createLots);
+router.post("/lot", isAuth, broughtLeafController.createLots);
 
 // DELETE /bleaf/lot
-router.delete('/lot/:lotid', broughtLeafController.deleteLot);
+router.delete("/lot/:lotid", isAuth, broughtLeafController.deleteLot);
 
 //POST /bleaf/bulk
-router.post('/bulk', broughtLeafController.createBulks);
+router.post("/bulk", isAuth, broughtLeafController.createBulks);
 
 //GET /bleaf/supp
-router.post('/supp', broughtLeafController.createBulks);
+router.post("/supp", isAuth, broughtLeafController.createBulks);
 
 module.exports = router;
