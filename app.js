@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 
 const broughtLeafRoutes = require("./routes/brought_leaf");
 const authtRoutes = require("./routes/auth");
+const loftRoutes = require("./routes/loft");
 
 const sequelize = require("./database/db");
 //define db models
@@ -13,6 +14,10 @@ const Container = require("./models/container");
 // const Receipt = require('./models/receipt');
 const Supplier = require("./models/supplier");
 const Lot = require("./models/lot");
+const Lot_Container = require("./models/lot_container");
+const Process = require("./models/process");
+const Trough = require("./models/trough");
+const Trough_Process = require("./models/trough_process");
 
 const app = express();
 
@@ -32,6 +37,7 @@ app.use((req, res, next) => {
 //ROUTES
 app.use("/bleaf", broughtLeafRoutes);
 app.use("/auth", authtRoutes);
+app.use("/loft", loftRoutes);
 
 // ERROR HANDLING
 app.use((error, req, res, next) => {
@@ -52,8 +58,15 @@ Supplier.hasMany(Bulk);
 Lot.belongsTo(Bulk);
 Bulk.hasMany(Lot);
 
-Lot.belongsToMany(Container, { through: "Lot_Container" }); //M:N
-Container.belongsToMany(Lot, { through: "Lot_Container" });
+Lot.belongsToMany(Container, { through: Lot_Container }); //M:N
+Container.belongsToMany(Lot, { through: Lot_Container }); //when using string sequelize automaticaly create table put both fk as its pks
+
+Process.belongsToMany(Trough, {
+  through: { model: Trough_Process, unique: false },
+});
+Trough.belongsToMany(Process, {
+  through: { model: Trough_Process, unique: false },
+});
 
 //CONNECTING MYSQL & SYNCING MODELS
 sequelize

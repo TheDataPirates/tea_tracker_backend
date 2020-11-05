@@ -25,31 +25,31 @@ exports.createLots = async (req, res, next) => {
   const cLeaf = req.body.course_leaf;
   const others = req.body.other;
   const netWeight = req.body.net_weight;
-    const deductions = req.body.deduction;
-    const bulk_id = req.body.bulkId;
-
-  await Lot.create({
-    lot_id: lotId,
-    grade_GL: gradeGL,
-    gross_weight: gWeight,
-    no_of_container: noOfContainer,
-    water: waters,
-    course_leaf: cLeaf,
-    other: others,
-    net_weight: netWeight,
+  const deductions = req.body.deduction;
+  const bulk_id = req.body.bulkId;
+  try {
+    await Lot.create({
+      lot_id: lotId,
+      grade_GL: gradeGL,
+      gross_weight: gWeight,
+      no_of_container: noOfContainer,
+      water: waters,
+      course_leaf: cLeaf,
+      other: others,
+      net_weight: netWeight,
       deduction: deductions,
-      bulkBulkId:bulk_id
-  }).catch((err) => {
+      bulkBulkId: bulk_id,
+    });
+    console.log("lot saved");
+    res.status(200).json({
+      lots: "saved",
+    });
+  } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     next(err);
-  });
-
-  console.log("lot saved");
-  res.status(200).json({
-    lots: "saved",
-  });
+  }
 };
 
 exports.deleteLot = async (req, res, next) => {

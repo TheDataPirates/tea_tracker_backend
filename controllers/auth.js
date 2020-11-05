@@ -60,7 +60,7 @@ exports.login = async (req, res, next) => {
         //genarate token and send back to user,token includes userid & fname
         { user_id: loadedUser.user_id, name: loadedUser.fname },
         "thisisatokenid",
-        { expiresIn: "1h" }
+        { expiresIn: "10h" }
       );
       res.status(200).json({ token: token, userId: loadedUser.user_id });
     }

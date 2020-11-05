@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 
 const sequelize = require('../database/db');
 
-const Bulk = sequelize.define('bulk', {
+module.exports = sequelize.define('Bulk', {
     bulk_id: {
         type: Sequelize.INTEGER,
         primaryKey: true,
@@ -12,5 +12,3 @@ const Bulk = sequelize.define('bulk', {
    
     method:Sequelize.STRING
 });
-
-module.exports = Bulk;
