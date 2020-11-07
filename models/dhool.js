@@ -11,7 +11,7 @@ module.exports = sequelize.define("Dhool", {
   drier_id: Sequelize.INTEGER,
   rb_id:Sequelize.STRING,
   batch_no:Sequelize.INTEGER,
-  rb_turn: Sequelize.INTEGER,
+  rb_turn: Sequelize.STRING,
   rb_out_time: Sequelize.DATE,
   dhool_out_weight: Sequelize.DOUBLE,
   dhool_pct: Sequelize.INTEGER,

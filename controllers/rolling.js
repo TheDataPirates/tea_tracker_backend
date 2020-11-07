@@ -1,8 +1,14 @@
 const dhool = require("../models/dhool");
+const Sequelize = require("sequelize");
+const Op = Sequelize.Op;
 
 exports.getRollBreakings = async (req, res, next) => {
   try {
-    const allRollBreakings = await dhool.findAll();
+    const allRollBreakings = await dhool.findAll({
+      where: {
+        rb_turn: { [Op.notLike]: "%BB" },
+      },
+    });
 
     res.status(200).json({
       rollbreakings: allRollBreakings,
