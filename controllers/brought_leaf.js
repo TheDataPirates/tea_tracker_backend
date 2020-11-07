@@ -4,16 +4,17 @@ const Supplier = require("../models/supplier");
 const User = require("../models/user");
 
 exports.getLots = async (req, res, next) => {
-  const allLots = await Lot.findAll().catch((err) => {
+  try {
+    const allLots = await Lot.findAll();
+    res.status(200).json({
+      lots: allLots,
+    });
+  } catch (err) {
     if (!err.statusCode) {
       err.statusCode = 500;
     }
     next(err);
-  });
-
-  res.status(200).json({
-    lots: allLots,
-  });
+  }
 };
 
 exports.createLots = async (req, res, next) => {
