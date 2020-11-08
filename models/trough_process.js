@@ -9,5 +9,5 @@ module.exports = sequelize.define("Trough_Process", {
   },
   humidity: Sequelize.DOUBLE,
   temperature: Sequelize.DOUBLE,
-  date: Sequelize.DATEONLY,
+  date: Sequelize.DATE,
 });

@@ -10,4 +10,10 @@ router.get("/rbreakings", isAuth, rollingController.getRollBreakings);
 //POST rolling/rbreaking
 router.post("/rbreaking", isAuth, rollingController.createRollBreaking);
 
+//GET rolling/fermentings
+router.get("/fermentings", isAuth, rollingController.getFermentings);
+
+//POST rolling/fermenting
+router.patch("/fermenting", isAuth, rollingController.createFermenting);
+
 module.exports = router;
