@@ -59,7 +59,7 @@ app.use((error, req, res, next) => {
 Bulk.belongsTo(User); //1:M
 User.hasMany(Bulk);
 
-Bulk.belongsTo(Supplier);
+Bulk.belongsTo(Supplier); //Sequelize doesn't currently support composite foreign keys, so there is no way to reference a model/table which has composite primary keys.
 Supplier.hasMany(Bulk);
 
 Lot.belongsTo(Bulk);
