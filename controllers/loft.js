@@ -143,11 +143,7 @@ exports.createFinishing = async (req, res, next) => {
 
 exports.getLoadings = async (req, res, next) => {
   try {
-    const allLoadings = await Loaded_Bulk_Box.findAll(
-    //   {
-    //   where: { date: getDate() },
-    // }
-    );
+    const allLoadings = await Loaded_Bulk_Box.findAll();
     res.status(200).json({
       loadings: allLoadings,
     });
