@@ -22,4 +22,10 @@ router.get("/finishings", isAuth, loftController.getFinishings);
 //POST loft/finishing
 router.post("/finishing", isAuth, loftController.createFinishing);
 
+//GET loft/loadings
+router.get("/loadings", isAuth, loftController.getLoadings);
+
+//POST loft/loading
+router.post("/loading", isAuth, loftController.createLoading);
+
 module.exports = router;

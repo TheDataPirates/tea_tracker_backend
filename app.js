@@ -23,6 +23,8 @@ const Batch = require("./models/batch");
 const Dhool = require("./models/dhool");
 const Roll_Breaker = require("./models/roll_breaker");
 const Roll_Break = require("./models/roll_break");
+const Box = require("./models/box");
+const Loaded_Bulk_Box = require('./models/loaded_bulk_box');
 const app = express();
 
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form> submit data
@@ -72,6 +74,9 @@ Process.belongsToMany(Trough, {
 Trough.belongsToMany(Process, {
   through: { model: Trough_Process, unique: false },
 });
+
+// Box.belongsToMany(Bulk, {through: {model:Loaded_Bulk_Box, unique: false}});
+// Bulk.belongsToMany(Box, {through: {model:Loaded_Bulk_Box, unique: false}});
 
 // Batch.belongsToMany(Dhool, { through: Roll_Break }); //ternary btw batch dhool roll breaker
 // Dhool.belongsToMany(Batch, { through: Roll_Break });
