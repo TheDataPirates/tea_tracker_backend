@@ -19,11 +19,7 @@
     <select />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f50f8832-7495-4642-88be-96de835597a5" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/controllers/auth.js" beforeDir="false" afterPath="$PROJECT_DIR$/controllers/auth.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/database/db.js" beforeDir="false" afterPath="$PROJECT_DIR$/database/db.js" afterDir="false" />
-    </list>
+    <list default="true" id="f50f8832-7495-4642-88be-96de835597a5" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -68,7 +64,7 @@
       <updated>1604950210686</updated>
       <workItem from="1604950215004" duration="249000" />
       <workItem from="1604950503852" duration="128000" />
-      <workItem from="1604982779883" duration="9641000" />
+      <workItem from="1604982779883" duration="9846000" />
     </task>
     <servers />
   </component>
