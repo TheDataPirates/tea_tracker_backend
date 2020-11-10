@@ -37,7 +37,7 @@ exports.login = async (req, res, next) => {
   let loadedUser;
   const user = await User.findOne({ where: { user_id: userid } }).catch(
     (err) => {
-      //check network faliurs
+      //check network failures
       if (!err.statusCode) {
         err.statusCode = 500;
       }
@@ -60,7 +60,7 @@ exports.login = async (req, res, next) => {
         //genarate token and send back to user,token includes userid & fname
         { user_id: loadedUser.user_id, name: loadedUser.fname },
         "thisisatokenid",
-        { expiresIn: "10h" }
+        { expiresIn: "1 day" }
       );
       res.status(200).json({ token: token, userId: loadedUser.user_id });
     }
