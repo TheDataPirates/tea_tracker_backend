@@ -19,4 +19,7 @@ router.post("/bulk", isAuth, broughtLeafController.createBulks);
 //GET /bleaf/supp
 router.post("/supp", isAuth, broughtLeafController.createBulks);
 
+//POST /bleaf/sync
+router.post('/sync',broughtLeafController.createLotFromLocalDb);
+
 module.exports = router;

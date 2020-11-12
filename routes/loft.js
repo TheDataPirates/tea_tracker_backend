@@ -28,4 +28,5 @@ router.get("/loadings", isAuth, loftController.getLoadings);
 //POST loft/loading
 router.post("/loading", isAuth, loftController.createLoading);
 
+
 module.exports = router;

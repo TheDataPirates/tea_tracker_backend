@@ -92,3 +92,33 @@ exports.createBulks = async (req, res, next) => {
 
   console.log("bulk saved");
 };
+exports.createLotFromLocalDb = async (req,res,next)=>{
+  const lotid = req.body.lotId;
+  const noOfContainer= req.body.no_of_containers;
+  const grade_GL = req.body.grade_GL;
+  const g_weight = req.body.g_weight;
+  const water = req.body.water;
+  const course_leaf = req.body.course_leaf;
+
+  try {
+    await Lot.create({
+      lot_id: lotid,
+      no_of_container: noOfContainer,
+      leaf_grade: grade_GL,
+      gross_weight: g_weight,
+      water: water,
+      course_leaf: course_leaf,
+    });
+    // console.log(box_no);
+    console.log("Lot saved from local db");
+    res.status(200).json({
+      lot: "saved",
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
