@@ -39,7 +39,7 @@ exports.createLots = async (req, res, next) => {
       other: others,
       net_weight: netWeight,
       deduction: deductions,
-      bulkBulkId: bulk_id,
+      BulkBulkId: bulk_id,
     });
     console.log("lot saved");
     res.status(200).json({

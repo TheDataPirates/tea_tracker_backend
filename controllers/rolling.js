@@ -31,7 +31,7 @@ exports.createRollBreaking = async (req, res, next) => {
   try {
     await dhool.create({
       id: id,
-      batch_no: batch_no,
+        BatchBatchNo: batch_no,
       rb_turn: roll_break_turn,
       rb_id: roll_breaker_no,
       dhool_out_weight: weight,

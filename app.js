@@ -22,9 +22,11 @@ const Trough_Process = require("./models/trough_process");
 const Batch = require("./models/batch");
 const Dhool = require("./models/dhool");
 const Roll_Breaker = require("./models/roll_breaker");
-const Roll_Break = require("./models/roll_break");
+// const Roll_Break = require("./models/roll_break");
 const Box = require("./models/box");
-const Loaded_Bulk_Box = require('./models/loaded_bulk_box');
+// const Loaded_Bulk_Box = require('./models/loaded_bulk_box');
+const Drier = require('./models/drier');
+const Roller = require('./models/roller');
 const app = express();
 
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form> submit data
@@ -66,7 +68,10 @@ Lot.belongsTo(Bulk);
 Bulk.hasMany(Lot);
 
 Lot.belongsToMany(Container, { through: Lot_Container }); //M:N
-Container.belongsToMany(Lot, { through: Lot_Container }); //when using string sequelize automaticaly create table put both fk as its pks
+Container.belongsToMany(Lot, { through: Lot_Container });//when using string sequelize automaticaly create table put both fk as its pks
+
+Lot.belongsTo(Box);
+Box.hasMany(Lot);
 
 Process.belongsToMany(Trough, {
   through: { model: Trough_Process, unique: false },
@@ -82,6 +87,16 @@ Trough.belongsToMany(Process, {
 // Dhool.belongsToMany(Batch, { through: Roll_Break });
 // Roll_Break.belongsTo(Roll_Breaker);
 // Roll_Breaker.hasMany(Roll_Break);
+
+Batch.belongsToMany(Roller,{through: { model: Dhool, unique: false },});//fornary btw batch roller drier roll_breaker
+Roller.belongsToMany(Batch,{through: { model: Dhool, unique: false },});
+
+Dhool.belongsTo(Roll_Breaker);
+Roll_Breaker.hasMany(Dhool);
+
+Dhool.belongsTo(Drier);
+Drier.hasMany(Dhool);
+
 
 //CONNECTING MYSQL & SYNCING MODELS
 sequelize

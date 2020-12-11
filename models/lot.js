@@ -15,6 +15,7 @@ module.exports = sequelize.define('Lot', {
     other: Sequelize.INTEGER,
     net_weight: Sequelize.INTEGER,
     deduction: Sequelize.INTEGER,
+    //`BoxBoxId` fk
     
     
 });
