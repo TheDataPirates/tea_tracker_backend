@@ -1,5 +1,6 @@
 const trough_process = require("../models/trough_process");
 const Lot = require("../models/lot");
+const Batch = require("../models/batch");
 const {Op} = require("sequelize");
 
 
@@ -194,3 +195,42 @@ exports.createLoading = async (req, res, next) => {
         next(err);
     }
 };
+
+exports.getBatches = async (req, res, next) => {
+    try {
+      const allBatches = await Batch.findAll();
+      res.status(200).json({
+        Batches: allBatches,
+      });
+    } catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
+  };
+  
+  exports.createBatch= async (req, res, next) => {
+    const id = req.body.id;
+    const batchNumber = req.body.batchNumber;
+    const batchWeight = req.body.batchWeight;
+    const time = req.body.time;
+    try {
+      await Batch.create({
+       batch_no: batchNumber,
+       batch_date: time,
+       weight: batchWeight,
+       
+      });
+    
+      console.log("batch saved");
+      res.status(200).json({
+        Batches: "saved",
+      });
+    } catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
+  };
