@@ -1,7 +1,7 @@
 const Bulk = require("../models/bulk");
 const Lot = require("../models/lot");
-const Supplier = require("../models/supplier");
-const User = require("../models/user");
+const Lot_Container = require('../models/lot_container');
+
 
 exports.getLots = async (req, res, next) => {
   try {
@@ -21,6 +21,7 @@ exports.createLots = async (req, res, next) => {
   const lotId = req.body.lot_id;
   const gradeGL = req.body.grade_GL;
   const gWeight = req.body.gross_weight;
+  const contType= req.body.container_type;
   const noOfContainer = req.body.no_of_container;
   const waters = req.body.water;
   const cLeaf = req.body.course_leaf;
@@ -40,7 +41,12 @@ exports.createLots = async (req, res, next) => {
       net_weight: netWeight,
       deduction: deductions,
       BulkBulkId: bulk_id,
+      container_type:contType
     });
+    // await Lot_Container({
+    //   LotLotId:lotId,
+    //   ContainerContainerId:"1"
+    // });
     console.log("lot saved");
     res.status(200).json({
       lots: "saved",

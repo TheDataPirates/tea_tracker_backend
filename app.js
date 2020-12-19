@@ -2,9 +2,10 @@ const express = require("express");
 const bodyParser = require("body-parser");
 
 const broughtLeafRoutes = require("./routes/brought_leaf");
-const authtRoutes = require("./routes/auth");
+const authRoutes = require("./routes/auth");
 const loftRoutes = require("./routes/loft");
 const rollingRoutes = require("./routes/rolling");
+const userRoutes = require('./routes/user');
 
 const sequelize = require("./database/db");
 //define db models
@@ -12,7 +13,9 @@ const sequelize = require("./database/db");
 const User = require("./models/user");
 const Bulk = require("./models/bulk");
 const Container = require("./models/container");
-// const Receipt = require('./models/receipt');
+const Type = require('./models/type');
+const Receipt = require('./models/receipt');
+const Difference_Report = require('./models/difference_report');
 const Supplier = require("./models/supplier");
 const Lot = require("./models/lot");
 const Lot_Container = require("./models/lot_container");
@@ -44,9 +47,10 @@ app.use((req, res, next) => {
 
 //ROUTES
 app.use("/bleaf", broughtLeafRoutes);
-app.use("/auth", authtRoutes);
+app.use("/auth", authRoutes);
 app.use("/loft", loftRoutes);
 app.use("/rolling", rollingRoutes);
+app.use("/user",userRoutes);
 
 // ERROR HANDLING
 app.use((error, req, res, next) => {
@@ -58,11 +62,17 @@ app.use((error, req, res, next) => {
 });
 
 //Relations
-Bulk.belongsTo(User); //1:M
+Bulk.belongsTo(User); //M:1
 User.hasMany(Bulk);
 
 Bulk.belongsTo(Supplier); //Sequelize doesn't currently support composite foreign keys, so there is no way to reference a model/table which has composite primary keys.
 Supplier.hasMany(Bulk);
+
+Receipt.belongsTo(Bulk);// this should be 1:1, we need bulk id as fk to the receipt, so we used 1:M
+Bulk.hasMany(Receipt);
+
+Difference_Report.belongsTo(Bulk);// this should be 1:1, we need bulk id as fk to the diff_report, so we used 1:M
+Bulk.hasMany(Difference_Report);
 
 Lot.belongsTo(Bulk);
 Bulk.hasMany(Lot);
@@ -70,8 +80,15 @@ Bulk.hasMany(Lot);
 Lot.belongsToMany(Container, { through: Lot_Container }); //M:N
 Container.belongsToMany(Lot, { through: Lot_Container });//when using string sequelize automaticaly create table put both fk as its pks
 
+Container.belongsTo(Type);// container M type 1
+Type.hasMany(Container);
+
+
 Lot.belongsTo(Box);
 Box.hasMany(Lot);
+
+Box.belongsTo(Trough);//1:M
+Trough.hasMany(Box);
 
 Process.belongsToMany(Trough, {
   through: { model: Trough_Process, unique: false },
@@ -80,20 +97,13 @@ Trough.belongsToMany(Process, {
   through: { model: Trough_Process, unique: false },
 });
 
-// Box.belongsToMany(Bulk, {through: {model:Loaded_Bulk_Box, unique: false}});
-// Bulk.belongsToMany(Box, {through: {model:Loaded_Bulk_Box, unique: false}});
-
-// Batch.belongsToMany(Dhool, { through: Roll_Break }); //ternary btw batch dhool roll breaker
-// Dhool.belongsToMany(Batch, { through: Roll_Break });
-// Roll_Break.belongsTo(Roll_Breaker);
-// Roll_Breaker.hasMany(Roll_Break);
+Box.belongsTo(Batch);
+Batch.hasMany(Box);
 
 Batch.belongsToMany(Roller,{through: { model: Dhool, unique: false },});//fornary btw batch roller drier roll_breaker
 Roller.belongsToMany(Batch,{through: { model: Dhool, unique: false },});
-
 Dhool.belongsTo(Roll_Breaker);
 Roll_Breaker.hasMany(Dhool);
-
 Dhool.belongsTo(Drier);
 Drier.hasMany(Dhool);
 

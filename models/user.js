@@ -13,4 +13,7 @@ module.exports= sequelize.define('User', {
     lname: Sequelize.STRING,
     dob: Sequelize.STRING,
     user_type: Sequelize.STRING,
+    telephone_no:Sequelize.STRING,
+    nic:Sequelize.STRING,
+    address:Sequelize.STRING
 });

@@ -11,4 +11,6 @@ module.exports = sequelize.define("Batch", {
     type: Sequelize.DATE,
     primaryKey: true,
   },
+  weight:Sequelize.DOUBLE,
+  outturn:Sequelize.DOUBLE
 });

@@ -7,7 +7,8 @@ const Receipt = sequelize.define('receipt', {
         type: Sequelize.INTEGER,
         primaryKey: true,
     },
-   total_deduction:Sequelize.INTEGER
+    //bulk_id fk
+   total_deduction:Sequelize.DOUBLE
 });
 
 module.exports = Receipt;
