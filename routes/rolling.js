@@ -1,8 +1,13 @@
 const express = require("express");
-
 const isAuth = require("../middleware/is-auth");
 const rollingController = require("../controllers/rolling");
 const router = express.Router();
+
+//GET rolling/rollings
+router.get("/rollings", isAuth, rollingController.getRollings);
+
+//POST rolling/rolling
+router.post("/rolling", isAuth, rollingController.createRolling);
 
 //GET rolling/rbreakings
 router.get("/rbreakings", isAuth, rollingController.getRollBreakings);

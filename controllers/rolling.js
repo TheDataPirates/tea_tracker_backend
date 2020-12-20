@@ -2,6 +2,54 @@ const dhool = require("../models/dhool");
 const Sequelize = require("sequelize");
 const Op = Sequelize.Op;
 
+
+exports.getRollings = async (req, res, next) => {
+  try {
+    const allRollings = await dhool.findAll();
+
+    res.status(200).json({
+      rollings: allRollings,
+    });
+  } catch (error) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.createRolling = async (req, res, next) => {
+  const id = req.body.id;
+  const batch_no = req.body.batchNumber;
+  const rolling_turn = req.body.rollingTurn;
+  const roller_no = req.body.rollerNumber;
+  const weight_in = req.body.weightIn;
+  const weight_out = req.body.weightOut;
+  const time = req.body.time;
+  try {
+    await dhool.create({
+      id: id,
+      BatchBatchNo: batch_no,
+      rolling_turn: rolling_turn,
+      RollerRollerId: roller_no,
+      rolling_in_kg: weight_in,
+      rolling_out_kg:weight_out,
+      rolling_out_time: time,
+    });
+    console.log("rolling saved");
+
+    res.status(200).json({
+      rolling: "saved",
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+
 exports.getRollBreakings = async (req, res, next) => {
   try {
     const allRollBreakings = await dhool.findAll({
