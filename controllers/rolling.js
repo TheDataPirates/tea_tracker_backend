@@ -121,7 +121,7 @@ exports.createDrying = async (req, res, next) => {
   const drier_out_kg = req.body.drierOutWeight;
   //const drier_in_weight = req.body.drierInWeight;
   const drier_out_time = req.body.time; 
-try {git
+try {
   await dhool.update ({
       id: id,
       batch_no: batch_no,
