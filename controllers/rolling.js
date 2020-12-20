@@ -33,7 +33,7 @@ exports.createRolling = async (req, res, next) => {
       rolling_turn: rolling_turn,
       RollerRollerId: roller_no,
       rolling_in_kg: weight_in,
-      rolling_out_kg:weight_out,
+      rolling_out_kg: weight_out,
       rolling_out_time: time,
     });
     console.log("rolling saved");
@@ -54,7 +54,7 @@ exports.getRollBreakings = async (req, res, next) => {
   try {
     const allRollBreakings = await dhool.findAll({
       where: {
-        rb_turn: { [Op.notLike]: "%BB" },
+        rolling_turn: { [Op.notLike]: "%BB" },
       },
     });
 
@@ -77,18 +77,24 @@ exports.createRollBreaking = async (req, res, next) => {
   const weight = req.body.weight;
   const time = req.body.time;
   try {
-    await dhool.create({
-      id: id,
-        BatchBatchNo: batch_no,
-      rb_turn: roll_break_turn,
-      rb_id: roll_breaker_no,
-      dhool_out_weight: weight,
-      rb_out_time: time,
-    });
+    await dhool.update(
+      {
+        dhool_out_weight: weight,
+        rb_out_time: time,
+        RollBreakerRollBreakerId: roll_breaker_no
+      },
+      {
+        where: {
+          rolling_turn: roll_break_turn,
+          BatchBatchNo: batch_no,
+          // batch_date: date,
+        },
+      }
+    );
     console.log("roll breaking saved");
 
     res.status(200).json({
-      starting: "saved",
+      rollBreaking: "updated",
     });
   } catch (err) {
     if (!err.statusCode) {
@@ -129,8 +135,8 @@ exports.createFermenting = async (req, res, next) => {
       },
       {
         where: {
-          rb_turn: rb_turn,
-          batch_no: batch_no,
+          rolling_turn: rb_turn,
+          BatchBatchNo: batch_no,
           // batch_date: date,
         },
       }
