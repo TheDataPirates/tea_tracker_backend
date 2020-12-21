@@ -28,5 +28,11 @@ router.get("/loadings", isAuth, loftController.getLoadings);
 //POST loft/loading
 router.post("/loading", isAuth, loftController.createLoading);
 
+//GET loft/batches
+router.get("/batches", isAuth, loftController.getBatches);
+
+//POST loft/batch
+router.post("/batch", isAuth, loftController.createBatch);
+
 
 module.exports = router;
