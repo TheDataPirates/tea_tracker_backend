@@ -2,12 +2,15 @@ const express = require("express");
 const router = express.Router();
 const { body } = require("express-validator/check");
 const authController = require("../controllers/auth");
+const isAuth = require("../middleware/is-auth");
+const fileUpload = require('../middleware/file-upload');
 const User = require("../models/user");
 
 //PUT auth/signup
 router.put(
   //why use put? -- PUT method requests for the enclosed entity be stored under the supplied Request & refers to an already existing resource – an update operation will happen, otherwise create operation should happen
   "/signup",
+  fileUpload.single('image'),
   [
     body("user_id")
       .trim()
@@ -27,5 +30,18 @@ router.put(
 
 //POST auth/login
 router.post("/login", authController.login);
+
+
+//GET auth/users
+router.get("/users",authController.getUsers);
+
+//GET auth/users/:userId
+router.get("/users/:userId",authController.getUser);
+
+//PATCH auth/users
+router.patch("/users",isAuth,authController.updateUser);
+
+//DELETE auth/users
+router.delete("/users/:userId",isAuth,authController.deleteUser);
 
 module.exports = router;

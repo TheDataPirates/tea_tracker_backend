@@ -9,11 +9,15 @@ module.exports= sequelize.define('User', {
         
     },
     password:Sequelize.STRING,
-    fname: Sequelize.STRING,
-    lname: Sequelize.STRING,
+    name: Sequelize.STRING,
     dob: Sequelize.STRING,
     user_type: Sequelize.STRING,
     telephone_no:Sequelize.STRING,
     nic:Sequelize.STRING,
-    address:Sequelize.STRING
+    address:Sequelize.STRING,
+    image:Sequelize.STRING,
+
+
+},{
+    timestamps: false,
 });
