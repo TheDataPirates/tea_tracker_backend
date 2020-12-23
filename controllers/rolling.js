@@ -117,22 +117,30 @@ exports.getDryings = async (req, res, next) => {
 exports.createDrying = async (req, res, next) => {
   const id = req.body.id;
   const batch_no = req.body.batchNumber;
-  const rb_turn = req.body.dhoolNumber;
+  const rolling_turn = req.body.dhoolNumber;
   const drier_out_kg = req.body.drierOutWeight;
-  //const drier_in_weight = req.body.drierInWeight;
+  const drier_in_weight = req.body.drierInWeight;
   const drier_out_time = req.body.time; 
 try {
   await dhool.update ({
       id: id,
-      batch_no: batch_no,
-      rb_turn: rb_turn,
+      // batch_no: batch_no,
+      // rb_turn: rb_turn,
       //dhool_out_weight: dhool_out_weight,
       drier_out_kg: drier_out_kg,
       drier_out_time: drier_out_time,
-    });
-    console.log("drier saved");
+    },
+    {
+      where: {
+        rolling_turn: rolling_turn,
+        batch_no: batch_no,
+      },
+    }
+    
+    );
+    console.log("drying updated");
     res.status(200).json({
-      starting: "saved",
+      starting: "updated",
     });
   
 } catch (error)  {

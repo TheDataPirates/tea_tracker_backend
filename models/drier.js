@@ -7,4 +7,7 @@ module.exports = sequelize.define("Drier", {
     type: Sequelize.INTEGER,
     primaryKey: true,
   },
+  modal: Sequelize.STRING,
+  machine_purchase_date:Sequelize.DATE,
+  power_into:Sequelize.STRING
 });

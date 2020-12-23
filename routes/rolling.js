@@ -20,7 +20,7 @@ router.patch("/fermenting", isAuth, rollingController.createFermenting);
 router.get("/dryings", isAuth, rollingController.getDryings);
 
 //POST rolling/drying
-router.get("/drying", isAuth, rollingController.createDrying);
+router.post("/drying", isAuth, rollingController.createDrying);
 
 
 module.exports = router;
