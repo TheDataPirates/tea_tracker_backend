@@ -8,6 +8,7 @@ const broughtLeafRoutes = require("./routes/brought_leaf");
 const authRoutes = require("./routes/auth");
 const loftRoutes = require("./routes/loft");
 const rollingRoutes = require("./routes/rolling");
+const supplyRoutes = require("./routes/supplier");
 
 const sequelize = require("./database/db");
 //define db models
@@ -53,6 +54,7 @@ app.use("/bleaf", broughtLeafRoutes);
 app.use("/auth", authRoutes);
 app.use("/loft", loftRoutes);
 app.use("/rolling", rollingRoutes);
+app.use("/supp",supplyRoutes);
 
 // ERROR HANDLING
 app.use((error, req, res, next) => {

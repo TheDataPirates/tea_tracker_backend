@@ -13,4 +13,6 @@ module.exports = sequelize.define("Supplier", {
   status:Sequelize.STRING,
   gps_location:Sequelize.STRING
 
+},{
+  timestamps: false,
 });
