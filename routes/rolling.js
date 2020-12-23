@@ -13,18 +13,18 @@ router.post("/rolling", isAuth, rollingController.createRolling);
 router.get("/rbreakings", isAuth, rollingController.getRollBreakings);
 
 //POST rolling/rbreaking
-router.post("/rbreaking", isAuth, rollingController.createRollBreaking);
+router.patch("/rbreaking", isAuth, rollingController.createRollBreaking);
 
 //GET rolling/fermentings
 router.get("/fermentings", isAuth, rollingController.getFermentings);
 
 //POST rolling/fermenting
-router.post("/fermenting", isAuth, rollingController.createFermenting);
+router.patch("/fermenting", isAuth, rollingController.createFermenting);
 
 //GET rolling/dryings
 router.get("/dryings", isAuth, rollingController.getDryings);
 
 //POST rolling/drying
-router.post("/drying", isAuth, rollingController.createDrying);
+router.patch("/drying", isAuth, rollingController.createDrying);
 
 module.exports = router;
