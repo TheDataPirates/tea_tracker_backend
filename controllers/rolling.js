@@ -152,3 +152,54 @@ exports.createFermenting = async (req, res, next) => {
     next(err);
   }
 };
+
+
+exports.getDryings = async (req, res, next) => {
+  try {
+    const allDryings = await dhool.findAll();
+
+    res.status(200).json({
+      dryings: allDryings,
+    });
+  } catch (error) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+
+exports.createDrying = async (req, res, next) => {
+  const id = req.body.id;
+  const batch_no = req.body.batchNumber;
+  const rb_turn = req.body.dhoolNumber;
+  const drier_in_weight = req.body.drierInWeight;
+  const drier_out_weight = req.body.drierOutWeight;
+  const time = req.body.time;
+  // const date = req.body.date;
+  try {
+    await dhool.update(
+      {
+        drier_out_kg: drier_out_weight,
+        drier_out_time: time,
+        DrierDrierId: 1,
+      },
+      {
+        where: {
+          rolling_turn: rb_turn,
+          BatchBatchNo: batch_no,
+          // batch_date: date,
+        },
+      }
+    );
+    console.log("drying updated");
+    res.status(200).json({
+      drying: "updated",
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};

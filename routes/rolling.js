@@ -21,4 +21,10 @@ router.get("/fermentings", isAuth, rollingController.getFermentings);
 //POST rolling/fermenting
 router.post("/fermenting", isAuth, rollingController.createFermenting);
 
+//GET rolling/dryings
+router.get("/dryings", isAuth, rollingController.getDryings);
+
+//POST rolling/drying
+router.post("/drying", isAuth, rollingController.createDrying);
+
 module.exports = router;
