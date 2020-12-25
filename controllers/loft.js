@@ -216,11 +216,20 @@ exports.getBatches = async (req, res, next) => {
     const batchWeight = req.body.batchWeight;
     const time = req.body.time;
     try {
+
+        const dateT = new Date();
+        let date = ("0" + dateT.getDate()).slice(-2);
+        // current month
+        let month = ("0" + (dateT.getMonth() + 1)).slice(-2);
+        // current year
+        let year = dateT.getFullYear();
+        const dateString = date + "/" + month + "/" + year;
+
       await Batch.create({
        batch_no: batchNumber,
-       batch_date: time,
+       batch_date: dateString,
        weight: batchWeight,
-       
+       outturn:0,
       });
     
       console.log("batch saved");
