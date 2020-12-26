@@ -9,6 +9,7 @@ const authRoutes = require("./routes/auth");
 const loftRoutes = require("./routes/loft");
 const rollingRoutes = require("./routes/rolling");
 const supplyRoutes = require("./routes/supplier");
+const machineRoutes = require("./routes/machine");
 
 const sequelize = require("./database/db");
 //define db models
@@ -55,6 +56,7 @@ app.use("/auth", authRoutes);
 app.use("/loft", loftRoutes);
 app.use("/rolling", rollingRoutes);
 app.use("/supp",supplyRoutes);
+app.use("/machine",machineRoutes);
 
 // ERROR HANDLING
 app.use((error, req, res, next) => {
