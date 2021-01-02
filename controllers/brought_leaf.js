@@ -82,10 +82,14 @@ exports.createBulks = async (req, res, next) => {
   const bulkid = req.body.bulk_id;
   const userid = req.body.user_id;
   const supid = req.body.supplier_id;
+  const date = req.body.date;
+  const method = req.body.method;
   await Bulk.create({
     bulk_id: bulkid,
     UserUserId: userid,
     SupplierSupplierId: supid,
+    date: date,
+    method: method,
   }).catch((err) => {
     if (!err.statusCode) {
       err.statusCode = 500;

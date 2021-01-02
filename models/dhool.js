@@ -7,7 +7,7 @@ module.exports = sequelize.define("Dhool", {
     type: Sequelize.STRING,
     primaryKey: true,
   },
-  rolling_turn:Sequelize.INTEGER,
+  rolling_turn:Sequelize.STRING,
   rolling_in_kg:Sequelize.DOUBLE,
   // rolling_in_time:Sequelize.DATE,
   batch_date: Sequelize.STRING,

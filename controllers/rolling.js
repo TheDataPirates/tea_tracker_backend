@@ -89,8 +89,11 @@ exports.createRollBreaking = async (req, res, next) => {
   const roll_breaker_no = req.body.rollBreakerNumber;
   const weight = req.body.weight;
   const time = req.body.time;
-  try {
-    const dateT = new Date();
+
+  console.log('RBTurn');
+  console.log(roll_break_turn);
+
+  const dateT = new Date();
     let date = ("0" + dateT.getDate()).slice(-2);
     // current month
     let month = ("0" + (dateT.getMonth() + 1)).slice(-2);
@@ -98,44 +101,72 @@ exports.createRollBreaking = async (req, res, next) => {
     let year = dateT.getFullYear();
     const dateString = date + "/" + month + "/" + year;
 
-    const batch_weight = await batch.findAll({
-      attributes: ['weight']
-    },
-    {
-      where: {
-        batch_no: batch_no,
-      },
-    });
-    // console.log("batch weight in roll breaking");
-    // console.log(batch_weight[0].dataValues.weight);
-    const dhool_pct = batch_weight[0].dataValues.weight/weight;
-    // console.log("dhool percentage in roll breaking");
-    // console.log(dhool_pct);
-    await dhool.update(
-      {
+  if(roll_break_turn === 'BB'){
+    try{
+      await dhool.create({
+        id: id,
+        BatchBatchNo: batch_no,
+        batch_date: dateString,
         dhool_out_weight: weight,
-        rb_out_time: time,
-        RollBreakerRollBreakerId: roll_breaker_no,
-        dhool_pct: dhool_pct
+        rolling_turn: roll_break_turn,
+      });
+
+      console.log("Big Bulk saved");
+  
+      res.status(200).json({
+        rollBreaking: "saved",
+      });
+
+    }
+    catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    }
+  }
+  else{
+    try {
+    
+      const batch_weight = await batch.findAll({
+        attributes: ['weight']
       },
       {
         where: {
-          rolling_turn: roll_break_turn,
-          BatchBatchNo: batch_no,
-          batch_date: dateString,
+          batch_no: batch_no,
         },
+      });
+      // console.log("batch weight in roll breaking");
+      // console.log(batch_weight[0].dataValues.weight);
+      const dhool_pct = batch_weight[0].dataValues.weight/weight;
+      // console.log("dhool percentage in roll breaking");
+      // console.log(dhool_pct);
+      await dhool.update(
+        {
+          dhool_out_weight: weight,
+          rb_out_time: time,
+          RollBreakerRollBreakerId: roll_breaker_no,
+          dhool_pct: dhool_pct
+        },
+        {
+          where: {
+            rolling_turn: roll_break_turn,
+            BatchBatchNo: batch_no,
+            batch_date: dateString,
+          },
+        }
+      );
+      console.log("roll breaking saved");
+  
+      res.status(200).json({
+        rollBreaking: "updated",
+      });
+    } catch (err) {
+      if (!err.statusCode) {
+        err.statusCode = 500;
       }
-    );
-    console.log("roll breaking saved");
-
-    res.status(200).json({
-      rollBreaking: "updated",
-    });
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
+      next(err);
     }
-    next(err);
   }
 };
 
