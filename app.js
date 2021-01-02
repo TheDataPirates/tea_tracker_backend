@@ -10,6 +10,8 @@ const loftRoutes = require("./routes/loft");
 const rollingRoutes = require("./routes/rolling");
 const supplyRoutes = require("./routes/supplier");
 const machineRoutes = require("./routes/machine");
+const differenceReportRoutes = require("./routes/difference_report");
+
 
 const sequelize = require("./database/db");
 //define db models
@@ -57,6 +59,8 @@ app.use("/loft", loftRoutes);
 app.use("/rolling", rollingRoutes);
 app.use("/supp",supplyRoutes);
 app.use("/machine",machineRoutes);
+app.use("/diff",differenceReportRoutes);
+
 
 // ERROR HANDLING
 app.use((error, req, res, next) => {
