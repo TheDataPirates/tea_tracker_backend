@@ -7,7 +7,8 @@ module.exports = sequelize.define("Roller", {
         type: Sequelize.INTEGER,
         primaryKey: true,
     },
-    model_no:{
-        type:Sequelize.STRING,
-    }
+    modal:Sequelize.STRING,
+    machine_purchase_date:Sequelize.DATE,
+    power_info:Sequelize.STRING,
+    image:Sequelize.STRING,
 });

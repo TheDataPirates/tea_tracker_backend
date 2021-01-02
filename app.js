@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+
 const express = require("express");
 const bodyParser = require("body-parser");
 
@@ -5,7 +8,8 @@ const broughtLeafRoutes = require("./routes/brought_leaf");
 const authRoutes = require("./routes/auth");
 const loftRoutes = require("./routes/loft");
 const rollingRoutes = require("./routes/rolling");
-const userRoutes = require('./routes/user');
+const supplyRoutes = require("./routes/supplier");
+const machineRoutes = require("./routes/machine");
 
 const sequelize = require("./database/db");
 //define db models
@@ -25,15 +29,16 @@ const Trough_Process = require("./models/trough_process");
 const Batch = require("./models/batch");
 const Dhool = require("./models/dhool");
 const Roll_Breaker = require("./models/roll_breaker");
-// const Roll_Break = require("./models/roll_break");
 const Box = require("./models/box");
-// const Loaded_Bulk_Box = require('./models/loaded_bulk_box');
 const Drier = require('./models/drier');
 const Roller = require('./models/roller');
 const app = express();
 
 // app.use(bodyParser.urlencoded()); // x-www-form-urlencoded <form> submit data
 app.use(bodyParser.json()); // application/json <- Header for incoming json data ex:(req.body)
+
+app.use('/uploads/images', express.static(path.join('uploads', 'images')));//frontend request can see the images (static serve)
+
 
 app.use((req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -50,10 +55,16 @@ app.use("/bleaf", broughtLeafRoutes);
 app.use("/auth", authRoutes);
 app.use("/loft", loftRoutes);
 app.use("/rolling", rollingRoutes);
-app.use("/user",userRoutes);
+app.use("/supp",supplyRoutes);
+app.use("/machine",machineRoutes);
 
 // ERROR HANDLING
 app.use((error, req, res, next) => {
+  if (req.file) {
+    fs.unlink(req.file.path, err => {
+      console.log(err);
+    });
+  }
   console.log(error);
   const status = error.statusCode || 500;
   const message = error.message;

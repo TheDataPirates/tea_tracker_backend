@@ -7,4 +7,8 @@ module.exports = sequelize.define("Roll_Breaker", {
     type: Sequelize.INTEGER,
     primaryKey: true,
   },
+  modal:Sequelize.STRING,
+  machine_purchase_date:Sequelize.DATE,
+  power_info:Sequelize.STRING,
+  image:Sequelize.STRING,
 });

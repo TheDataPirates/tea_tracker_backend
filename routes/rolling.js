@@ -18,7 +18,7 @@ router.patch("/rbreaking", isAuth, rollingController.createRollBreaking);
 //GET rolling/fermentings
 router.get("/fermentings", isAuth, rollingController.getFermentings);
 
-//POST rolling/fermenting
+//PATCH rolling/fermenting
 router.patch("/fermenting", isAuth, rollingController.createFermenting);
 
 //GET rolling/dryings
