@@ -121,7 +121,8 @@ Drier.hasMany(Dhool);
 
 //CONNECTING MYSQL & SYNCING MODELS
 sequelize
-  .sync()
+  // .sync({force:true}
+    .sync()
   .then((results) => {
     // console.log(results);
     app.listen(8080);
