@@ -5,7 +5,7 @@ const isAuth = require("../middleware/is-auth");
 const router = express.Router();
 
 //GET /bleaf/lots
-router.get("/lots", isAuth, broughtLeafController.getLots);
+router.get("/lots/:Bulkid", isAuth, broughtLeafController.getLots);
 
 // POST /bleaf/lot
 router.post("/lot", isAuth, broughtLeafController.createLots);

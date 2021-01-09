@@ -4,8 +4,11 @@ const Lot = require("../models/lot");
 
 
 exports.getLots = async (req, res, next) => {
+  const BulkBulkId = req.params.Bulkid;
   try {
-    const allLots = await Lot.findAll();
+    const allLots = await Lot.findAll({
+      where: { BulkBulkId }
+    });
     res.status(200).json({
       lots: allLots,
     });

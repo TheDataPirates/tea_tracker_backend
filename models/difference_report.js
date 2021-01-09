@@ -10,5 +10,6 @@ module.exports = sequelize.define("Difference_Report", {
     original_weight: Sequelize.DOUBLE,
     remeasuring_weight: Sequelize.DOUBLE,
     weight_difference: Sequelize.DOUBLE,
+    supplier_id: Sequelize.STRING,
     //bulk_id fk
 });
