@@ -1,11 +1,14 @@
 const Bulk = require("../models/bulk");
 const Lot = require("../models/lot");
-const Supplier = require("../models/supplier");
-const User = require("../models/user");
+// const Lot_Container = require('../models/lot_container');
+
 
 exports.getLots = async (req, res, next) => {
+  const BulkBulkId = req.params.Bulkid;
   try {
-    const allLots = await Lot.findAll();
+    const allLots = await Lot.findAll({
+      where: { BulkBulkId }
+    });
     res.status(200).json({
       lots: allLots,
     });
@@ -21,6 +24,7 @@ exports.createLots = async (req, res, next) => {
   const lotId = req.body.lot_id;
   const gradeGL = req.body.grade_GL;
   const gWeight = req.body.gross_weight;
+  const contType= req.body.container_type;
   const noOfContainer = req.body.no_of_container;
   const waters = req.body.water;
   const cLeaf = req.body.course_leaf;
@@ -39,8 +43,13 @@ exports.createLots = async (req, res, next) => {
       other: others,
       net_weight: netWeight,
       deduction: deductions,
-      bulkBulkId: bulk_id,
+      BulkBulkId: bulk_id,
+      container_type:contType
     });
+    // await Lot_Container({
+    //   LotLotId:lotId,
+    //   ContainerContainerId:"1"
+    // });
     console.log("lot saved");
     res.status(200).json({
       lots: "saved",
@@ -76,10 +85,14 @@ exports.createBulks = async (req, res, next) => {
   const bulkid = req.body.bulk_id;
   const userid = req.body.user_id;
   const supid = req.body.supplier_id;
+  const date = req.body.date;
+  const method = req.body.method;
   await Bulk.create({
     bulk_id: bulkid,
     UserUserId: userid,
     SupplierSupplierId: supid,
+    date: date,
+    method: method,
   }).catch((err) => {
     if (!err.statusCode) {
       err.statusCode = 500;
@@ -92,3 +105,53 @@ exports.createBulks = async (req, res, next) => {
 
   console.log("bulk saved");
 };
+exports.createLotFromLocalDb = async (req,res,next)=>{
+  const {lotId,no_of_containers,container_type,grade_GL,g_weight,water,course_leaf,other,bulkId,method,date,suppId,deduction,net_weight,user_Id,container1,container2,container3,container4,container5}= req.body;
+
+
+  try {
+    const bulkExist = await Bulk.findOne({where: {bulk_id:bulkId}}).catch(
+        (err) => {
+          //check network failures
+          if (!err.statusCode) {
+            err.statusCode = 500;
+          }
+          next(err);
+        }
+    );
+    if (!bulkExist) {
+     await Bulk.create({
+       bulk_id:bulkId,
+       date,
+       method,
+       UserUserId:user_Id,
+       SupplierSupplierId:suppId,
+     });
+    }
+    await Lot.create({
+      lot_id: lotId,
+      no_of_container: no_of_containers,
+      grade_GL: grade_GL,
+      gross_weight: g_weight,
+      water: water,
+      course_leaf: course_leaf,
+      other,
+      deduction,
+      net_weight,
+      container_type,
+      BulkBulkId:bulkId
+
+    });
+    // console.log(box_no);
+    console.log("Lot saved from local db");
+    res.status(200).json({
+      lot: "saved",
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+

@@ -8,7 +8,5 @@ module.exports= sequelize.define('Container', {
         primaryKey: true,
         
     },
-    type:Sequelize.STRING,
-    container_deduction: Sequelize.INTEGER,
-    capacity: Sequelize.INTEGER,
+
 });

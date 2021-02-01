@@ -7,17 +7,22 @@ module.exports = sequelize.define("Dhool", {
     type: Sequelize.STRING,
     primaryKey: true,
   },
-  batch_date: Sequelize.DATE,
-  drier_id: Sequelize.INTEGER,
-  rb_id:Sequelize.STRING,
-  batch_no:Sequelize.INTEGER,
-  rb_turn: Sequelize.STRING,
+  rolling_turn:Sequelize.STRING,
+  rolling_in_kg:Sequelize.DOUBLE,
+  // rolling_in_time:Sequelize.DATE,
+  batch_date: Sequelize.STRING,
+  rolling_out_kg:Sequelize.DOUBLE,
+  rolling_out_time:Sequelize.DATE,
   rb_out_time: Sequelize.DATE,
   dhool_out_weight: Sequelize.DOUBLE,
-  dhool_pct: Sequelize.INTEGER,
+  dhool_pct: Sequelize.DOUBLE,
   fd_time_out: Sequelize.DATE,
   fd_out_kg: Sequelize.DOUBLE,
-  fd_pct: Sequelize.INTEGER,
+  fd_pct: Sequelize.DOUBLE,
   drier_out_kg: Sequelize.DOUBLE,
   drier_out_time:Sequelize.DATE
+  //batch_no fk
+  //roller_id fk
+  //roll_breaker_id fk
+  //drier_id fk
 });
