@@ -109,6 +109,11 @@ exports.createRollBreaking = async (req, res, next) => {
         batch_date: dateString,
         dhool_out_weight: weight,
         rolling_turn: roll_break_turn,
+      }).catch ((err) =>{
+        if (!err.statusCode) {
+          err.statusCode = 500;
+        }
+        next(err);
       });
 
       console.log("Big Bulk saved");
@@ -193,7 +198,7 @@ exports.createFermenting = async (req, res, next) => {
   const dhool_out_weight = req.body.dhoolOutWeight;
   const time = req.body.time;
   // const date = req.body.date;
-  try {
+  // try {
 
     const dateT = new Date();
     let date = ("0" + dateT.getDate()).slice(-2);
@@ -221,17 +226,23 @@ exports.createFermenting = async (req, res, next) => {
           batch_date: dateString,
         },
       }
-    );
+    ).catch ((err) =>{
+      if (!err.statusCode) {
+        err.statusCode = 500;
+      }
+      next(err);
+    });
     console.log("fermenting updated");
     res.status(200).json({
       fermenting: "updated",
     });
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
-    }
-    next(err);
-  }
+  // } 
+  // catch (err) {
+  //   if (!err.statusCode) {
+  //     err.statusCode = 500;
+  //   }
+  //   next(err);
+  // }
 };
 
 

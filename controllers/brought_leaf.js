@@ -99,6 +99,7 @@ exports.createBulks = async (req, res, next) => {
   const supid = req.body.supplier_id;
   const date = req.body.date;
   const method = req.body.method;
+  
   await Bulk.create({
     bulk_id: bulkid,
     UserUserId: userid,
@@ -117,6 +118,7 @@ exports.createBulks = async (req, res, next) => {
 
   console.log("bulk saved");
 };
+
 exports.createLotFromLocalDb = async (req,res,next)=>{
   const {lotId,no_of_containers,container_type,grade_GL,g_weight,water,course_leaf,other,bulkId,method,date,suppId,deduction,net_weight,user_Id,container1,container2,container3,container4,container5}= req.body;
 
