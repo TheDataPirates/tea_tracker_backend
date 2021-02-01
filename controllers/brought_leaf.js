@@ -4,17 +4,32 @@ const Lot = require("../models/lot");
 
 
 exports.getLots = async (req, res, next) => {
-  try {
-    const allLots = await Lot.findAll();
-    res.status(200).json({
-      lots: allLots,
-    });
-  } catch (err) {
-    if (!err.statusCode) {
-      err.statusCode = 500;
+
+    const BulkBulkId = req.params.Bulkid;
+    try {
+        const allLots = await Lot.findAll({
+            where: { BulkBulkId }
+        });
+        res.status(200).json({
+            lots: allLots,
+        });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
-    next(err);
-  }
+  // try {
+  //   const allLots = await Lot.findAll();
+  //   res.status(200).json({
+  //     lots: allLots,
+  //   });
+  // } catch (err) {
+  //   if (!err.statusCode) {
+  //     err.statusCode = 500;
+  //   }
+  //   next(err);
+  // }
 };
 
 exports.createLots = async (req, res, next) => {
