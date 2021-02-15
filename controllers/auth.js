@@ -13,14 +13,25 @@ exports.signup = async (req, res, next) => {
         next(error);
     } else {
         const {user_id, password, name, dob, user_type, telephone_no, nic, address} = req.body;
-
-        const hashedpw = await bcrypt.hash(password, 8).catch((err) => {
-            //hashing enterd pw and store it db, hashing cannot turn back previous values
-            if (!err.statusCode) {
-                err.statusCode = 500;
-            }
-            next(err);
+        let hashedpw = null;
+        await bcrypt.genSalt(8, function(err, salt) {
+            console.log(salt);
+            bcrypt.hash(password, salt, function(err, hash) {
+                if(err){
+                    next(err);
+                }
+                hashedpw= hash;
+                console.log(hashedpw);
+                // Store hash in your password DB.
+            });
         });
+        // const hashedpw = await bcrypt.hash(password, 8).catch((err) => {
+        //     //hashing enterd pw and store it db, hashing cannot turn back previous values
+        //     if (!err.statusCode) {
+        //         err.statusCode = 500;
+        //     }
+        //     next(err);
+        // });
         await User.create({
             user_id: user_id,
             password: hashedpw,

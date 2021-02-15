@@ -1,0 +1,8 @@
+{
+  "env": {
+    "DB_USER": "admin",
+    "DB_PASSWORD": "#Makara*1",
+    "DB_NAME": "tea_tracker_db",
+    "DB_HOST_ADDRESS": "database-1.czagwwbsmjkc.ap-southeast-1.rds.amazonaws.com"
+  }
+}

@@ -5,8 +5,9 @@
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon app.js",
-    "preinstall": "npm install -g sequelize-cli"
+    "start": "node app.js",
+    "preinstall": "npm install -g sequelize-cli",
+    "start:dev": "nodemon app.js"
   },
   "author": "",
   "license": "ISC",
