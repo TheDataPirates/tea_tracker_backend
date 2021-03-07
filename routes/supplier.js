@@ -14,6 +14,9 @@ router.post('/supplier',isAuth,supplyingController.createSupplier);
 //GET supp/suppliers/:suppId
 router.get("/suppliers/:suppId",supplyingController.getSupplier);
 
+//GET supp/reports/supplier/:suppId
+router.get("/reports/supplier/:suppId",supplyingController.getSupplierInfoForReporting);
+
 //GET supp/suppliers/:supName
 router.get("/supplier/:suppId/:supName",isAuth,supplyingController.getSupplierByName);
 

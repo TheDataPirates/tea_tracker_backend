@@ -1,4 +1,7 @@
+const {Op} = require("sequelize");
 const Supplier = require('../models/supplier');
+const Bulk = require('../models/bulk');
+const Lot = require('../models/lot');
 
 exports.getSuppliers = async (req, res, next) => {
     try {
@@ -46,6 +49,31 @@ exports.getSupplier = async (req, res, next) => {
         const allSupplier = await Supplier.findAll({where: {supplier_id}});
         res.status(200).json({
             supplier: allSupplier,
+        });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getSupplierInfoForReporting = async (req, res, next) => {
+    const supplier_id = req.params.suppId;
+    try {
+        let bulkID = await Bulk.findAll({attributes: ['bulk_id'], where: {SupplierSupplierId:supplier_id}});// At Now, we didnt fetch details according to daily, monthly
+
+        console.log(bulkID[0].dataValues.bulk_id);
+
+        const gradeWiseTotalLots = await Lot.findAll({
+            attributes: ['grade_GL', [sequelize.fn('sum', sequelize.col('gross_weight')), 'total_Gross_weight'],],
+            where: {BulkBulkId: bulkID[0].dataValues.bulk_id},
+            group: ['grade_GL']
+
+        });
+        console.log(gradeWiseTotalLots);
+        res.status(200).json({
+            supplier: gradeWiseTotalLots,
         });
     } catch (err) {
         if (!err.statusCode) {
