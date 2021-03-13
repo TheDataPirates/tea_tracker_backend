@@ -61,19 +61,38 @@ exports.getSupplier = async (req, res, next) => {
 exports.getSupplierInfoForReporting = async (req, res, next) => {
     const supplier_id = req.params.suppId;
     try {
-        let bulkID = await Bulk.findAll({attributes: ['bulk_id'], where: {SupplierSupplierId:supplier_id}});// At Now, we didnt fetch details according to daily, monthly
+        let gradeWiseTotalLots;
+        let gradeWiseLotTotalArray = [];
+        let lotWithDate;
+        let date;
+        let bulkID = await Bulk.findAll({attributes: ['bulk_id', 'date'], where: {SupplierSupplierId: supplier_id}});// At Now, we didnt fetch details according to daily, monthly
+        // console.log(bulkID);
+        // console.log(bulkID[0].dataValues.bulk_id);
+        // date = bulkID[0].dataValues.date;
 
-        console.log(bulkID[0].dataValues.bulk_id);
 
-        const gradeWiseTotalLots = await Lot.findAll({
-            attributes: ['grade_GL', [sequelize.fn('sum', sequelize.col('gross_weight')), 'total_Gross_weight'],],
-            where: {BulkBulkId: bulkID[0].dataValues.bulk_id},
-            group: ['grade_GL']
+        for (const bulk_id_ele of bulkID) {
 
-        });
-        console.log(gradeWiseTotalLots);
+            gradeWiseTotalLots = await Lot.findAll({
+                attributes: ['grade_GL', [sequelize.fn('sum', sequelize.col('gross_weight')), 'total_Gross_weight'],],
+                where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id},
+                group: ['grade_GL']
+
+            });
+            date = bulk_id_ele.dataValues.date;
+
+            for (let lots_ele of gradeWiseTotalLots) {
+                console.log(lots_ele.dataValues);
+                lots_ele.dataValues = {...lots_ele.dataValues, date};
+                console.log(lots_ele.dataValues);
+
+            }
+
+            gradeWiseLotTotalArray.push(...gradeWiseTotalLots);
+        }
+        // console.log(gradeWiseTotalLots);
         res.status(200).json({
-            supplier: gradeWiseTotalLots,
+            supplier: gradeWiseLotTotalArray,
         });
     } catch (err) {
         if (!err.statusCode) {
