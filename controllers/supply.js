@@ -1,4 +1,5 @@
-const {Op} = require("sequelize");
+const Sequelize = require('sequelize');
+const Op = Sequelize.Op;
 const Supplier = require('../models/supplier');
 const Bulk = require('../models/bulk');
 const Lot = require('../models/lot');
@@ -63,9 +64,12 @@ exports.getSupplierInfoForReporting = async (req, res, next) => {
     try {
         let gradeWiseTotalLots;
         let gradeWiseLotTotalArray = [];
-        let lotWithDate;
+        let lotWithDate = {};
         let date;
-        let bulkID = await Bulk.findAll({attributes: ['bulk_id', 'date'], where: {SupplierSupplierId: supplier_id}});// At Now, we didnt fetch details according to daily, monthly
+        let bulkID = await Bulk.findAll({
+            attributes: ['bulk_id', 'date'],
+            where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},}
+        });// At Now, we didnt fetch details according to daily, monthly
         // console.log(bulkID);
         // console.log(bulkID[0].dataValues.bulk_id);
         // date = bulkID[0].dataValues.date;
@@ -80,15 +84,25 @@ exports.getSupplierInfoForReporting = async (req, res, next) => {
 
             });
             date = bulk_id_ele.dataValues.date;
-
+            // console.log(gradeWiseTotalLots);
             for (let lots_ele of gradeWiseTotalLots) {
-                console.log(lots_ele.dataValues);
-                lots_ele.dataValues = {...lots_ele.dataValues, date};
-                console.log(lots_ele.dataValues);
+                // console.log(lots_ele.dataValues.grade_GL);
 
+
+                lotWithDate[lots_ele.dataValues.grade_GL] = lots_ele.dataValues.total_Gross_weight;
+                // console.log(lots_ele.dataValues.grade_GL +`+` +lots_ele.dataValues.total_Gross_weight);
+
+
+                lotWithDate = {...lotWithDate, date};
+                // console.log(lots_ele.dataValues);
+
+                // lotWithDate = {...lotWithDate};
+                console.log(lotWithDate);
             }
 
-            gradeWiseLotTotalArray.push(...gradeWiseTotalLots);
+            gradeWiseLotTotalArray.push(lotWithDate);
+            lotWithDate = {};
+
         }
         // console.log(gradeWiseTotalLots);
         res.status(200).json({
