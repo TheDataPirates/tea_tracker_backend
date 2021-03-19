@@ -8,7 +8,7 @@ module.exports = sequelize.define('Bulk', {
         primaryKey: true,
         
     },
-    date: Sequelize.STRING,
+    date: Sequelize.DATEONLY,
    
     method:Sequelize.STRING
 });

@@ -1,6 +1,7 @@
 const trough_process = require("../models/trough_process");
 const Lot = require("../models/lot");
 const Batch = require("../models/batch");
+const Bulk = require('../models/bulk');
 const {Op} = require("sequelize");
 
 
@@ -243,3 +244,57 @@ exports.getBatches = async (req, res, next) => {
       next(err);
     }
   };
+
+
+
+  // Reporting
+
+exports.getLoftLoadingForReporting = async (req, res, next) => {
+    try {
+
+        let boxWiseTotalNetWeight;
+        let date;
+        const bulkID = await Bulk.findAll({
+            attributes: ['bulk_id', 'date'],
+            where: {date:new Date()}
+        });
+        for (const bulk_id_ele of bulkID) {
+
+            boxWiseTotalNetWeight = await Lot.findAll({
+                attributes: ['grade_GL','BoxBoxId', [sequelize.fn('sum', sequelize.col('net_weight')), 'total_Net_weight'],],
+                where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id,},
+                group: ['BoxBoxId']
+//date:{$between: [dateString, endDate]
+            });
+            date = bulk_id_ele.dataValues.date;
+            console.log(boxWiseTotalNetWeight);
+            // for (let lots_ele of gradeWiseTotalLots) {
+            //     // console.log(lots_ele.dataValues.grade_GL);
+            //
+            //
+            //     lotWithDate[lots_ele.dataValues.grade_GL] = lots_ele.dataValues.total_Gross_weight;
+            //     // console.log(lots_ele.dataValues.grade_GL +`+` +lots_ele.dataValues.total_Gross_weight);
+            //
+            //
+            //     lotWithDate = {...lotWithDate, date};
+            //     // console.log(lots_ele.dataValues);
+            //
+            //     // lotWithDate = {...lotWithDate};
+            //     // console.log(lotWithDate);
+            // }
+            //
+            // gradeWiseLotTotalArray.push(lotWithDate);
+            // lotWithDate = {};
+
+        }
+
+        res.status(200).json({
+            loading: bulkID,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};

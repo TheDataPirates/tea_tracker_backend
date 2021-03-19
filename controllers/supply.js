@@ -1,3 +1,4 @@
+
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const Supplier = require('../models/supplier');
@@ -61,15 +62,56 @@ exports.getSupplier = async (req, res, next) => {
 
 exports.getSupplierInfoForReporting = async (req, res, next) => {
     const supplier_id = req.params.suppId;
+    const time = req.params.time;
+// console.log( getCurrDate(new Date()));
+//     console.log( getDateMonthly());
+    getDateMonthly();
+//     const date = new Date();
+//     const monthBefore =new Date(getCurrDate(getDateMonthly()));
+//     console.log( date);
+//     console.log(monthBefore);
+
+
     try {
         let gradeWiseTotalLots;
         let gradeWiseLotTotalArray = [];
         let lotWithDate = {};
         let date;
-        let bulkID = await Bulk.findAll({
-            attributes: ['bulk_id', 'date'],
-            where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},}
-        });// At Now, we didnt fetch details according to daily, monthly
+        let bulkID;
+        switch (time){
+            case "Daily":
+                bulkID = await Bulk.findAll({
+                    attributes: ['bulk_id', 'date'],
+                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]}}
+                });
+                let bulkBydate = await Bulk.findAll({
+                    attributes: ['bulk_id', 'date'],
+                    where: {SupplierSupplierId: supplier_id, date:(sequelize.fn("month", sequelize.col("date")), 10) }
+                });
+                console.log(bulkBydate);
+                break;
+            case "Monthly":
+                bulkID = await Bulk.findAll({
+                    attributes: ['bulk_id', 'date'],
+                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ getDateMonthly(),new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)]}}
+                });
+
+                break;
+            case "Yearly":
+                bulkID = await Bulk.findAll({
+                    attributes: ['bulk_id', 'date'],
+                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ getFullYear(),new Date(new Date().getFullYear(), 11, 31)]}}
+                });
+
+                break;
+            default:
+                bulkID = await Bulk.findAll({
+                    attributes: ['bulk_id', 'date'],
+                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]}}
+                });
+
+        }
+       // At Now, we didnt fetch details according to daily, monthly
         // console.log(bulkID);
         // console.log(bulkID[0].dataValues.bulk_id);
         // date = bulkID[0].dataValues.date;
@@ -79,9 +121,9 @@ exports.getSupplierInfoForReporting = async (req, res, next) => {
 
             gradeWiseTotalLots = await Lot.findAll({
                 attributes: ['grade_GL', [sequelize.fn('sum', sequelize.col('gross_weight')), 'total_Gross_weight'],],
-                where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id},
+                where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id,},
                 group: ['grade_GL']
-
+//date:{$between: [dateString, endDate]
             });
             date = bulk_id_ele.dataValues.date;
             // console.log(gradeWiseTotalLots);
@@ -97,7 +139,7 @@ exports.getSupplierInfoForReporting = async (req, res, next) => {
                 // console.log(lots_ele.dataValues);
 
                 // lotWithDate = {...lotWithDate};
-                console.log(lotWithDate);
+                // console.log(lotWithDate);
             }
 
             gradeWiseLotTotalArray.push(lotWithDate);
@@ -186,3 +228,47 @@ exports.deleteSupplier = async (req, res, next) => {
         });
     }
 };
+
+// const getCurrDate = ( dateObject)=>{
+//     const dateT = dateObject;
+//     // console.log(dateT);
+//     let date = ("0" + dateT.getDate()).slice(-2);
+//     // current month
+//     let month = ("0" + (dateT.getMonth() + 1)).slice(-2);
+//     // current year
+//     let year = dateT.getFullYear();
+//     return year + "-" + month + "-" + date;
+//     // console.log(new Date(new Date(dateT) - 30*24 * 60 * 60 * 1000));
+//     // const dateBefore30 =new Date(new Date(dateT) - 30*24 * 60 * 60 * 1000);
+// }
+const getDateMonthly = ( )=>{
+    // const dateT = new Date(new Date() - 30 * 24 * 60 * 60 * 1000);
+    // // console.log(dateT);
+    // let date = ("0" + dateT.getDate()).slice(-2);
+    // // current month
+    // let month = ("0" + (dateT.getMonth() + 1)).slice(-2);
+    // // current year
+    // let year = dateT.getFullYear();
+    // const dateString= year + "-" + month + "-" + date;
+    // // console.log(new Date(new Date(dateT) - 30*24 * 60 * 60 * 1000));
+    // return dateString;
+    let d = new Date();
+    d.setMonth(d.getMonth() - 11);
+    // console.log('d='+d);
+    // let date = new Date();
+    // let firstDay = new Date(date.getFullYear(), date.getMonth(), 1);
+    // console.log(firstDay);
+    // let lastDay = new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    // console.log(lastDay);
+
+    return new Date(d.getFullYear(), d.getMonth(), 1);
+}
+const getFullYear = ( )=>{
+
+    let d = new Date();
+    d.setFullYear(d.getFullYear() - 3);
+
+
+console.log(new Date(d.getFullYear(), 0, 1));
+    return new Date(d.getFullYear(), 0, 1);
+}
