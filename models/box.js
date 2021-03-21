@@ -9,6 +9,7 @@ module.exports = sequelize.define("Box", {
   },
   withered_pct:Sequelize.DOUBLE,
   unloading_weight:Sequelize.DOUBLE,
+  date: Sequelize.DATEONLY,
   //trough_id fk
   //batch_id fk
 });

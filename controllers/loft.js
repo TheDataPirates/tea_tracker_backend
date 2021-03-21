@@ -338,3 +338,48 @@ exports.getLoftLoadingForReporting = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getLoftUnloadingForReporting = async (req, res, next) => {
+    try {
+
+        let boxWiseGradeLeaf;
+        let boxWiseWitheringPct;
+        let date;
+        let boxesArray = [];
+        const boxID = await Box.findAll({
+            attributes: ['box_id', 'withered_pct','unloading_weight','BatchBatchNo','date'],
+            where: {date: new Date()}
+        });
+
+        if(boxID.length === 0){
+            console.log('empty boxID');
+        }
+        for (const box_id_ele of boxID) {
+
+            boxWiseGradeLeaf = await Lot.findAll({
+                attributes: ['grade_GL'],
+                where: {BoxBoxId: box_id_ele.dataValues.box_id,},
+                group: ['BoxBoxId']
+//date:{$between: [dateString, endDate]
+            });
+            // console.log(boxWiseTotalNetWeight);
+            box_id_ele.grade_GL = boxWiseGradeLeaf[0].dataValues.grade_GL;
+
+            console.log(box_id_ele);
+
+            //
+            // gradeWiseLotTotalArray.push(lotWithDate);
+            // lotWithDate = {};
+
+        }
+
+        res.status(200).json({
+            unloading: boxID,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
