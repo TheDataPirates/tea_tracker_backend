@@ -2,6 +2,7 @@ const trough_process = require("../models/trough_process");
 const Lot = require("../models/lot");
 const Batch = require("../models/batch");
 const Bulk = require('../models/bulk');
+const Box = require('../models/box');
 const {Op} = require("sequelize");
 
 
@@ -181,7 +182,7 @@ exports.createLoading = async (req, res, next) => {
             BoxBoxId: box_id
         }, {
             where: {
-                lot_id:lot__id
+                lot_id: lot__id
             }
         });
         // console.log(box_no);
@@ -199,19 +200,19 @@ exports.createLoading = async (req, res, next) => {
 
 exports.getBatches = async (req, res, next) => {
     try {
-      const allBatches = await Batch.findAll();
-      res.status(200).json({
-        Batches: allBatches,
-      });
+        const allBatches = await Batch.findAll();
+        res.status(200).json({
+            Batches: allBatches,
+        });
     } catch (err) {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
-  };
-  
-  exports.createBatch= async (req, res, next) => {
+};
+
+exports.createBatch = async (req, res, next) => {
     const id = req.body.id;
     const batchNumber = req.body.batchNumber;
     const batchWeight = req.body.batchWeight;
@@ -226,62 +227,101 @@ exports.getBatches = async (req, res, next) => {
         let year = dateT.getFullYear();
         const dateString = date + "/" + month + "/" + year;
 
-      await Batch.create({
-       batch_no: batchNumber,
-       batch_date: dateString,
-       weight: batchWeight,
-       outturn:0,
-      });
-    
-      console.log("batch saved");
-      res.status(200).json({
-        Batches: "saved",
-      });
+        await Batch.create({
+            batch_no: batchNumber,
+            batch_date: dateString,
+            weight: batchWeight,
+            outturn: 0,
+        });
+
+        console.log("batch saved");
+        res.status(200).json({
+            Batches: "saved",
+        });
     } catch (err) {
-      if (!err.statusCode) {
-        err.statusCode = 500;
-      }
-      next(err);
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
     }
-  };
+};
 
 
-
-  // Reporting
+// Reporting
 
 exports.getLoftLoadingForReporting = async (req, res, next) => {
     try {
 
         let boxWiseTotalNetWeight;
+        let boxWiseWitheringPct;
         let date;
+        let boxesArray = [];
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date:new Date()}
+            where: {date: new Date('2021-03-19')} // date should be yesterday not today
         });
+        if(bulkID.length === 0){
+            console.log('empty bulks');
+        }
         for (const bulk_id_ele of bulkID) {
 
             boxWiseTotalNetWeight = await Lot.findAll({
-                attributes: ['grade_GL','BoxBoxId', [sequelize.fn('sum', sequelize.col('net_weight')), 'total_Net_weight'],],
+                attributes: ['grade_GL', 'BoxBoxId', [sequelize.fn('sum', sequelize.col('net_weight')), 'total_Net_weight'],],
                 where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id,},
                 group: ['BoxBoxId']
 //date:{$between: [dateString, endDate]
             });
             date = bulk_id_ele.dataValues.date;
-            console.log(boxWiseTotalNetWeight);
-            // for (let lots_ele of gradeWiseTotalLots) {
-            //     // console.log(lots_ele.dataValues.grade_GL);
-            //
-            //
-            //     lotWithDate[lots_ele.dataValues.grade_GL] = lots_ele.dataValues.total_Gross_weight;
-            //     // console.log(lots_ele.dataValues.grade_GL +`+` +lots_ele.dataValues.total_Gross_weight);
-            //
-            //
-            //     lotWithDate = {...lotWithDate, date};
-            //     // console.log(lots_ele.dataValues);
-            //
-            //     // lotWithDate = {...lotWithDate};
-            //     // console.log(lotWithDate);
-            // }
+            // console.log(boxWiseTotalNetWeight);
+            for (let lots_ele of boxWiseTotalNetWeight) {
+
+//                 boxWiseWitheringPct = await Box.findAll({
+//                     attributes: ['withered_pct'],
+//                     where: {box_id: lots_ele.dataValues.BoxBoxId}
+// //date:{$between: [dateString, endDate]
+//                 });
+//                 lots_ele.dataValues.withered_pct = boxWiseWitheringPct[0].dataValues.withered_pct;
+
+
+                // console.log(boxWiseWitheringPct);
+                if (boxesArray.length === 0) {
+                    // console.log(lots_ele.dataValues);
+                    boxesArray.push(lots_ele.dataValues);
+                    continue;
+                }
+                // console.log(boxesArray.length);
+                // console.log('before for');
+                let flag = 0; // used to identify existing box and push new boxes to array
+                for (let lot of boxesArray) {
+                    // console.log("inside for");
+                    if (lot.BoxBoxId === lots_ele.dataValues.BoxBoxId) {
+                        // console.log("inside if");
+                        // console.log(parseInt(lot.total_Net_weight));
+                        // console.log(parseInt(lots_ele.dataValues.total_Net_weight));
+                        let newWeight = parseInt(lot.total_Net_weight) + parseInt(lots_ele.dataValues.total_Net_weight);
+
+                        lot.total_Net_weight = newWeight.toString();
+                        lot.date = date;
+
+
+                        // console.log(lot);
+                        flag = 1;
+
+                        break;
+                    }
+                    lot.date = date;
+
+                }
+                if (flag === 0) {
+                    // console.log("outside for");
+                    lots_ele.dataValues.date = date;
+
+                    // console.log(lots_ele.dataValues);
+                    boxesArray.push(lots_ele.dataValues);
+                }
+            }
+            console.log(boxesArray);
+
             //
             // gradeWiseLotTotalArray.push(lotWithDate);
             // lotWithDate = {};
@@ -289,7 +329,7 @@ exports.getLoftLoadingForReporting = async (req, res, next) => {
         }
 
         res.status(200).json({
-            loading: bulkID,
+            loading: boxesArray,
         });
     } catch (error) {
         if (!error.statusCode) {

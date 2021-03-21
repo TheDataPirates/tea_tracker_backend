@@ -7,7 +7,8 @@ module.exports = sequelize.define("Box", {
     type: Sequelize.STRING,
     primaryKey: true,
   },
-  withered_pct:Sequelize.DOUBLE
+  withered_pct:Sequelize.DOUBLE,
+  unloading_weight:Sequelize.DOUBLE,
   //trough_id fk
   //batch_id fk
 });
