@@ -258,9 +258,9 @@ exports.getLoftLoadingForReporting = async (req, res, next) => {
         let boxesArray = [];
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: new Date('2021-03-19')} // date should be yesterday not today
+            where: {date: new Date('2021-03-20')} // date should be yesterday not today
         });
-        if(bulkID.length === 0){
+        if (bulkID.length === 0) {
             console.log('empty bulks');
         }
         for (const bulk_id_ele of bulkID) {
@@ -343,33 +343,31 @@ exports.getLoftUnloadingForReporting = async (req, res, next) => {
     try {
 
         let boxWiseGradeLeaf;
-        let boxWiseWitheringPct;
-        let date;
-        let boxesArray = [];
+
+
         const boxID = await Box.findAll({
-            attributes: ['box_id', 'withered_pct','unloading_weight','BatchBatchNo','date'],
+            attributes: ['box_id', 'withered_pct', 'unloading_weight', 'BatchBatchNo', 'date'],
             where: {date: new Date()}
         });
-
-        if(boxID.length === 0){
-            console.log('empty boxID');
-        }
-        for (const box_id_ele of boxID) {
-
-            boxWiseGradeLeaf = await Lot.findAll({
-                attributes: ['grade_GL'],
-                where: {BoxBoxId: box_id_ele.dataValues.box_id,},
-                group: ['BoxBoxId']
+        console.log(boxID);
+        const bulkID = await Bulk.findAll({
+            attributes: ['bulk_id', 'date'],
+            where: {date: new Date('2021-03-20')} // date should be yesterday not today
+        });
+        console.log(bulkID);
+        for (const bulk_id_ele of bulkID) {
+            for (const box_id_ele of boxID) {
+                boxWiseGradeLeaf = await Lot.findAll({
+                    attributes: ['grade_GL'],
+                    where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id, BoxBoxId: box_id_ele.dataValues.box_id},
 //date:{$between: [dateString, endDate]
-            });
-            // console.log(boxWiseTotalNetWeight);
-            box_id_ele.grade_GL = boxWiseGradeLeaf[0].dataValues.grade_GL;
+                });
+                console.log(boxWiseGradeLeaf);
+                if (boxWiseGradeLeaf.length !== 0) {
+                    box_id_ele.dataValues.grade_GL = boxWiseGradeLeaf[0].dataValues.grade_GL;
+                }
+            }
 
-            console.log(box_id_ele);
-
-            //
-            // gradeWiseLotTotalArray.push(lotWithDate);
-            // lotWithDate = {};
 
         }
 

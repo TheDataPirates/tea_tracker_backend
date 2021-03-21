@@ -38,5 +38,8 @@ router.post("/batch", isAuth, loftController.createBatch);
 //GET loft/reports/loading
 router.get("/reports/loading", loftController.getLoftLoadingForReporting);
 
+//GET loft/reports/unloading
+router.get("/reports/unloading", loftController.getLoftUnloadingForReporting);
+
 
 module.exports = router;
