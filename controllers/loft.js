@@ -1,4 +1,4 @@
-const trough_process = require("../models/trough_process");
+const Trough_process = require("../models/Trough_process");
 const Lot = require("../models/lot");
 const Batch = require("../models/batch");
 const Bulk = require('../models/bulk');
@@ -8,7 +8,7 @@ const {Op} = require("sequelize");
 
 exports.getStartings = async (req, res, next) => {
     try {
-        const allStartings = await trough_process.findAll({
+        const allStartings = await Trough_process.findAll({
             where: {ProcessProcessName: "starting"},
         });
 
@@ -31,7 +31,7 @@ exports.createStarting = async (req, res, next) => {
     const humid = req.body.humidity;
     const proc_name = req.body.process_name;
     try {
-        await trough_process.create({
+        await Trough_process.create({
             tp_id: id,
             TroughTroughId: trough_no,
             date: date,
@@ -53,7 +53,7 @@ exports.createStarting = async (req, res, next) => {
 
 exports.getMixings = async (req, res, next) => {
     try {
-        const allMixings = await trough_process.findAll({
+        const allMixings = await Trough_process.findAll({
             where: {
                 [Op.or]: [
                     {ProcessProcessName: "mixing1"},
@@ -80,7 +80,7 @@ exports.createMixing = async (req, res, next) => {
     const humid = req.body.humidity;
     const proc_name = req.body.process_name;
     try {
-        await trough_process.create({
+        await Trough_process.create({
             tp_id: id,
             TroughTroughId: trough_no,
             date: date,
@@ -102,7 +102,7 @@ exports.createMixing = async (req, res, next) => {
 
 exports.getFinishings = async (req, res, next) => {
     try {
-        const allFinishings = await trough_process.findAll({
+        const allFinishings = await Trough_process.findAll({
             where: {ProcessProcessName: "finishing"},
         });
         res.status(200).json({
@@ -124,7 +124,7 @@ exports.createFinishing = async (req, res, next) => {
     const humid = req.body.humidity;
     const proc_name = req.body.process_name;
     try {
-        await trough_process.create({
+        await Trough_process.create({
             tp_id: id,
             TroughTroughId: trough_no,
             date: date,
@@ -219,17 +219,17 @@ exports.createBatch = async (req, res, next) => {
     const time = req.body.time;
     try {
 
-        const dateT = new Date();
-        let date = ("0" + dateT.getDate()).slice(-2);
-        // current month
-        let month = ("0" + (dateT.getMonth() + 1)).slice(-2);
-        // current year
-        let year = dateT.getFullYear();
-        const dateString = date + "/" + month + "/" + year;
+        // const dateT = new Date();
+        // let date = ("0" + dateT.getDate()).slice(-2);
+        // // current month
+        // let month = ("0" + (dateT.getMonth() + 1)).slice(-2);
+        // // current year
+        // let year = dateT.getFullYear();
+        // const dateString =  year+"-"+ month + "-" +date  ;
 
         await Batch.create({
             batch_no: batchNumber,
-            batch_date: dateString,
+            batch_date: new Date(),
             weight: batchWeight,
             outturn: 0,
         });
@@ -258,7 +258,7 @@ exports.getLoftLoadingForReporting = async (req, res, next) => {
         let boxesArray = [];
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: new Date('2021-03-20')} // date should be yesterday not today
+            where: {date: new Date('2021-03-20'),method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
         });
         if (bulkID.length === 0) {
             console.log('empty bulks');
@@ -267,7 +267,7 @@ exports.getLoftLoadingForReporting = async (req, res, next) => {
 
             boxWiseTotalNetWeight = await Lot.findAll({
                 attributes: ['grade_GL', 'BoxBoxId', [sequelize.fn('sum', sequelize.col('net_weight')), 'total_Net_weight'],],
-                where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id,},
+                where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id},
                 group: ['BoxBoxId']
 //date:{$between: [dateString, endDate]
             });
@@ -320,7 +320,7 @@ exports.getLoftLoadingForReporting = async (req, res, next) => {
                     boxesArray.push(lots_ele.dataValues);
                 }
             }
-            console.log(boxesArray);
+            // console.log(boxesArray);
 
             //
             // gradeWiseLotTotalArray.push(lotWithDate);
@@ -347,14 +347,15 @@ exports.getLoftUnloadingForReporting = async (req, res, next) => {
 
         const boxID = await Box.findAll({
             attributes: ['box_id', 'withered_pct', 'unloading_weight', 'BatchBatchNo', 'date'],
-            where: {date: new Date()}
+            // where: {date: new Date()}
+            where:{date:new Date('2021-03-20')}
         });
-        console.log(boxID);
+        // console.log(boxID);
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: new Date('2021-03-20')} // date should be yesterday not today
+            where: {date: new Date('2021-03-20'),method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
         });
-        console.log(bulkID);
+        // console.log(bulkID);
         for (const bulk_id_ele of bulkID) {
             for (const box_id_ele of boxID) {
                 boxWiseGradeLeaf = await Lot.findAll({
@@ -362,7 +363,7 @@ exports.getLoftUnloadingForReporting = async (req, res, next) => {
                     where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id, BoxBoxId: box_id_ele.dataValues.box_id},
 //date:{$between: [dateString, endDate]
                 });
-                console.log(boxWiseGradeLeaf);
+                // console.log(boxWiseGradeLeaf);
                 if (boxWiseGradeLeaf.length !== 0) {
                     box_id_ele.dataValues.grade_GL = boxWiseGradeLeaf[0].dataValues.grade_GL;
                 }
@@ -381,3 +382,71 @@ exports.getLoftUnloadingForReporting = async (req, res, next) => {
         next(error);
     }
 };
+
+exports.getLoftStartingForReporting = async (req, res, next) => {
+
+    try {
+        const tpID = await Trough_process.findAll({
+            attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
+            where: {
+                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+                date: new Date('2021-03-22'),
+                ProcessProcessName: 'starting',
+
+            } // this should be update as previous 30 days
+        });
+        res.status(200).json({
+            starting: tpID,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+
+};
+
+exports.getLoftFinishingForReporting = async (req, res, next) => {
+    try {
+        const tpID = await Trough_process.findAll({
+            attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
+            where: {
+                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+                date: new Date('2021-03-22'),
+                ProcessProcessName: 'finishing'
+            } // this should be update as previous 30 days
+        });
+        res.status(200).json({
+            finishing: tpID,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+
+exports.getLoftMixingForReporting = async (req, res, next) => {
+
+    try {
+        const tpID = await Trough_process.findAll({
+            attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
+            where: {
+                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+                date: new Date('2021-03-22'),
+                ProcessProcessName: {[Op.like]: 'mixing%'}
+            } // this should be update as previous 30 days
+        });
+        res.status(200).json({
+            mixing: tpID,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}

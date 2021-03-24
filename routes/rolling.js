@@ -27,4 +27,16 @@ router.get("/dryings", isAuth, rollingController.getDryings);
 //POST rolling/drying
 router.patch("/drying", isAuth, rollingController.createDrying);
 
+//GET rolling/reports/rollings
+router.get("/reports/rollings", rollingController.getRollingForReporting);
+
+//GET rolling/reports/rollings
+router.get("/reports/rbreakings", rollingController.getRollBreakingForReporting);
+
+//GET rolling/reports/rollings
+router.get("/reports/fermentings", rollingController.getFermentingForReporting );
+
+//GET rolling/reports/dryings
+router.get("/reports/dryings", rollingController.getDryingForReporting);
+
 module.exports = router;

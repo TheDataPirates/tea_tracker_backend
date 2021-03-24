@@ -10,7 +10,7 @@ module.exports = sequelize.define("Dhool", {
   rolling_turn:Sequelize.STRING,
   rolling_in_kg:Sequelize.DOUBLE,
   // rolling_in_time:Sequelize.DATE,
-  batch_date: Sequelize.STRING,
+  batch_date: Sequelize.DATEONLY,
   rolling_out_kg:Sequelize.DOUBLE,
   rolling_out_time:Sequelize.DATE,
   rb_out_time: Sequelize.DATE,

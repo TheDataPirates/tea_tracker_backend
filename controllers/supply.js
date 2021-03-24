@@ -84,11 +84,11 @@ exports.getSupplierInfoForReporting = async (req, res, next) => {
                     attributes: ['bulk_id', 'date'],
                     where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]}}
                 });
-                let bulkBydate = await Bulk.findAll({
-                    attributes: ['bulk_id', 'date'],
-                    where: {SupplierSupplierId: supplier_id, date:(sequelize.fn("month", sequelize.col("date")), 10) }
-                });
-                console.log(bulkBydate);
+                // let bulkBydate = await Bulk.findAll({
+                //     attributes: ['bulk_id', 'date'],
+                //     where: {SupplierSupplierId: supplier_id, date:(sequelize.fn("month", sequelize.col("date")), 10) }
+                // });
+                // console.log(bulkBydate);
                 break;
             case "Monthly":
                 bulkID = await Bulk.findAll({

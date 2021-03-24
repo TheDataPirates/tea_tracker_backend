@@ -8,7 +8,7 @@ module.exports = sequelize.define("Batch", {
     primaryKey: true,
   },
   batch_date: {
-    type: Sequelize.STRING,
+    type: Sequelize.DATEONLY,
     primaryKey: true,
   },
   weight:Sequelize.DOUBLE,

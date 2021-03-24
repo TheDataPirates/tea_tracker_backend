@@ -41,5 +41,13 @@ router.get("/reports/loading", loftController.getLoftLoadingForReporting);
 //GET loft/reports/unloading
 router.get("/reports/unloading", loftController.getLoftUnloadingForReporting);
 
+//GET loft/reports/starting
+router.get("/reports/starting", loftController.getLoftStartingForReporting);
+
+//GET loft/reports/finishing
+router.get("/reports/finishing", loftController.getLoftFinishingForReporting);
+
+//GET loft/reports/mixing
+router.get("/reports/mixing", loftController.getLoftMixingForReporting);
 
 module.exports = router;
