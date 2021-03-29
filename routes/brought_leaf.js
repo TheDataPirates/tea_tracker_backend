@@ -22,4 +22,9 @@ router.post("/supp", isAuth, broughtLeafController.createBulks);
 //POST /bleaf/sync
 router.post('/sync',broughtLeafController.createLotFromLocalDb);
 
+//For Dashboard
+
+//GET /bleaf/dashboard/supplierlotsfirstfeek
+router.get("/dashboard/supplierlotsfirstfeek", broughtLeafController.getSupplierLotsFirstWeek);
+
 module.exports = router;
