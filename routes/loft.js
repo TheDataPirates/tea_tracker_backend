@@ -28,6 +28,12 @@ router.get("/loadings", isAuth, loftController.getLoadings);
 //POST loft/loading
 router.post("/loading", isAuth, loftController.createLoading);
 
+//POST loft/unloading
+router.post("/unloading", isAuth, loftController.createUnloading);
+
+//GET loft/unloadings
+router.get("/unloadings", isAuth, loftController.getUnloadings);
+
 //GET loft/batches
 router.get("/batches", isAuth, loftController.getBatches);
 

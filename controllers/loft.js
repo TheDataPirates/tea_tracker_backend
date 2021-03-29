@@ -198,6 +198,51 @@ exports.createLoading = async (req, res, next) => {
     }
 };
 
+exports.getUnloadings = async (req, res, next) => {
+    try {
+        const allUnloadings = await Box.findAll();
+        res.status(200).json({
+            unloadings: allUnloadings,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.createUnloading = async (req, res, next) => {
+    const id = req.body.id;
+    const trough_no = req.body.troughNumber;
+    const batch_no = req.body.batchNumber;
+    const date = req.body.date;
+    const box_no = req.body.boxNumber;
+    const withering_pct = req.body.witheringPct;
+    const lot_weight = req.body.lotWeight;
+
+    const box_id = "T" + trough_no + "B" + box_no;//T+trough_no+B+box_no
+    try {
+        await Box.create({
+            box_id: box_id,
+            withered_pct: withering_pct,
+            unloading_weight: lot_weight,
+            date: date,
+            TroughTroughId: trough_no,
+            BatchBatchNo: batch_no,
+        });
+
+        console.log("Unloading saved");
+        res.status(200).json({
+            unloading: "saved",
+        });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
 exports.getBatches = async (req, res, next) => {
     try {
         const allBatches = await Batch.findAll();
