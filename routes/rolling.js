@@ -39,4 +39,10 @@ router.get("/reports/fermentings", rollingController.getFermentingForReporting )
 //GET rolling/reports/dryings
 router.get("/reports/dryings", rollingController.getDryingForReporting);
 
+//Dashboard
+
+//GET rolling/dashboard/dailydhoolpct
+router.get("/dashboard/dailydhoolpct", rollingController.getDailyDhoolPct);
+
 module.exports = router;
+

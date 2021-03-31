@@ -82,7 +82,7 @@ exports.getSupplierInfoForReporting = async (req, res, next) => {
             case "Daily":
                 bulkID = await Bulk.findAll({
                     attributes: ['bulk_id', 'date'],
-                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]}}
+                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000),new Date('2021-03-30')]}}
                 });
                 // let bulkBydate = await Bulk.findAll({
                 //     attributes: ['bulk_id', 'date'],
@@ -93,21 +93,21 @@ exports.getSupplierInfoForReporting = async (req, res, next) => {
             case "Monthly":
                 bulkID = await Bulk.findAll({
                     attributes: ['bulk_id', 'date'],
-                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ getDateMonthly(),new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0)]}}
+                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ getDateMonthly(),new Date(new Date('2021-03-30').getFullYear(), new Date('2021-03-30').getMonth() + 1, 0)]}}
                 });
 
                 break;
             case "Yearly":
                 bulkID = await Bulk.findAll({
                     attributes: ['bulk_id', 'date'],
-                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ getFullYear(),new Date(new Date().getFullYear(), 11, 31)]}}
+                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ getFullYear(),new Date(new Date('2021-03-30').getFullYear(), 11, 31)]}}
                 });
 
                 break;
             default:
                 bulkID = await Bulk.findAll({
                     attributes: ['bulk_id', 'date'],
-                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]}}
+                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000),new Date('2021-03-30')]}}
                 });
 
         }

@@ -169,14 +169,9 @@ exports.createLoading = async (req, res, next) => {
 
     const box_id = "T" + trough_no + "B" + box_no;//T+trough_no+B+box_no
     try {
-        // await Loaded_Bulk_Box.create({
-        //   load_bulk_box_id: id,
-        //   date: date,
-        //   leaf_grade: leaf_grade,
-        //   net_weight: net_weight,
-        //   box_number: box_no,
-        //   trough_number: trough_no,
-        // });
+        await Box.create({
+            box_id: box_id,
+        });
 
         await Lot.update({
             BoxBoxId: box_id
@@ -223,13 +218,17 @@ exports.createUnloading = async (req, res, next) => {
 
     const box_id = "T" + trough_no + "B" + box_no;//T+trough_no+B+box_no
     try {
-        await Box.create({
-            box_id: box_id,
+        await Box.update({
+            
             withered_pct: withering_pct,
             unloading_weight: lot_weight,
             date: date,
             TroughTroughId: trough_no,
             BatchBatchNo: batch_no,
+        }, {
+            where: {
+                box_id: box_id
+            }
         });
 
         console.log("Unloading saved");
@@ -398,7 +397,7 @@ exports.getLoftUnloadingForReporting = async (req, res, next) => {
         // console.log(boxID);
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: new Date('2021-03-20'),method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
+            where: {date: new Date('2021-03-29'),method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
         });
         // console.log(bulkID);
         for (const bulk_id_ele of bulkID) {
@@ -435,7 +434,7 @@ exports.getLoftStartingForReporting = async (req, res, next) => {
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
                 // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
-                date: new Date('2021-03-22'),
+                date: new Date('2021-03-30'),
                 ProcessProcessName: 'starting',
 
             } // this should be update as previous 30 days
@@ -458,7 +457,7 @@ exports.getLoftFinishingForReporting = async (req, res, next) => {
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
                 // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
-                date: new Date('2021-03-22'),
+                date: new Date('2021-03-30'),
                 ProcessProcessName: 'finishing'
             } // this should be update as previous 30 days
         });
@@ -481,7 +480,7 @@ exports.getLoftMixingForReporting = async (req, res, next) => {
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
                 // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
-                date: new Date('2021-03-22'),
+                date: new Date('2021-03-30'),
                 ProcessProcessName: {[Op.like]: 'mixing%'}
             } // this should be update as previous 30 days
         });

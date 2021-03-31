@@ -179,14 +179,14 @@ exports.getSupplierLotsFirstWeek = async (req, res, next) => {
   try {
     const suppliersForLastWeek = await Bulk.findAll({
       attributes: ['SupplierSupplierId'],
-      where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date() - 7 * 24 * 60 * 60 * 1000), new Date()] }, }, // Should retrieve bulks for last seven days
+      where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000), new Date('2021-03-30')] }, }, // Should retrieve bulks for last seven days
       group: ['SupplierSupplierId']
     });
     
     for (let sup_id of suppliersForLastWeek) {
       bulksForLastWeek = await Bulk.findAll({
         attributes: ['bulk_id', 'SupplierSupplierId'],
-        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date() - 7 * 24 * 60 * 60 * 1000), new Date()] }},
+        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000), new Date('2021-03-30')] }},
       });
       // console.log(bulksForLastWeek);
 
@@ -227,14 +227,14 @@ exports.getSupplierLotsSecondWeek = async (req, res, next) => {
   try {
     const suppliersForLastWeek = await Bulk.findAll({
       attributes: ['SupplierSupplierId'],
-      where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date() - 14 * 24 * 60 * 60 * 1000), new Date(new Date() - 7 * 24 * 60 * 60 * 1000)] }, }, // Should retrieve bulks from last seven days to last fourteen days
+      where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000)] }, }, // Should retrieve bulks from last seven days to last fourteen days
       group: ['SupplierSupplierId']
     });
     
     for (let sup_id of suppliersForLastWeek) {
       bulksForLastWeek = await Bulk.findAll({
         attributes: ['bulk_id', 'SupplierSupplierId'],
-        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date() - 14 * 24 * 60 * 60 * 1000), new Date(new Date() - 7 * 24 * 60 * 60 * 1000)] }},
+        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000)] }},
       });
       // console.log(bulksForLastWeek);
 
@@ -275,14 +275,14 @@ exports.getSupplierLotsThirdWeek = async (req, res, next) => {
   try {
     const suppliersForLastWeek = await Bulk.findAll({
       attributes: ['SupplierSupplierId'],
-      where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date() - 21 * 24 * 60 * 60 * 1000), new Date(new Date() - 14 * 24 * 60 * 60 * 1000)] }, }, // Should retrieve bulks from fourteen days days to last twentyone days
+      where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000)] }, }, // Should retrieve bulks from fourteen days days to last twentyone days
       group: ['SupplierSupplierId']
     });
     
     for (let sup_id of suppliersForLastWeek) {
       bulksForLastWeek = await Bulk.findAll({
         attributes: ['bulk_id', 'SupplierSupplierId'],
-        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date() - 21 * 24 * 60 * 60 * 1000), new Date(new Date() - 14 * 24 * 60 * 60 * 1000)] }},
+        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000)] }},
       });
       // console.log(bulksForLastWeek);
 
@@ -323,14 +323,14 @@ exports.getSupplierLotsFourthWeek = async (req, res, next) => {
   try {
     const suppliersForLastWeek = await Bulk.findAll({
       attributes: ['SupplierSupplierId'],
-      where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date() - 30 * 24 * 60 * 60 * 1000), new Date(new Date() - 21 * 24 * 60 * 60 * 1000)] }, }, // Should retrieve bulks from last twentyone days to last thirty days
+      where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000)] }, }, // Should retrieve bulks from last twentyone days to last thirty days
       group: ['SupplierSupplierId']
     });
     
     for (let sup_id of suppliersForLastWeek) {
       bulksForLastWeek = await Bulk.findAll({
         attributes: ['bulk_id', 'SupplierSupplierId'],
-        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date() - 30 * 24 * 60 * 60 * 1000), new Date(new Date() - 21 * 24 * 60 * 60 * 1000)] }},
+        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000)] }},
       });
       // console.log(bulksForLastWeek);
 
