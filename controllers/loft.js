@@ -171,6 +171,7 @@ exports.createLoading = async (req, res, next) => {
     try {
         await Box.create({
             box_id: box_id,
+            date: date
         });
 
         await Lot.update({
@@ -227,7 +228,8 @@ exports.createUnloading = async (req, res, next) => {
             BatchBatchNo: batch_no,
         }, {
             where: {
-                box_id: box_id
+                box_id: box_id,
+                date: date,// The date should be equal to the yesterday's date as the loading of the box is done in the previous day and the unloading done in the next day
             }
         });
 
