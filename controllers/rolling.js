@@ -335,7 +335,7 @@ exports.getRollingForReporting = async (req, res, next) => {
 
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
-                // where: {date: new Date()}
+                // where: {date: new Date()} // Date dhould be yesterday because in the box table the date is inserted when loading which is the previous day.
                 where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
             });
             for (const box_no_ele of boxID) {
@@ -378,8 +378,8 @@ exports.getRollBreakingForReporting = async (req, res, next) => {
 
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
-                // where: {date: new Date()}
-                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
+                // where: {date: new Date()} // Date dhould be yesterday because in the box table the date is inserted when loading which is the previous day.
+                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date } 
             });
             for (const box_no_ele of boxID) {
                 const grade_GL = await Lot.findAll({
@@ -422,7 +422,7 @@ exports.getFermentingForReporting = async (req, res, next) => {
 
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
-                // where: {date: new Date()}
+                // where: {date: new Date()} // Date dhould be yesterday because in the box table the date is inserted when loading which is the previous day.
                 where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
             });
             for (const box_no_ele of boxID) {
@@ -466,7 +466,7 @@ exports.getDryingForReporting = async (req, res, next) => {
 
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
-                // where: {date: new Date()}
+                // where: {date: new Date()} // Date dhould be yesterday because in the box table the date is inserted when loading which is the previous day.
                 where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
             });
             for (const box_no_ele of boxID) {
@@ -523,7 +523,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                 for (const lot_no_ele of lots) {
                     batches = await Box.findAll({
                         attributes: ['box_id', 'BatchBatchNo'],
-                        where: { box_id: lot_no_ele.dataValues.BoxBoxId, date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000) },
+                        where: { box_id: lot_no_ele.dataValues.BoxBoxId, date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000) }, // Date dhould be yesterday because in the box table the date is inserted when loading which is the previous day.
                     });
                     console.log(batches);
                     // if (grade_GL.length !== 0) {

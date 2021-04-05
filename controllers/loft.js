@@ -393,7 +393,7 @@ exports.getLoftUnloadingForReporting = async (req, res, next) => {
 
         const boxID = await Box.findAll({
             attributes: ['box_id', 'withered_pct', 'unloading_weight', 'BatchBatchNo', 'date'],
-            // where: {date: new Date()}
+            // where: {date: new Date()} // Date dhould be yesterday because in the box table the date is inserted when loading which is the previous day.
             where:{date:new Date('2021-03-20')}
         });
         // console.log(boxID);
