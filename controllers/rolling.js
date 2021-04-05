@@ -4,7 +4,7 @@ const Box = require('../models/box');
 const Lot = require("../models/lot");
 const Bulk = require("../models/bulk");
 const Sequelize = require("sequelize");
-const { DATE } = require("sequelize");
+const {DATE} = require("sequelize");
 const Op = Sequelize.Op;
 
 
@@ -70,7 +70,7 @@ exports.getRollBreakings = async (req, res, next) => {
     try {
         const allRollBreakings = await dhool.findAll({
             where: {
-                rolling_turn: { [Op.notLike]: "%BB" },
+                rolling_turn: {[Op.notLike]: "%BB"},
             },
         });
 
@@ -135,8 +135,8 @@ exports.createRollBreaking = async (req, res, next) => {
         try {
 
             const batch_weight = await batch.findAll({
-                attributes: ['weight']
-            },
+                    attributes: ['weight']
+                },
                 {
                     where: {
                         batch_no: batch_no,
@@ -336,12 +336,12 @@ exports.getRollingForReporting = async (req, res, next) => {
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
                 // where: {date: new Date()}
-                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
+                where: {BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date}
             });
             for (const box_no_ele of boxID) {
                 const grade_GL = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
+                    where: {BoxBoxId: box_no_ele.dataValues.box_id},
 
                 });
                 if (grade_GL.length !== 0) {
@@ -379,12 +379,12 @@ exports.getRollBreakingForReporting = async (req, res, next) => {
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
                 // where: {date: new Date()}
-                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
+                where: {BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date}
             });
             for (const box_no_ele of boxID) {
                 const grade_GL = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
+                    where: {BoxBoxId: box_no_ele.dataValues.box_id},
 
                 });
                 if (grade_GL.length !== 0) {
@@ -423,12 +423,12 @@ exports.getFermentingForReporting = async (req, res, next) => {
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
                 // where: {date: new Date()}
-                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
+                where: {BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date}
             });
             for (const box_no_ele of boxID) {
                 const grade_GL = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
+                    where: {BoxBoxId: box_no_ele.dataValues.box_id},
 
                 });
                 if (grade_GL.length !== 0) {
@@ -467,12 +467,12 @@ exports.getDryingForReporting = async (req, res, next) => {
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
                 // where: {date: new Date()}
-                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
+                where: {BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date}
             });
             for (const box_no_ele of boxID) {
                 const grade_GL = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
+                    where: {BoxBoxId: box_no_ele.dataValues.box_id},
 
                 });
                 if (grade_GL.length !== 0) {
@@ -496,52 +496,125 @@ exports.getDryingForReporting = async (req, res, next) => {
 
 }
 
-
-exports.getDailyDhoolPct = async (req, res, next) => {
+exports.getOutturnForReporting = async (req, res, next) => {
+    let allBulks = [];
+    let lots = [];
+    let leafGLABatches = [];
+    let leafGLBBatches = [];
+    let leafGLCBatches = [];
     try {
-        let allBulks = [];
-        let lots = [];
-        let batches = [];
-        let dhools = [];
-
-        for (let i = 1; i <= 7; i++) {
+        for (let i = 1; i <= 30; i++) {
             allBulks = await Bulk.findAll({
                 attributes: ['bulk_id', 'date'],
                 where: {
-                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000), method: { [Op.notLike]: 'AgentOriginal' },
+                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000),
+                    method: {[Op.notLike]: 'AgentOriginal'},
                 },
             });
-
             for (const bulk_no_ele of allBulks) {
-
                 lots = await Lot.findAll({
-                    attributes: ['lot_id', 'grade_GL', 'BoxBoxId'],
-                    where: { BulkBulkId: bulk_no_ele.dataValues.bulk_id },
-                    group: ['grade_GL']
+                    attributes: ['grade_GL', 'BoxBoxId'],
+                    where: {BulkBulkId: bulk_no_ele.dataValues.bulk_id},
+                    // group: ['grade_GL']
                 });
                 // console.log(lots);
                 for (const lot_no_ele of lots) {
-                    batches = await Box.findAll({
-                        attributes: ['box_id', 'BatchBatchNo'],
-                        where: { box_id: lot_no_ele.dataValues.BoxBoxId, date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000) },
-                    });
-                    console.log(batches);
-                    // if (grade_GL.length !== 0) {
-                    //     batch_no_ele.dataValues.grade_GL = grade_GL[0].dataValues.grade_GL;
-                    //     // console.log(grade_GL[0].dataValues.grade_GL);
-                    // }
-                    // for (const batch_no of batches) {
-                    //     dhools = await dhool.findAll({
-                    //         attributes: [[sequelize.fn('sum', sequelize.col('dhool_pct')), 'total_dhool_pct'], 'BatchBatchNo'],
-                    //         where: { BatchBatchNo: batch_no.dataValues.BatchBatchNo, date: new Date('2021-03-30')},
-                    //         group: ['BatchBatchNo']
-                    //     });
-                    //     console.log(dhools);
-                    // }
-                }
+                    switch (lot_no_ele.dataValues.grade_GL) {
+                        case 'A':
+                            const boxID = await Box.findAll({
+                                attributes: ['BatchBatchNo'],
+                                // where: {date: new Date()}
+                                where: {
+                                    box_id: lot_no_ele.dataValues.BoxBoxId,
+                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                }
+                            });
+                            if (boxID.length === 0) {
+                                break
+                            }
+                            if (leafGLABatches.length === 0) {
+                                leafGLABatches.push(parseInt(boxID[0].dataValues.BatchBatchNo));
+                            } else {
+                                let flag = 0;
+                                for (let batch of leafGLABatches) {
+                                    if (batch === boxID[0].dataValues.BatchBatchNo) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    leafGLABatches.push(boxID[0].dataValues.BatchBatchNo);
+                                }
+                            }
+                            break;
+                        case 'B':
+                            const boxIDForB = await Box.findAll({
+                                attributes: ['BatchBatchNo'],
+                                // where: {date: new Date()}
+                                where: {
+                                    box_id: lot_no_ele.dataValues.BoxBoxId,
+                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                }
+                            });
+                            if (boxIDForB.length === 0) {
+                                break
+                            }
+                            if (leafGLBBatches.length === 0) {
+                                leafGLBBatches.push(parseInt(boxIDForB[0].dataValues.BatchBatchNo));
+                            } else {
+                                let flag = 0;
+                                for (let batch of leafGLBBatches) {
+                                    if (batch === boxIDForB[0].dataValues.BatchBatchNo) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    leafGLBBatches.push(boxIDForB[0].dataValues.BatchBatchNo);
+                                }
+                            }
+                            break;
+                        case 'C':
+                            const boxIDForC = await Box.findAll({
+                                attributes: ['BatchBatchNo'],
+                                // where: {date: new Date()}
+                                where: {
+                                    box_id: lot_no_ele.dataValues.BoxBoxId,
+                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                }
+                            });
+                            if (boxIDForC.length === 0) {
+                                break
+                            }
+                            if (leafGLCBatches.length === 0) {
+                                leafGLCBatches.push(parseInt(boxIDForC[0].dataValues.BatchBatchNo));
+                            } else {
+                                let flag = 0;
+                                for (let batch of leafGLCBatches) {
+                                    if (batch === boxIDForC[0].dataValues.BatchBatchNo) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    leafGLCBatches.push(boxIDForC[0].dataValues.BatchBatchNo);
+                                }
+                            }
+                            break
+                        default:
+                            break;
+                    }
 
+                }
             }
+            console.log(leafGLABatches);
+            console.log(leafGLBBatches);
+            console.log(leafGLCBatches);
+            leafGLABatches = [];
+            leafGLBBatches = [];
+            leafGLCBatches = [];
         }
+
 
         res.status(200).json({
             dhools: allBulks,
@@ -552,6 +625,499 @@ exports.getDailyDhoolPct = async (req, res, next) => {
         }
         next(error);
     }
+}
 
+
+//Dashboard
+
+// exports.getDailyDhoolPct = async (req, res, next) => {
+//     try {
+//         let allBulks = [];
+//         let lots = [];
+//         let batches = [];
+//         let dhools = [];
+//
+//         for (let i = 1; i <= 7; i++) {
+//             allBulks = await Bulk.findAll({
+//                 attributes: ['bulk_id', 'date'],
+//                 where: {
+//                     date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000), method: { [Op.notLike]: 'AgentOriginal' },
+//                 },
+//             });
+//
+//             for (const bulk_no_ele of allBulks) {
+//
+//                 lots = await Lot.findAll({
+//                     attributes: ['lot_id', 'grade_GL', 'BoxBoxId'],
+//                     where: { BulkBulkId: bulk_no_ele.dataValues.bulk_id },
+//                     group: ['grade_GL']
+//                 });
+//                 // console.log(lots);
+//                 for (const lot_no_ele of lots) {
+//                     batches = await Box.findAll({
+//                         attributes: ['box_id', 'BatchBatchNo'],
+//                         where: { box_id: lot_no_ele.dataValues.BoxBoxId, date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000) },
+//                     });
+//                     console.log(batches);
+//                     // if (grade_GL.length !== 0) {
+//                     //     batch_no_ele.dataValues.grade_GL = grade_GL[0].dataValues.grade_GL;
+//                     //     // console.log(grade_GL[0].dataValues.grade_GL);
+//                     // }
+//                     // for (const batch_no of batches) {
+//                     //     dhools = await dhool.findAll({
+//                     //         attributes: [[sequelize.fn('sum', sequelize.col('dhool_pct')), 'total_dhool_pct'], 'BatchBatchNo'],
+//                     //         where: { BatchBatchNo: batch_no.dataValues.BatchBatchNo, date: new Date('2021-03-30')},
+//                     //         group: ['BatchBatchNo']
+//                     //     });
+//                     //     console.log(dhools);
+//                     // }
+//                 }
+//
+//             }
+//         }
+//
+//         res.status(200).json({
+//             dhools: allBulks,
+//         });
+//     } catch (error) {
+//         if (!error.statusCode) {
+//             error.statusCode = 500;
+//         }
+//         next(error);
+//     }
+//
+//
+// }
+
+exports.getDailyDhoolPct = async (req, res, next) => {
+    let allBulks = [];
+    let lots = [];
+    let leafGLABatches = [];
+    let leafGLBBatches = [];
+    let leafGLCBatches = [];
+    let totalGLAPct = 0;
+    let totalGLBPct = 0;
+    let totalGLCPct = 0;
+    let avgGLA = 0;
+    let avgGLB = 0;
+    let avgGLC = 0;
+    let countA = 0;
+    let countB = 0;
+    let countC = 0;
+    let dhoolele = {};
+    let dhoolArray = [];
+    try {
+        for (let i = 1; i <= 7; i++) {
+            allBulks = await Bulk.findAll({
+                attributes: ['bulk_id', 'date'],
+                where: {
+                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000),
+                    method: {[Op.notLike]: 'AgentOriginal'},
+                },
+            });
+            for (const bulk_no_ele of allBulks) {
+                lots = await Lot.findAll({
+                    attributes: ['grade_GL', 'BoxBoxId'],
+                    where: {BulkBulkId: bulk_no_ele.dataValues.bulk_id},
+                    // group: ['grade_GL']
+                });
+                // console.log(lots);
+                for (const lot_no_ele of lots) {
+                    switch (lot_no_ele.dataValues.grade_GL) {
+                        case 'A':
+                            const boxID = await Box.findAll({
+                                attributes: ['BatchBatchNo'],
+                                // where: {date: new Date()}
+                                where: {
+                                    box_id: lot_no_ele.dataValues.BoxBoxId,
+                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                }
+                            });
+                            if (boxID.length === 0) {
+                                break
+                            }
+                            if (leafGLABatches.length === 0) {
+                                leafGLABatches.push(parseInt(boxID[0].dataValues.BatchBatchNo));
+                            } else {
+                                let flag = 0;
+                                for (let batch of leafGLABatches) {
+                                    if (batch === boxID[0].dataValues.BatchBatchNo) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    leafGLABatches.push(boxID[0].dataValues.BatchBatchNo);
+                                }
+                            }
+                            break;
+                        case 'B':
+                            const boxIDForB = await Box.findAll({
+                                attributes: ['BatchBatchNo'],
+                                // where: {date: new Date()}
+                                where: {
+                                    box_id: lot_no_ele.dataValues.BoxBoxId,
+                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                }
+                            });
+                            if (boxIDForB.length === 0) {
+                                break
+                            }
+                            if (leafGLBBatches.length === 0) {
+                                leafGLBBatches.push(parseInt(boxIDForB[0].dataValues.BatchBatchNo));
+                            } else {
+                                let flag = 0;
+                                for (let batch of leafGLBBatches) {
+                                    if (batch === boxIDForB[0].dataValues.BatchBatchNo) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    leafGLBBatches.push(boxIDForB[0].dataValues.BatchBatchNo);
+                                }
+                            }
+                            break;
+                        case 'C':
+                            const boxIDForC = await Box.findAll({
+                                attributes: ['BatchBatchNo'],
+                                // where: {date: new Date()}
+                                where: {
+                                    box_id: lot_no_ele.dataValues.BoxBoxId,
+                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                }
+                            });
+                            if (boxIDForC.length === 0) {
+                                break
+                            }
+                            if (leafGLCBatches.length === 0) {
+                                leafGLCBatches.push(parseInt(boxIDForC[0].dataValues.BatchBatchNo));
+                            } else {
+                                let flag = 0;
+                                for (let batch of leafGLCBatches) {
+                                    if (batch === boxIDForC[0].dataValues.BatchBatchNo) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    leafGLCBatches.push(boxIDForC[0].dataValues.BatchBatchNo);
+                                }
+                            }
+                            break
+                        default:
+                            break;
+                    }
+
+                }
+            }
+            for (let batch of leafGLABatches) {
+                const dhool_pct = await dhool.findAll({
+                    attributes: ['dhool_pct'],
+                    where: {
+                        rolling_turn: {[Op.notLike]: "BB"},
+                        BatchBatchNo: batch,
+                        batch_date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                    },
+                });
+
+                for (let dhool_pct_ele of dhool_pct) {
+                    totalGLAPct = totalGLAPct + dhool_pct_ele.dataValues.dhool_pct;
+                    countA = countA + 1;
+                }
+
+            }
+            avgGLA = totalGLAPct / countA;
+
+            for (let batch of leafGLBBatches) {
+                const dhool_pct = await dhool.findAll({
+                    attributes: ['dhool_pct'],
+                    where: {
+                        rolling_turn: {[Op.notLike]: "BB"},
+                        BatchBatchNo: batch,
+                        batch_date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                    },
+                });
+
+                for (let dhool_pct_ele of dhool_pct) {
+                    totalGLBPct = totalGLBPct + dhool_pct_ele.dataValues.dhool_pct;
+                    countB = countB + 1;
+                }
+
+            }
+            avgGLB = totalGLBPct / countB;
+
+            for (let batch of leafGLCBatches) {
+                const dhool_pct = await dhool.findAll({
+                    attributes: ['dhool_pct'],
+                    where: {
+                        rolling_turn: {[Op.notLike]: "BB"},
+                        BatchBatchNo: batch,
+                        batch_date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                    },
+                });
+
+                for (let dhool_pct_ele of dhool_pct) {
+                    totalGLCPct = totalGLCPct + dhool_pct_ele.dataValues.dhool_pct;
+                    countC = countC + 1;
+                }
+
+            }
+            avgGLC = totalGLCPct / countC;
+
+
+
+            dhoolele ={
+                date:new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000),
+                a:avgGLA,
+                b:avgGLB,
+                c:avgGLC
+            }
+            dhoolArray.push(dhoolele);
+
+            // console.log(avgGLA);
+            // console.log(avgGLB);
+            // console.log(avgGLC);
+            leafGLABatches = [];
+            leafGLBBatches = [];
+            leafGLCBatches = [];
+            totalGLAPct = 0;
+            totalGLBPct = 0;
+            totalGLCPct = 0;
+            countA = 0;
+            countB = 0;
+            countC = 0;
+            avgGLA = 0;
+            avgGLB = 0;
+            avgGLC = 0;
+
+        }
+
+
+        res.status(200).json({
+            dhools: dhoolArray,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+
+}
+
+exports.getDailyFermentingDhoolPct = async (req, res, next) => {
+    let allBulks = [];
+    let lots = [];
+    let leafGLABatches = [];
+    let leafGLBBatches = [];
+    let leafGLCBatches = [];
+    let totalGLAPct = 0;
+    let totalGLBPct = 0;
+    let totalGLCPct = 0;
+    let avgGLA = 0;
+    let avgGLB = 0;
+    let avgGLC = 0;
+    let countA = 0;
+    let countB = 0;
+    let countC = 0;
+    let dhoolele = {};
+    let dhoolArray = [];
+    try {
+        for (let i = 1; i <= 7; i++) {
+            allBulks = await Bulk.findAll({
+                attributes: ['bulk_id', 'date'],
+                where: {
+                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000),
+                    method: {[Op.notLike]: 'AgentOriginal'},
+                },
+            });
+            for (const bulk_no_ele of allBulks) {
+                lots = await Lot.findAll({
+                    attributes: ['grade_GL', 'BoxBoxId'],
+                    where: {BulkBulkId: bulk_no_ele.dataValues.bulk_id},
+                    // group: ['grade_GL']
+                });
+                // console.log(lots);
+                for (const lot_no_ele of lots) {
+                    switch (lot_no_ele.dataValues.grade_GL) {
+                        case 'A':
+                            const boxID = await Box.findAll({
+                                attributes: ['BatchBatchNo'],
+                                // where: {date: new Date()}
+                                where: {
+                                    box_id: lot_no_ele.dataValues.BoxBoxId,
+                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                }
+                            });
+                            if (boxID.length === 0) {
+                                break
+                            }
+                            if (leafGLABatches.length === 0) {
+                                leafGLABatches.push(parseInt(boxID[0].dataValues.BatchBatchNo));
+                            } else {
+                                let flag = 0;
+                                for (let batch of leafGLABatches) {
+                                    if (batch === boxID[0].dataValues.BatchBatchNo) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    leafGLABatches.push(boxID[0].dataValues.BatchBatchNo);
+                                }
+                            }
+                            break;
+                        case 'B':
+                            const boxIDForB = await Box.findAll({
+                                attributes: ['BatchBatchNo'],
+                                // where: {date: new Date()}
+                                where: {
+                                    box_id: lot_no_ele.dataValues.BoxBoxId,
+                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                }
+                            });
+                            if (boxIDForB.length === 0) {
+                                break
+                            }
+                            if (leafGLBBatches.length === 0) {
+                                leafGLBBatches.push(parseInt(boxIDForB[0].dataValues.BatchBatchNo));
+                            } else {
+                                let flag = 0;
+                                for (let batch of leafGLBBatches) {
+                                    if (batch === boxIDForB[0].dataValues.BatchBatchNo) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    leafGLBBatches.push(boxIDForB[0].dataValues.BatchBatchNo);
+                                }
+                            }
+                            break;
+                        case 'C':
+                            const boxIDForC = await Box.findAll({
+                                attributes: ['BatchBatchNo'],
+                                // where: {date: new Date()}
+                                where: {
+                                    box_id: lot_no_ele.dataValues.BoxBoxId,
+                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                }
+                            });
+                            if (boxIDForC.length === 0) {
+                                break
+                            }
+                            if (leafGLCBatches.length === 0) {
+                                leafGLCBatches.push(parseInt(boxIDForC[0].dataValues.BatchBatchNo));
+                            } else {
+                                let flag = 0;
+                                for (let batch of leafGLCBatches) {
+                                    if (batch === boxIDForC[0].dataValues.BatchBatchNo) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    leafGLCBatches.push(boxIDForC[0].dataValues.BatchBatchNo);
+                                }
+                            }
+                            break
+                        default:
+                            break;
+                    }
+
+                }
+            }
+            for (let batch of leafGLABatches) {
+                const dhool_pct = await dhool.findAll({
+                    attributes: ['fd_pct'],
+                    where: {
+                        // rolling_turn: {[Op.notLike]: "BB"},
+                        BatchBatchNo: batch,
+                        batch_date: new Date(new Date('2021-03-30') - i  * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                    },
+                });
+
+                for (let dhool_pct_ele of dhool_pct) {
+                    totalGLAPct = totalGLAPct + dhool_pct_ele.dataValues.fd_pct;
+                    countA = countA + 1;
+                }
+
+            }
+            avgGLA = totalGLAPct / countA;
+
+            for (let batch of leafGLBBatches) {
+                const dhool_pct = await dhool.findAll({
+                    attributes: ['fd_pct'],
+                    where: {
+                        BatchBatchNo: batch,
+                        batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                    },
+                });
+
+                for (let dhool_pct_ele of dhool_pct) {
+                    totalGLBPct = totalGLBPct + dhool_pct_ele.dataValues.fd_pct;
+                    countB = countB + 1;
+                }
+
+            }
+            avgGLB = totalGLBPct / countB;
+
+            for (let batch of leafGLCBatches) {
+                const dhool_pct = await dhool.findAll({
+                    attributes: ['fd_pct'],
+                    where: {
+                        // rolling_turn: {[Op.notLike]: "BB"},
+                        BatchBatchNo: batch,
+                        batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                    },
+                });
+
+                for (let dhool_pct_ele of dhool_pct) {
+                    totalGLCPct = totalGLCPct + dhool_pct_ele.dataValues.fd_pct;
+                    countC = countC + 1;
+                }
+
+            }
+            avgGLC = totalGLCPct / countC;
+
+
+
+            dhoolele ={
+                date:new Date(new Date('2021-03-30') - i  * 24 * 60 * 60 * 1000), //this should be i - 1 not i
+                a:avgGLA,
+                b:avgGLB,
+                c:avgGLC
+            }
+            dhoolArray.push(dhoolele);
+
+            // console.log(avgGLA);
+            // console.log(avgGLB);
+            // console.log(avgGLC);
+            leafGLABatches = [];
+            leafGLBBatches = [];
+            leafGLCBatches = [];
+            totalGLAPct = 0;
+            totalGLBPct = 0;
+            totalGLCPct = 0;
+            countA = 0;
+            countB = 0;
+            countC = 0;
+            avgGLA = 0;
+            avgGLB = 0;
+            avgGLC = 0;
+
+        }
+
+
+        res.status(200).json({
+            fdDhools: dhoolArray,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
 
 }
