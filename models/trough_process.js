@@ -10,4 +10,6 @@ module.exports = sequelize.define("Trough_Process", {
   humidity: Sequelize.DOUBLE,
   temperature: Sequelize.DOUBLE,
   date: Sequelize.DATE,
+  ProcessProcessName: Sequelize.STRING,
+  TroughTroughId: Sequelize.INTEGER
 });

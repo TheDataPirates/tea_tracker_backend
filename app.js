@@ -105,12 +105,12 @@ Box.hasMany(Lot);
 Box.belongsTo(Trough);//1:M
 Trough.hasMany(Box);
 
-Process.belongsToMany(Trough, {
-  through: { model: Trough_Process, unique: false },
-});
-Trough.belongsToMany(Process, {
-  through: { model: Trough_Process, unique: false },
-});
+// Process.belongsToMany(Trough, {
+//   through: { model: Trough_Process, unique: false },
+// });
+// Trough.belongsToMany(Process, {
+//   through: { model: Trough_Process, unique: false },
+// });
 
 Box.belongsTo(Batch);
 Batch.hasMany(Box);

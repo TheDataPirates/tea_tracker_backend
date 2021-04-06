@@ -9,6 +9,7 @@ const {Op} = require("sequelize");
 exports.getStartings = async (req, res, next) => {
     try {
         const allStartings = await Trough_process.findAll({
+            attributes: ["tp_id","TroughTroughId","date","temperature","humidity"],
             where: {ProcessProcessName: "starting"},
         });
 
@@ -54,6 +55,7 @@ exports.createStarting = async (req, res, next) => {
 exports.getMixings = async (req, res, next) => {
     try {
         const allMixings = await Trough_process.findAll({
+            attributes: ["tp_id","TroughTroughId","date","temperature","humidity","ProcessProcessName"],
             where: {
                 [Op.or]: [
                     {ProcessProcessName: "mixing1"},
@@ -103,6 +105,7 @@ exports.createMixing = async (req, res, next) => {
 exports.getFinishings = async (req, res, next) => {
     try {
         const allFinishings = await Trough_process.findAll({
+            attributes: ["tp_id","TroughTroughId","date","temperature","humidity"],
             where: {ProcessProcessName: "finishing"},
         });
         res.status(200).json({
@@ -166,14 +169,32 @@ exports.createLoading = async (req, res, next) => {
     const leaf_grade = req.body.gradeOfGL;
     const net_weight = req.body.netWeight;
     const lot__id = req.body.lotId;
+    const time = req.body.loadingTime;
+
 
     const box_id = "T" + trough_no + "B" + box_no;//T+trough_no+B+box_no
     try {
-        await Box.create({
-            box_id: box_id,
-            date: date
-        });
+        const loading = await Box.findAll({where:{box_id
+        ,date}});
 
+        if (loading.length===0){
+            await Box.create({
+                box_id: box_id,
+                date: date,
+                loading_time:time,
+                loading_weight:net_weight
+            });
+        }else{
+            await Box.update({
+                loading_weight: sequelize.literal(`loading_weight +${net_weight}`),
+                loading_time:time,
+            }, {
+                where: {
+                    box_id: box_id,
+                    date: date,
+                }
+            });
+        }
         await Lot.update({
             BoxBoxId: box_id
         }, {
@@ -196,7 +217,9 @@ exports.createLoading = async (req, res, next) => {
 
 exports.getUnloadings = async (req, res, next) => {
     try {
-        const allUnloadings = await Box.findAll();
+        const allUnloadings = await Box.findAll({where:{withered_pct:{
+                    [Op.ne]: null
+                }}});
         res.status(200).json({
             unloadings: allUnloadings,
         });
@@ -216,6 +239,8 @@ exports.createUnloading = async (req, res, next) => {
     const box_no = req.body.boxNumber;
     const withering_pct = req.body.witheringPct;
     const lot_weight = req.body.lotWeight;
+    const time = req.body.unloadingTime;
+
 
     const box_id = "T" + trough_no + "B" + box_no;//T+trough_no+B+box_no
     try {
@@ -224,6 +249,7 @@ exports.createUnloading = async (req, res, next) => {
             withered_pct: withering_pct,
             unloading_weight: lot_weight,
             date: date,
+            unloading_time:time,
             TroughTroughId: trough_no,
             BatchBatchNo: batch_no,
         }, {
