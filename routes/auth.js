@@ -31,6 +31,9 @@ router.put(
 //POST auth/login
 router.post("/login", authController.login);
 
+//POST auth/loginWeb
+router.post("/loginWeb", authController.loginWeb);
+
 
 //GET auth/users
 router.get("/users",authController.getUsers);

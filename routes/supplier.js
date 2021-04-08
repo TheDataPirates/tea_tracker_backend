@@ -26,5 +26,9 @@ router.patch("/suppliers",isAuth,supplyingController.updateSupplier);
 //DELETE supp/user/:suppId
 router.delete("/supplier/:suppId",isAuth,supplyingController.deleteSupplier);
 
+//Dashboard
+//GET supp/dashboard/suppliersuntiltoday
+router.get("/dashboard/suppliersuntiltoday", supplyingController.getSuppliersuntiltoday);
+
 
 module.exports = router;

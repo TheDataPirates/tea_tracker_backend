@@ -1,7 +1,7 @@
-const {validationResult} = require("express-validator");
+const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-
+const {Op} = require("sequelize");
 const User = require("../models/user");
 
 exports.signup = async (req, res, next) => {
@@ -12,15 +12,15 @@ exports.signup = async (req, res, next) => {
         error.data = errors.array();
         next(error);
     } else {
-        const {user_id, password, name, dob, user_type, telephone_no, nic, address} = req.body;
+        const { user_id, password, name, dob, user_type, telephone_no, nic, address } = req.body;
         let hashedpw = null;
-        await bcrypt.genSalt(8, function(err, salt) {
+        await bcrypt.genSalt(8, function (err, salt) {
             console.log(salt);
-            bcrypt.hash(password, salt, function(err, hash) {
-                if(err){
+            bcrypt.hash(password, salt, function (err, hash) {
+                if (err) {
                     next(err);
                 }
-                hashedpw= hash;
+                hashedpw = hash;
                 console.log(hashedpw);
                 // Store hash in your password DB.
             });
@@ -44,7 +44,7 @@ exports.signup = async (req, res, next) => {
             image: req.file.path //storing image path uploads/images/...
         });
         console.log("User saved");
-        res.status(200).json({message: "User created"});
+        res.status(200).json({ message: "User created" });
     }
 };
 
@@ -52,7 +52,7 @@ exports.login = async (req, res, next) => {
     const userid = req.body.user_id;
     const password = req.body.password;
     let loadedUser;
-    const user = await User.findOne({where: {user_id: userid}}).catch(
+    const user = await User.findOne({ where: { user_id: userid } }).catch(
         (err) => {
             //check network failures
             if (!err.statusCode) {
@@ -62,7 +62,7 @@ exports.login = async (req, res, next) => {
         }
     );
     if (!user) {
-        const error = new Error("user with this id could not be found");
+        const error = new Error("Such user does not exist !!!");
         error.statusCode = 400;
         next(error);
     } else {
@@ -75,11 +75,54 @@ exports.login = async (req, res, next) => {
         } else {
             const token = jwt.sign(
                 //genarate token and send back to user,token includes userid & fname
-                {user_id: loadedUser.user_id, name: loadedUser.fname},
+                { user_id: loadedUser.user_id, name: loadedUser.fname },
                 "thisisatokenid",
-                {expiresIn: "1 day"}
+                { expiresIn: "1 day" }
             );
-            res.status(200).json({token: token, userId: loadedUser.user_id});
+            res.status(200).json({ token: token, userId: loadedUser.user_id });
+        }
+    }
+};
+
+exports.loginWeb = async (req, res, next) => {
+    const userid = req.body.user_id;
+    const password = req.body.password;
+    let loadedUser;
+    const user = await User.findOne({
+        where: {
+            user_id: userid, [Op.or]: [
+                { user_type: "Manager" },
+                { user_type: "Admin" },
+            ],
+        }
+    }).catch(
+        (err) => {
+            //check network failures
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+        }
+    );
+    if (!user) {
+        const error = new Error("Such user does not exist, please Sign Up !!!");
+        error.statusCode = 400;
+        next(error);
+    } else {
+        loadedUser = user;
+        const isEqual = await bcrypt.compare(password, user.password);
+        if (!isEqual) {
+            const error = new Error("Wrong password!!!");
+            error.statusCode = 400;
+            next(error);
+        } else {
+            const token = jwt.sign(
+                //genarate token and send back to user,token includes userid & fname
+                { user_id: loadedUser.user_id, name: loadedUser.fname },
+                "thisisatokenid",
+                { expiresIn: "1 day" }
+            );
+            res.status(200).json({ token: token, userId: loadedUser.user_id });
         }
     }
 };
@@ -100,7 +143,7 @@ exports.getUsers = async (req, res, next) => {
 exports.getUser = async (req, res, next) => {
     const user_id = req.params.userId;
     try {
-        const allUsers = await User.findAll({where: {user_id}});
+        const allUsers = await User.findAll({ where: { user_id } });
         res.status(200).json({
             user: allUsers,
         });
@@ -112,7 +155,7 @@ exports.getUser = async (req, res, next) => {
     }
 };
 exports.updateUser = async (req, res, next) => {
-    const {user_id, password, name, dob, user_type, telephone_no, nic, address} = req.body;
+    const { user_id, password, name, dob, user_type, telephone_no, nic, address } = req.body;
     console.log(user_id);
 
     const hashedpw = await bcrypt.hash(password, 8).catch((err) => {

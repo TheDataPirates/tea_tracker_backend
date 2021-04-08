@@ -36,4 +36,9 @@ router.get("/dashboard/supplierlotsthirdweek", broughtLeafController.getSupplier
 //GET /bleaf/dashboard/supplierlotsfourthweek
 router.get("/dashboard/supplierlotsfourthweek", broughtLeafController.getSupplierLotsFourthWeek);
 
+//GET /bleaf/dashboard/todayPurchasedTea
+router.get("/dashboard/todayPurchasedTea", broughtLeafController.getTodayPurchasedTea);
+
+
+
 module.exports = router;
