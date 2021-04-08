@@ -127,7 +127,7 @@ Drier.hasMany(Dhool);
 sequelize
   // .sync({force:true})
   .sync()
-  .then((results) => {
+  .then((sresults) => {
     // console.log(results);
     app.listen(process.env.PORT || 8080);
   })
