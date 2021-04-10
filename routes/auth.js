@@ -31,6 +31,9 @@ router.put(
 //POST auth/login
 router.post("/login", authController.login);
 
+//GET auth/login
+router.get("/forgetpassword/:email", authController.forgotPassword);
+
 
 //GET auth/users
 router.get("/users",authController.getUsers);

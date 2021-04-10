@@ -1,9 +1,10 @@
-
 const Sequelize = require('sequelize');
 const Op = Sequelize.Op;
 const Supplier = require('../models/supplier');
 const Bulk = require('../models/bulk');
 const Lot = require('../models/lot');
+const aleaRNGFactory = require("number-generator/lib/aleaRNGFactory");
+const generator1 = aleaRNGFactory(2);
 
 exports.getSuppliers = async (req, res, next) => {
     try {
@@ -21,20 +22,46 @@ exports.getSuppliers = async (req, res, next) => {
 };
 
 exports.createSupplier = async (req, res, next) => {
-    const {supplier_id, name, type, telephone_no, address, status} = req.body;
-    console.log(supplier_id);
+    const {name, type, telephone_no, address, status} = req.body;
+    // console.log(supplier_id);
     console.log(name);
     console.log(type);
-
     try {
-        await Supplier.create({
-            supplier_id,
-            name,
-            type,
-            telephone_no,
-            address,
-            status
-        });
+        switch (type) {
+            case 'Grower Direct':
+                await Supplier.create({
+                    supplier_id: `GD${generator1.uInt32()}`,
+                    name,
+                    type,
+                    telephone_no,
+                    address,
+                    status
+                });
+                break;
+            case 'Grower through Agent':
+                await Supplier.create({
+                    supplier_id: `GA${generator1.uInt32()}`,
+                    name,
+                    type,
+                    telephone_no,
+                    address,
+                    status
+                });
+                break;
+            case 'Dealer':
+                await Supplier.create({
+                    supplier_id: `DL${generator1.uInt32()}`,
+                    name,
+                    type,
+                    telephone_no,
+                    address,
+                    status
+                });
+                break;
+            default:
+                break;
+
+        }
         console.log("Supplier saved");
         res.status(200).json({message: "Supplier created"});
     } catch (err) {
@@ -78,11 +105,15 @@ exports.getSupplierInfoForReporting = async (req, res, next) => {
         let lotWithDate = {};
         let date;
         let bulkID;
-        switch (time){
+        switch (time) {
             case "Daily":
                 bulkID = await Bulk.findAll({
                     attributes: ['bulk_id', 'date'],
-                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000),new Date('2021-03-30')]}}
+                    where: {
+                        SupplierSupplierId: supplier_id,
+                        method: {[Op.notLike]: 'AgentOriginal'},
+                        date: {[Op.between]: [new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000), new Date('2021-03-30')]}
+                    }
                 });
                 // let bulkBydate = await Bulk.findAll({
                 //     attributes: ['bulk_id', 'date'],
@@ -93,25 +124,37 @@ exports.getSupplierInfoForReporting = async (req, res, next) => {
             case "Monthly":
                 bulkID = await Bulk.findAll({
                     attributes: ['bulk_id', 'date'],
-                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ getDateMonthly(),new Date(new Date('2021-03-30').getFullYear(), new Date('2021-03-30').getMonth() + 1, 0)]}}
+                    where: {
+                        SupplierSupplierId: supplier_id,
+                        method: {[Op.notLike]: 'AgentOriginal'},
+                        date: {[Op.between]: [getDateMonthly(), new Date(new Date('2021-03-30').getFullYear(), new Date('2021-03-30').getMonth() + 1, 0)]}
+                    }
                 });
 
                 break;
             case "Yearly":
                 bulkID = await Bulk.findAll({
                     attributes: ['bulk_id', 'date'],
-                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ getFullYear(),new Date(new Date('2021-03-30').getFullYear(), 11, 31)]}}
+                    where: {
+                        SupplierSupplierId: supplier_id,
+                        method: {[Op.notLike]: 'AgentOriginal'},
+                        date: {[Op.between]: [getFullYear(), new Date(new Date('2021-03-30').getFullYear(), 11, 31)]}
+                    }
                 });
 
                 break;
             default:
                 bulkID = await Bulk.findAll({
                     attributes: ['bulk_id', 'date'],
-                    where: {SupplierSupplierId: supplier_id, method: {[Op.notLike]: 'AgentOriginal'},date:{[Op.between]: [ new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000),new Date('2021-03-30')]}}
+                    where: {
+                        SupplierSupplierId: supplier_id,
+                        method: {[Op.notLike]: 'AgentOriginal'},
+                        date: {[Op.between]: [new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000), new Date('2021-03-30')]}
+                    }
                 });
 
         }
-       // At Now, we didnt fetch details according to daily, monthly
+        // At Now, we didnt fetch details according to daily, monthly
         // console.log(bulkID);
         // console.log(bulkID[0].dataValues.bulk_id);
         // date = bulkID[0].dataValues.date;
@@ -187,7 +230,7 @@ exports.updateSupplier = async (req, res, next) => {
     try {
         await Supplier.update(
             {
-                supplier_id,
+                // supplier_id,
                 name,
                 status,
                 telephone_no,
@@ -241,7 +284,7 @@ exports.deleteSupplier = async (req, res, next) => {
 //     // console.log(new Date(new Date(dateT) - 30*24 * 60 * 60 * 1000));
 //     // const dateBefore30 =new Date(new Date(dateT) - 30*24 * 60 * 60 * 1000);
 // }
-const getDateMonthly = ( )=>{
+const getDateMonthly = () => {
     // const dateT = new Date(new Date() - 30 * 24 * 60 * 60 * 1000);
     // // console.log(dateT);
     // let date = ("0" + dateT.getDate()).slice(-2);
@@ -263,12 +306,12 @@ const getDateMonthly = ( )=>{
 
     return new Date(d.getFullYear(), d.getMonth(), 1);
 }
-const getFullYear = ( )=>{
+const getFullYear = () => {
 
     let d = new Date();
     d.setFullYear(d.getFullYear() - 3);
 
 
-console.log(new Date(d.getFullYear(), 0, 1));
+    console.log(new Date(d.getFullYear(), 0, 1));
     return new Date(d.getFullYear(), 0, 1);
 }

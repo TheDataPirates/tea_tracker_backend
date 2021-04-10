@@ -3,6 +3,9 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+const templates = require("../email/email.templates");
+const sendEmail = require("../email/email.send");
+const msgs = require("../email/email.msgs")
 
 exports.signup = async (req, res, next) => {
     const errors = validationResult(req); //this will get errors in validation middleware
@@ -14,13 +17,13 @@ exports.signup = async (req, res, next) => {
     } else {
         const {user_id, password, name, dob, user_type, telephone_no, nic, address} = req.body;
         let hashedpw = null;
-        await bcrypt.genSalt(8, function(err, salt) {
+        await bcrypt.genSalt(8, function (err, salt) {
             console.log(salt);
-            bcrypt.hash(password, salt, function(err, hash) {
-                if(err){
+            bcrypt.hash(password, salt, function (err, hash) {
+                if (err) {
                     next(err);
                 }
-                hashedpw= hash;
+                hashedpw = hash;
                 console.log(hashedpw);
                 // Store hash in your password DB.
             });
@@ -83,6 +86,115 @@ exports.login = async (req, res, next) => {
         }
     }
 };
+
+//forgotPassowrd
+exports.forgotPassword = function (req, res,next) {
+
+    const email = req.params.email;
+    // console.log(email);
+    User.findOne({where: {email: email}})
+        .then((user) => {
+            if (!user) {
+                err = "User not found";
+                return res.status(404).json(err);
+            } else if (user) {
+                sendEmail(user.email, templates.resetPassword(user.user_id));
+                console.log(user.email);
+                console.log(user.user_id);
+                console.log(msgs.forgotPassword);
+                return res.status(200).json(msgs.forgotPassword);
+            } else {
+                err = "Cannot send email to this address";
+                return res.status(404).json(err);
+            }
+        }).catch(err => {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    });
+}
+
+//reset password
+exports.resetPassword = (req, res,next) => {
+    // var validPasswordRegex = RegExp(
+    //     /^(?=.\d)(?=.[a-z])(?=.[A-Z])(?=.[^a-zA-Z0-9])(?!.*\s).{6,20}$/
+    // );
+    const email = req.params.email;
+    const newpassword = req.body.password;
+    // const confirmpassword = req.body.confirmpassword;
+    // if (!validPasswordRegex.test(newpassword)) {
+    //     passerr = "Password must between 6 to 20 characters which contain at least one lowercase letter, one uppercase letter, one numeric digit, and one special character";
+    //     return res.status(400).json(passerr);
+    // } else if (confirmpassword !== newpassword) {
+    //     passerr = "Passwords must match!";
+    //     return res.status(400).json(passerr);
+    // } else {
+        User.findOne({where: {email}})
+            .then(user => {
+                // A user with that id does not exist in the DB. Perhaps some tricky
+                // user tried to go to a different url than the one provided in the
+                // confirmation email.
+                if (!user) {
+                    res.json({msg: msgs.couldNotFind});
+                }
+                    // The user exists but has not been confirmed. We need to confirm this
+                // user and let them know their email address has been confirmed.
+                else if (user) {
+                    bcrypt.genSalt(8, function (err, salt) {
+                        bcrypt.hash(newpassword, salt, (err, hash) => {
+                            if (err) throw err;
+                            User.password = hash;
+                            User.update(
+                                {
+                                    password: hash,
+                                },
+                                {where: {email}}
+                            ).then((user) => {
+                                if (!user) {
+                                    err = "User not found";
+                                    return res.status(404).json(err);
+                                } else {
+                                    console.log(msgs.resetPassword)
+                                    res.json({
+                                        success: true,
+                                        msg: msgs.resetPassword,
+                                    });
+                                }
+                            }).catch(err => {
+                                if (!err.statusCode) {
+                                    err.statusCode = 500;
+                                }
+                                next(err);
+                            });
+                        })
+                    });
+                    // let hashedpw = null;
+                    // await bcrypt.genSalt(8, function (err, salt) {
+                    //     console.log(salt);
+                    //     bcrypt.hash(password, salt, function (err, hash) {
+                    //         if (err) {
+                    //             next(err);
+                    //         }
+                    //         hashedpw = hash;
+                    //         console.log(hashedpw);
+                    //         // Store hash in your password DB.
+                    //     });
+                    // });
+                }
+                // The user has already confirmed this email address.
+                else {
+                    res.json({msg: msgs.errorPassword})
+                }
+            })
+            .catch(err => {
+                if (!err.statusCode) {
+                    err.statusCode = 500;
+                }
+                next(err);
+            });
+    // }
+}
 exports.getUsers = async (req, res, next) => {
     try {
         const allUsers = await User.findAll();
@@ -155,7 +267,7 @@ exports.updateUser = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
     const user_id = req.params.userId;
 
-    let user = await User.destroy({ where: { user_id } }).catch((err) => {
+    let user = await User.destroy({where: {user_id}}).catch((err) => {
         if (!err.statusCode) {
             err.statusCode = 500;
         }
@@ -163,7 +275,7 @@ exports.deleteUser = async (req, res, next) => {
     });
     if (!user) {
         console.log("user not found");
-        res.status(500).json({ message: "user not found" });
+        res.status(500).json({message: "user not found"});
     } else {
         res.status(200).json({
             user: "Deleted",
