@@ -5,7 +5,9 @@ const { Op } = require("sequelize");
 const User = require("../models/user");
 const templates = require("../email/email.templates");
 const sendEmail = require("../email/email.send");
-const msgs = require("../email/email.msgs")
+const msgs = require("../email/email.msgs");
+const aleaRNGFactory = require("number-generator/lib/aleaRNGFactory");
+const generator1 = aleaRNGFactory(2);
 
 exports.signup = async (req, res, next) => {
     const errors = validationResult(req); //this will get errors in validation middleware
@@ -35,19 +37,73 @@ exports.signup = async (req, res, next) => {
         //     }
         //     next(err);
         // });
-        await User.create({
-            user_id: user_id,
-            password: hashedpw,
-            name: name,
-            dob: dob,
-            user_type: user_type,
-            telephone_no: telephone_no,
-            nic: nic,
-            address: address,
-            image: req.file.path //storing image path uploads/images/...
-        });
-        console.log("User saved");
-        res.status(200).json({ message: "User created" });
+
+        // await User.create({
+        //     user_id: user_id,
+        //     password: hashedpw,
+        //     name: name,
+        //     dob: dob,
+        //     user_type: user_type,
+        //     telephone_no: telephone_no,
+        //     nic: nic,
+        //     address: address,
+        //     image: req.file.path //storing image path uploads/images/...
+        // });
+        try {
+            switch (user_type) {
+                case 'Agent':
+                    await User.create({
+                        user_id: `AG${generator1.uInt32()}`,
+                        password: 'hashedpw',
+                        name: name,
+                        dob: dob,
+                        user_type: user_type,
+                        telephone_no: telephone_no,
+                        nic: nic,
+                        address: address,
+                        image: req.file.path //storing image path uploads/images/...
+                    });
+                    break;
+                case 'Officer':
+                    await User.create({
+                        user_id: `OF${generator1.uInt32()}`,
+                        password: hashedpw,
+                        name: name,
+                        dob: dob,
+                        user_type: user_type,
+                        telephone_no: telephone_no,
+                        nic: nic,
+                        address: address,
+                        image: req.file.path //storing image path uploads/images/...
+                    });
+                    break;
+                case 'Admin':
+                    await User.create({
+                        user_id: `AD${generator1.uInt32()}`,
+                        password: hashedpw,
+                        name: name,
+                        dob: dob,
+                        user_type: user_type,
+                        telephone_no: telephone_no,
+                        nic: nic,
+                        address: address,
+                        image: req.file.path //storing image path uploads/images/...
+                    });
+                    break;
+                default:
+                    break;
+
+            }
+            console.log("User saved");
+            res.status(200).json({message: "User created"});
+        } catch (err) {
+            if (!err.statusCode) {
+                err.statusCode = 500;
+            }
+            next(err);
+        }
+        // console.log("User saved");
+        // res.status(200).json({message: "User created"});
     }
 };
 
