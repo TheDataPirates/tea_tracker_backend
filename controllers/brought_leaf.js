@@ -1,6 +1,7 @@
 const Bulk = require("../models/bulk");
 const Lot = require("../models/lot");
 const { Op } = require("sequelize");
+const dhool = require("../models/dhool");
 // const Lot_Container = require('../models/lot_container');
 
 
@@ -182,11 +183,11 @@ exports.getSupplierLotsFirstWeek = async (req, res, next) => {
       where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000), new Date('2021-03-30')] }, }, // Should retrieve bulks for last seven days
       group: ['SupplierSupplierId']
     });
-    
+
     for (let sup_id of suppliersForLastWeek) {
       bulksForLastWeek = await Bulk.findAll({
         attributes: ['bulk_id', 'SupplierSupplierId'],
-        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000), new Date('2021-03-30')] }},
+        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000), new Date('2021-03-30')] } },
       });
       // console.log(bulksForLastWeek);
 
@@ -196,11 +197,11 @@ exports.getSupplierLotsFirstWeek = async (req, res, next) => {
           where: { BulkBulkId: bulk_id.dataValues.bulk_id },
         });
         // console.log(lotsForLastWeek);
-        for(let lot_id of lotsForLastWeek){
+        for (let lot_id of lotsForLastWeek) {
           totalNetWeight = totalNetWeight + lot_id.dataValues.net_weight;
         }
         sup_id.dataValues.totalNetWeight = totalNetWeight;
-        
+
       }
       totalNetWeight = 0;
     }
@@ -230,11 +231,11 @@ exports.getSupplierLotsSecondWeek = async (req, res, next) => {
       where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000)] }, }, // Should retrieve bulks from last seven days to last fourteen days
       group: ['SupplierSupplierId']
     });
-    
+
     for (let sup_id of suppliersForLastWeek) {
       bulksForLastWeek = await Bulk.findAll({
         attributes: ['bulk_id', 'SupplierSupplierId'],
-        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000)] }},
+        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000)] } },
       });
       // console.log(bulksForLastWeek);
 
@@ -244,11 +245,11 @@ exports.getSupplierLotsSecondWeek = async (req, res, next) => {
           where: { BulkBulkId: bulk_id.dataValues.bulk_id },
         });
         // console.log(lotsForLastWeek);
-        for(let lot_id of lotsForLastWeek){
+        for (let lot_id of lotsForLastWeek) {
           totalNetWeight = totalNetWeight + lot_id.dataValues.net_weight;
         }
         sup_id.dataValues.totalNetWeight = totalNetWeight;
-        
+
       }
       totalNetWeight = 0;
     }
@@ -278,11 +279,11 @@ exports.getSupplierLotsThirdWeek = async (req, res, next) => {
       where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000)] }, }, // Should retrieve bulks from fourteen days days to last twentyone days
       group: ['SupplierSupplierId']
     });
-    
+
     for (let sup_id of suppliersForLastWeek) {
       bulksForLastWeek = await Bulk.findAll({
         attributes: ['bulk_id', 'SupplierSupplierId'],
-        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000)] }},
+        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000)] } },
       });
       // console.log(bulksForLastWeek);
 
@@ -292,11 +293,11 @@ exports.getSupplierLotsThirdWeek = async (req, res, next) => {
           where: { BulkBulkId: bulk_id.dataValues.bulk_id },
         });
         // console.log(lotsForLastWeek);
-        for(let lot_id of lotsForLastWeek){
+        for (let lot_id of lotsForLastWeek) {
           totalNetWeight = totalNetWeight + lot_id.dataValues.net_weight;
         }
         sup_id.dataValues.totalNetWeight = totalNetWeight;
-        
+
       }
       totalNetWeight = 0;
     }
@@ -326,11 +327,11 @@ exports.getSupplierLotsFourthWeek = async (req, res, next) => {
       where: { method: { [Op.notLike]: 'AgentOriginal' }, date: { [Op.between]: [new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000)] }, }, // Should retrieve bulks from last twentyone days to last thirty days
       group: ['SupplierSupplierId']
     });
-    
+
     for (let sup_id of suppliersForLastWeek) {
       bulksForLastWeek = await Bulk.findAll({
         attributes: ['bulk_id', 'SupplierSupplierId'],
-        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000)] }},
+        where: { SupplierSupplierId: sup_id.dataValues.SupplierSupplierId, date: { [Op.between]: [new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000)] } },
       });
       // console.log(bulksForLastWeek);
 
@@ -340,11 +341,11 @@ exports.getSupplierLotsFourthWeek = async (req, res, next) => {
           where: { BulkBulkId: bulk_id.dataValues.bulk_id },
         });
         // console.log(lotsForLastWeek);
-        for(let lot_id of lotsForLastWeek){
+        for (let lot_id of lotsForLastWeek) {
           totalNetWeight = totalNetWeight + lot_id.dataValues.net_weight;
         }
         sup_id.dataValues.totalNetWeight = totalNetWeight;
-        
+
       }
       totalNetWeight = 0;
     }
@@ -362,3 +363,36 @@ exports.getSupplierLotsFourthWeek = async (req, res, next) => {
     next(err);
   }
 };
+
+exports.getTodayPurchasedTea = async (req, res, next) => {
+
+  let todayLots = [];
+  let totalNetWeight = 0;
+  try {
+    const todayBulks = await Bulk.findAll({
+      attributes: ['bulk_id'],
+      where: { method: { [Op.notLike]: 'AgentOriginal' }, date: new Date('2021-03-30') }, // This should be today's date
+    });
+
+    for (let bulk_id of todayBulks) {
+      todayLots = await Lot.findAll({
+        attributes: ['net_weight'],
+        where: { BulkBulkId: bulk_id.dataValues.bulk_id },
+      });
+
+      for (let lot_id of todayLots) {
+        totalNetWeight = totalNetWeight + lot_id.dataValues.net_weight;
+      }
+    }
+
+    res.status(200).json({
+      lots: totalNetWeight,
+    });
+  } catch (err) {
+    if (!err.statusCode) {
+      err.statusCode = 500;
+    }
+    next(err);
+  }
+};
+

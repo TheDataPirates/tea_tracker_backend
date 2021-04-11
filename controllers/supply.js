@@ -272,6 +272,26 @@ exports.deleteSupplier = async (req, res, next) => {
     }
 };
 
+exports.getSuppliersuntiltoday = async (req, res, next) => {
+   let supplierCount = 0;
+    try {
+        const allSuppliers = await Supplier.findAll();
+
+        for (let supplier of allSuppliers) {
+            supplierCount = supplierCount + 1;
+        }
+
+        res.status(200).json({
+            suppliers: supplierCount,
+        });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
 // const getCurrDate = ( dateObject)=>{
 //     const dateT = dateObject;
 //     // console.log(dateT);

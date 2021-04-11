@@ -4,7 +4,7 @@ const Box = require('../models/box');
 const Lot = require("../models/lot");
 const Bulk = require("../models/bulk");
 const Sequelize = require("sequelize");
-const {DATE} = require("sequelize");
+const { DATE } = require("sequelize");
 const Op = Sequelize.Op;
 
 
@@ -70,7 +70,7 @@ exports.getRollBreakings = async (req, res, next) => {
     try {
         const allRollBreakings = await dhool.findAll({
             where: {
-                rolling_turn: {[Op.notLike]: "%BB"},
+                rolling_turn: { [Op.notLike]: "%BB" },
             },
         });
 
@@ -135,8 +135,8 @@ exports.createRollBreaking = async (req, res, next) => {
         try {
 
             const batch_weight = await batch.findAll({
-                    attributes: ['weight']
-                },
+                attributes: ['weight']
+            },
                 {
                     where: {
                         batch_no: batch_no,
@@ -336,12 +336,12 @@ exports.getRollingForReporting = async (req, res, next) => {
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
                 // where: {date: new Date()}
-                where: {BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date}
+                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
             });
             for (const box_no_ele of boxID) {
                 const grade_GL = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: {BoxBoxId: box_no_ele.dataValues.box_id},
+                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
 
                 });
                 if (grade_GL.length !== 0) {
@@ -379,12 +379,12 @@ exports.getRollBreakingForReporting = async (req, res, next) => {
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
                 // where: {date: new Date()}
-                where: {BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date}
+                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
             });
             for (const box_no_ele of boxID) {
                 const grade_GL = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: {BoxBoxId: box_no_ele.dataValues.box_id},
+                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
 
                 });
                 if (grade_GL.length !== 0) {
@@ -423,12 +423,12 @@ exports.getFermentingForReporting = async (req, res, next) => {
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
                 // where: {date: new Date()}
-                where: {BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date}
+                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
             });
             for (const box_no_ele of boxID) {
                 const grade_GL = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: {BoxBoxId: box_no_ele.dataValues.box_id},
+                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
 
                 });
                 if (grade_GL.length !== 0) {
@@ -467,12 +467,12 @@ exports.getDryingForReporting = async (req, res, next) => {
             const boxID = await Box.findAll({
                 attributes: ['box_id'],
                 // where: {date: new Date()}
-                where: {BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date}
+                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
             });
             for (const box_no_ele of boxID) {
                 const grade_GL = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: {BoxBoxId: box_no_ele.dataValues.box_id},
+                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
 
                 });
                 if (grade_GL.length !== 0) {
@@ -508,13 +508,13 @@ exports.getOutturnForReporting = async (req, res, next) => {
                 attributes: ['bulk_id', 'date'],
                 where: {
                     date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000),
-                    method: {[Op.notLike]: 'AgentOriginal'},
+                    method: { [Op.notLike]: 'AgentOriginal' },
                 },
             });
             for (const bulk_no_ele of allBulks) {
                 lots = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: {BulkBulkId: bulk_no_ele.dataValues.bulk_id},
+                    where: { BulkBulkId: bulk_no_ele.dataValues.bulk_id },
                     // group: ['grade_GL']
                 });
                 // console.log(lots);
@@ -712,13 +712,13 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                 attributes: ['bulk_id', 'date'],
                 where: {
                     date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000),
-                    method: {[Op.notLike]: 'AgentOriginal'},
+                    method: { [Op.notLike]: 'AgentOriginal' },
                 },
             });
             for (const bulk_no_ele of allBulks) {
                 lots = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: {BulkBulkId: bulk_no_ele.dataValues.bulk_id},
+                    where: { BulkBulkId: bulk_no_ele.dataValues.bulk_id },
                     // group: ['grade_GL']
                 });
                 // console.log(lots);
@@ -815,7 +815,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                 const dhool_pct = await dhool.findAll({
                     attributes: ['dhool_pct'],
                     where: {
-                        rolling_turn: {[Op.notLike]: "BB"},
+                        rolling_turn: { [Op.notLike]: "BB" },
                         BatchBatchNo: batch,
                         batch_date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                     },
@@ -833,7 +833,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                 const dhool_pct = await dhool.findAll({
                     attributes: ['dhool_pct'],
                     where: {
-                        rolling_turn: {[Op.notLike]: "BB"},
+                        rolling_turn: { [Op.notLike]: "BB" },
                         BatchBatchNo: batch,
                         batch_date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                     },
@@ -851,7 +851,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                 const dhool_pct = await dhool.findAll({
                     attributes: ['dhool_pct'],
                     where: {
-                        rolling_turn: {[Op.notLike]: "BB"},
+                        rolling_turn: { [Op.notLike]: "BB" },
                         BatchBatchNo: batch,
                         batch_date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                     },
@@ -867,11 +867,11 @@ exports.getDailyDhoolPct = async (req, res, next) => {
 
 
 
-            dhoolele ={
-                date:new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000),
-                a:avgGLA,
-                b:avgGLB,
-                c:avgGLC
+            dhoolele = {
+                date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000),
+                a: avgGLA,
+                b: avgGLB,
+                c: avgGLC
             }
             dhoolArray.push(dhoolele);
 
@@ -929,13 +929,13 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
                 attributes: ['bulk_id', 'date'],
                 where: {
                     date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000),
-                    method: {[Op.notLike]: 'AgentOriginal'},
+                    method: { [Op.notLike]: 'AgentOriginal' },
                 },
             });
             for (const bulk_no_ele of allBulks) {
                 lots = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
-                    where: {BulkBulkId: bulk_no_ele.dataValues.bulk_id},
+                    where: { BulkBulkId: bulk_no_ele.dataValues.bulk_id },
                     // group: ['grade_GL']
                 });
                 // console.log(lots);
@@ -1034,7 +1034,7 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
                     where: {
                         // rolling_turn: {[Op.notLike]: "BB"},
                         BatchBatchNo: batch,
-                        batch_date: new Date(new Date('2021-03-30') - i  * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                        batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                     },
                 });
 
@@ -1083,11 +1083,11 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
 
 
 
-            dhoolele ={
-                date:new Date(new Date('2021-03-30') - i  * 24 * 60 * 60 * 1000), //this should be i - 1 not i
-                a:avgGLA,
-                b:avgGLB,
-                c:avgGLC
+            dhoolele = {
+                date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000), //this should be i - 1 not i
+                a: avgGLA,
+                b: avgGLB,
+                c: avgGLC
             }
             dhoolArray.push(dhoolele);
 
@@ -1120,4 +1120,64 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
         next(error);
     }
 
-}
+};
+
+exports.getTodayTotalMadeTea = async (req, res, next) => {
+
+
+    let totalDriedDhoolWeight = 0;
+    try {
+        const todayDhools = await dhool.findAll({
+            attributes: ['id', 'drier_out_kg'],
+            where: { batch_date: new Date('2021-03-30') }, // This should be today's date
+        });
+
+        for (let dhool_id of todayDhools) {
+
+            totalDriedDhoolWeight = totalDriedDhoolWeight + dhool_id.dataValues.drier_out_kg;
+
+        }
+
+        res.status(200).json({
+            dhools: totalDriedDhoolWeight,
+        });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+
+exports.getTodayoutturn = async (req, res, next) => {
+    let totalDayOutturn = 0;
+    let batchCount = 0;
+    let todayOutturnAvg = 0;
+    try {
+        const allBatches = await batch.findAll({
+            attributes: ['batch_no', 'outturn'],
+            where: {
+                batch_date: new Date('2021-03-30')
+            },
+        });
+
+        for (let batch_id of allBatches) {
+            batchCount = batchCount + 1;
+            totalDayOutturn = totalDayOutturn + batch_id.dataValues.outturn;
+        }
+
+        todayOutturnAvg = totalDayOutturn/batchCount;
+
+        todayOutturnAvg = Math.round(todayOutturnAvg * 100) / 100
+
+        res.status(200).json({
+            out: todayOutturnAvg,
+        });
+    } catch (error) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};

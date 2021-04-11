@@ -33,6 +33,8 @@ router.post("/login", authController.login);
 
 //GET auth/login
 router.get("/forgetpassword/:email", authController.forgotPassword);
+//POST auth/loginWeb
+router.post("/loginWeb", authController.loginWeb);
 
 
 //GET auth/users
