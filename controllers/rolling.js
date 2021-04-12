@@ -5,6 +5,8 @@ const Lot = require("../models/lot");
 const Bulk = require("../models/bulk");
 const Sequelize = require("sequelize");
 const { DATE } = require("sequelize");
+const lot = require("../models/lot");
+const box = require("../models/box");
 const Op = Sequelize.Op;
 
 
@@ -499,15 +501,17 @@ exports.getDryingForReporting = async (req, res, next) => {
 exports.getOutturnForReporting = async (req, res, next) => {
     let allBulks = [];
     let lots = [];
-    let leafGLABatches = [];
-    let leafGLBBatches = [];
-    let leafGLCBatches = [];
+    let batches = [];
+    let outturns = [];
+    let batchLeafGradesArray = [];
+    let batchLeafGrades = {};
+
     try {
-        for (let i = 1; i <= 30; i++) {
+        for (let i = 1; i <= 5; i++) { //Should be 30 days
             allBulks = await Bulk.findAll({
                 attributes: ['bulk_id', 'date'],
                 where: {
-                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000),
+                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000), //THis date should be yesterday
                     method: { [Op.notLike]: 'AgentOriginal' },
                 },
             });
@@ -515,109 +519,53 @@ exports.getOutturnForReporting = async (req, res, next) => {
                 lots = await Lot.findAll({
                     attributes: ['grade_GL', 'BoxBoxId'],
                     where: { BulkBulkId: bulk_no_ele.dataValues.bulk_id },
-                    // group: ['grade_GL']
+
                 });
                 // console.log(lots);
-                for (const lot_no_ele of lots) {
-                    switch (lot_no_ele.dataValues.grade_GL) {
-                        case 'A':
-                            const boxID = await Box.findAll({
-                                attributes: ['BatchBatchNo'],
-                                // where: {date: new Date()}
-                                where: {
-                                    box_id: lot_no_ele.dataValues.BoxBoxId,
-                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
-                                }
-                            });
-                            if (boxID.length === 0) {
-                                break
-                            }
-                            if (leafGLABatches.length === 0) {
-                                leafGLABatches.push(parseInt(boxID[0].dataValues.BatchBatchNo));
-                            } else {
-                                let flag = 0;
-                                for (let batch of leafGLABatches) {
-                                    if (batch === boxID[0].dataValues.BatchBatchNo) {
-                                        flag = 1;
-                                        break;
-                                    }
-                                }
-                                if (flag === 0) {
-                                    leafGLABatches.push(boxID[0].dataValues.BatchBatchNo);
-                                }
-                            }
-                            break;
-                        case 'B':
-                            const boxIDForB = await Box.findAll({
-                                attributes: ['BatchBatchNo'],
-                                // where: {date: new Date()}
-                                where: {
-                                    box_id: lot_no_ele.dataValues.BoxBoxId,
-                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
-                                }
-                            });
-                            if (boxIDForB.length === 0) {
-                                break
-                            }
-                            if (leafGLBBatches.length === 0) {
-                                leafGLBBatches.push(parseInt(boxIDForB[0].dataValues.BatchBatchNo));
-                            } else {
-                                let flag = 0;
-                                for (let batch of leafGLBBatches) {
-                                    if (batch === boxIDForB[0].dataValues.BatchBatchNo) {
-                                        flag = 1;
-                                        break;
-                                    }
-                                }
-                                if (flag === 0) {
-                                    leafGLBBatches.push(boxIDForB[0].dataValues.BatchBatchNo);
-                                }
-                            }
-                            break;
-                        case 'C':
-                            const boxIDForC = await Box.findAll({
-                                attributes: ['BatchBatchNo'],
-                                // where: {date: new Date()}
-                                where: {
-                                    box_id: lot_no_ele.dataValues.BoxBoxId,
-                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
-                                }
-                            });
-                            if (boxIDForC.length === 0) {
-                                break
-                            }
-                            if (leafGLCBatches.length === 0) {
-                                leafGLCBatches.push(parseInt(boxIDForC[0].dataValues.BatchBatchNo));
-                            } else {
-                                let flag = 0;
-                                for (let batch of leafGLCBatches) {
-                                    if (batch === boxIDForC[0].dataValues.BatchBatchNo) {
-                                        flag = 1;
-                                        break;
-                                    }
-                                }
-                                if (flag === 0) {
-                                    leafGLCBatches.push(boxIDForC[0].dataValues.BatchBatchNo);
-                                }
-                            }
-                            break
-                        default:
-                            break;
-                    }
+                for (const box_id of lots) {
+                    batches = await box.findAll({
+                        attributes: ['BatchBatchNo', 'date'],
+                        where: { box_id: box_id.dataValues.BoxBoxId, date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000) },//THis date should be yesterday
+                    });
 
+                    for (const batch_id of batches) {
+                        outturns = await batch.findAll({
+                            attributes: ['batch_no', 'batch_date', 'outturn'],
+                            where: { batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000), batch_no: batch_id.dataValues.BatchBatchNo },//new Date(new Date('2021-03-30') - (i-1) * 24 * 60 * 60 * 1000)
+                        });
+                        // outturns.dataValues.leaf_grade = box_id.dataValues.grade_GL;
+                        // console.log(outturns);
+                        for (const out_id of outturns) {
+                            batchLeafGrades = { batch_no: out_id.dataValues.batch_no, batch_date: out_id.dataValues.batch_date, outturn: out_id.dataValues.outturn, leafGrade: box_id.dataValues.grade_GL };
+                            // console.log(batches);
+                            // if (batches.length === 0) {
+                            //     break
+                            // }
+                            if (batchLeafGradesArray.length === 0) {
+                                batchLeafGradesArray.push(batchLeafGrades);
+                            } else {
+                                let flag = 0;
+                                for (let batch of batchLeafGradesArray) {
+                                    if (batch.batch_no === batchLeafGrades.batch_no && batch.batch_date === batchLeafGrades.batch_date) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    batchLeafGradesArray.push(batchLeafGrades);
+                                }
+                            }
+                            // batchLeafGradesArray.push(batchLeafGrades);
+                        }
+                    }
                 }
             }
-            console.log(leafGLABatches);
-            console.log(leafGLBBatches);
-            console.log(leafGLCBatches);
-            leafGLABatches = [];
-            leafGLBBatches = [];
-            leafGLCBatches = [];
+
         }
 
 
         res.status(200).json({
-            dhools: allBulks,
+            dhools: batchLeafGradesArray,
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -1167,7 +1115,7 @@ exports.getTodayoutturn = async (req, res, next) => {
             totalDayOutturn = totalDayOutturn + batch_id.dataValues.outturn;
         }
 
-        todayOutturnAvg = totalDayOutturn/batchCount;
+        todayOutturnAvg = totalDayOutturn / batchCount;
 
         todayOutturnAvg = Math.round(todayOutturnAvg * 100) / 100
 
