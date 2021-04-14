@@ -28,6 +28,7 @@ exports.createDreport = async (req, res, next) => {
             report_id: reportId,
             BulkBulkId: BulkId,
             supplier_id: sup_id,
+            date: new Date()
         });
 
         console.log("Difference Report saved");
@@ -88,7 +89,7 @@ exports.updateDreport = async (req, res, next) => {
                     [sequelize.fn('sum', sequelize.col('gross_weight')), 'total_remeasured_weight'],
                 ],
                 group: ['BulkBulkId'],
-                where:{
+                where: {
                     BulkBulkId: bulk_id_ele.dataValues.bulk_id,
                 }
             });
@@ -119,7 +120,7 @@ exports.updateDreport = async (req, res, next) => {
                     [sequelize.fn('sum', sequelize.col('gross_weight')), 'total_original_weight'],
                 ],
                 group: ['BulkBulkId'],
-                where:{
+                where: {
                     BulkBulkId: bulk_id_ele.dataValues.bulk_id,
                 }
             });
@@ -131,10 +132,10 @@ exports.updateDreport = async (req, res, next) => {
 
             let count = 0;
             let remeasured_bulk_id = 0;
-            for (const index of re_sup_bulk_id){
-                if(index.dataValues.SupplierSupplierId === bulk_id_ele.dataValues.SupplierSupplierId){
+            for (const index of re_sup_bulk_id) {
+                if (index.dataValues.SupplierSupplierId === bulk_id_ele.dataValues.SupplierSupplierId) {
                     remeasured_bulk_id = count;
-                }else{
+                } else {
                     count++;
                 }
             }
@@ -163,14 +164,14 @@ exports.updateDreport = async (req, res, next) => {
                     'original_weight',
                     'remeasuring_weight'
                 ],
-                where:{
+                where: {
                     BulkBulkId: re_sup_bulk_id[remeasured_bulk_id].dataValues.bulk_id,
                 }
             });
 
             // let weight_diff = 0;
 
-           let weight_diff = remeasured_original_bulk_weight_get[0].original_weight - remeasured_original_bulk_weight_get[0].remeasuring_weight;
+            let weight_diff = remeasured_original_bulk_weight_get[0].original_weight - remeasured_original_bulk_weight_get[0].remeasuring_weight;
 
             await DifferenceReport.update(
                 {
@@ -187,8 +188,6 @@ exports.updateDreport = async (req, res, next) => {
             );
 
         }
-
-
 
 
         console.log("original_bulk_weight");
@@ -214,6 +213,73 @@ exports.updateDreport = async (req, res, next) => {
             differenceReport: "updated",
         });
     } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};
+
+exports.getDreportsForReporting = async (req, res, next) => {
+    let agentID = [];
+    let officerID = [];
+    let allDreports = [];
+    let totalDreports = [];
+    let dReport = {};
+    let dReportArray = [];
+    try {
+        for (let i = 0; i < 7; i++) {
+            allDreports = await DifferenceReport.findAll({
+                attributes: ['report_id', 'original_weight', 'remeasuring_weight', 'weight_difference', 'supplier_id','date', 'BulkBulkId'],
+                where: {
+                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000),
+                }
+            });
+            // console.log(allDreports);
+            for (const bulk_id_ele of allDreports) {
+                const allSuppliers = await Supplier.findAll({attributes:['name'],where:{
+                        supplier_id:bulk_id_ele.dataValues.supplier_id
+                    }});
+
+                officerID = await Bulk.findAll(
+                    {
+                        attributes: ['UserUserId', 'SupplierSupplierId'],
+                        where: {
+                            bulk_id: bulk_id_ele.dataValues.BulkBulkId
+                        },
+                    });
+
+                for (const user_id_ele of officerID) {
+                    agentID = await Bulk.findAll(
+                        {
+                            attributes: ['UserUserId', 'SupplierSupplierId'],
+                            where: {
+                                SupplierSupplierId: user_id_ele.dataValues.SupplierSupplierId,
+                                method: 'AgentOriginal',
+                                date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
+                            },
+                        });
+                    // console.log(agentID);
+                    dReport = {
+                        report_id: bulk_id_ele.dataValues.report_id,
+                        date:bulk_id_ele.dataValues.date,
+                        original_weight: bulk_id_ele.dataValues.original_weight,
+                        remeasuring_weight: bulk_id_ele.dataValues.remeasuring_weight,
+                        weight_difference: bulk_id_ele.dataValues.weight_difference,
+                        supplier_id: bulk_id_ele.dataValues.supplier_id,
+                        supplier_name:allSuppliers[0].dataValues.name,
+                        officer_id: user_id_ele.dataValues.UserUserId,
+                        agent_id: agentID[0].dataValues.UserUserId
+                    }
+                    dReportArray.push(dReport);
+                }
+            }
+        }
+        res.status(200).json({
+            dreports: dReportArray,
+        });
+    } catch
+        (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
         }
