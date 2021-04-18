@@ -327,7 +327,7 @@ exports.getLoftLoadingForReporting = async (req, res, next) => {
         let boxesArray = [];
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: new Date('2021-03-20'),method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
+            where: {date: new Date('2021-03-30'),method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
         });
         if (bulkID.length === 0) {
             console.log('empty bulks');
@@ -417,7 +417,7 @@ exports.getLoftUnloadingForReporting = async (req, res, next) => {
         const boxID = await Box.findAll({
             attributes: ['box_id', 'withered_pct', 'unloading_weight', 'BatchBatchNo', 'date'],
             // where: {date: new Date()}
-            where:{date:new Date('2021-03-20')}
+            where:{date:new Date('2021-03-30')}
         });
         // console.log(boxID);
         const bulkID = await Bulk.findAll({
