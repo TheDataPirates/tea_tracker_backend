@@ -17,7 +17,7 @@ exports.signup = async (req, res, next) => {
         error.data = errors.array();
         next(error);
     } else {
-        const {user_id, password, name, dob, user_type, telephone_no, nic, address} = req.body;
+        const {user_id, password, name, dob, email,user_type, telephone_no, nic, address} = req.body;
         let hashedpw;
         await bcrypt.genSalt(8, function (err, salt) {
             console.log(salt);
@@ -41,6 +41,7 @@ exports.signup = async (req, res, next) => {
                                 address: address,
                                 image: req.file.path //storing image path uploads/images/...
                             });
+
                             break;
                         case 'Officer':
                             await User.create({
@@ -60,6 +61,21 @@ exports.signup = async (req, res, next) => {
                                 user_id: `AD${generator1.uInt32()}`,
                                 password: hashedpw,
                                 name: name,
+                                email,
+                                dob: dob,
+                                user_type: user_type,
+                                telephone_no: telephone_no,
+                                nic: nic,
+                                address: address,
+                                image: req.file.path //storing image path uploads/images/...
+                            });
+                            break;
+                        case 'Manager':
+                            await User.create({
+                                user_id: `MG${generator1.uInt32()}`,
+                                password: hashedpw,
+                                name: name,
+                                email,
                                 dob: dob,
                                 user_type: user_type,
                                 telephone_no: telephone_no,
