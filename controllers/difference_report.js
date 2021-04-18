@@ -2,7 +2,7 @@ const Bulk = require("../models/bulk");
 const Lot = require("../models/lot");
 const Supplier = require("../models/supplier");
 const DifferenceReport = require("../models/difference_report");
-const {SSL_OP_SSLEAY_080_CLIENT_DH_BUG} = require("constants");
+const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
 
 exports.getDreports = async (req, res, next) => {
     try {
@@ -228,18 +228,21 @@ exports.getDreportsForReporting = async (req, res, next) => {
     let dReport = {};
     let dReportArray = [];
     try {
-        for (let i = 0; i < 7; i++) {
+        for (let i = 0; i < 7; i++) { // i < 7
             allDreports = await DifferenceReport.findAll({
-                attributes: ['report_id', 'original_weight', 'remeasuring_weight', 'weight_difference', 'supplier_id','date', 'BulkBulkId'],
+                attributes: ['report_id', 'original_weight', 'remeasuring_weight', 'weight_difference', 'supplier_id', 'date', 'BulkBulkId'],
                 where: {
-                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000),
+                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000), // This date should be today
                 }
             });
             // console.log(allDreports);
             for (const bulk_id_ele of allDreports) {
-                const allSuppliers = await Supplier.findAll({attributes:['name'],where:{
-                        supplier_id:bulk_id_ele.dataValues.supplier_id
-                    }});
+                const allSuppliers = await Supplier.findAll({
+                    attributes: ['name'],
+                    where: {
+                        supplier_id: bulk_id_ele.dataValues.supplier_id
+                    }
+                });
 
                 officerID = await Bulk.findAll(
                     {
@@ -256,18 +259,18 @@ exports.getDreportsForReporting = async (req, res, next) => {
                             where: {
                                 SupplierSupplierId: user_id_ele.dataValues.SupplierSupplierId,
                                 method: 'AgentOriginal',
-                                date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
+                                date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
                             },
                         });
                     // console.log(agentID);
                     dReport = {
                         report_id: bulk_id_ele.dataValues.report_id,
-                        date:bulk_id_ele.dataValues.date,
+                        date: bulk_id_ele.dataValues.date,
                         original_weight: bulk_id_ele.dataValues.original_weight,
                         remeasuring_weight: bulk_id_ele.dataValues.remeasuring_weight,
                         weight_difference: bulk_id_ele.dataValues.weight_difference,
                         supplier_id: bulk_id_ele.dataValues.supplier_id,
-                        supplier_name:allSuppliers[0].dataValues.name,
+                        supplier_name: allSuppliers[0].dataValues.name,
                         officer_id: user_id_ele.dataValues.UserUserId,
                         agent_id: agentID[0].dataValues.UserUserId
                     }
@@ -279,7 +282,7 @@ exports.getDreportsForReporting = async (req, res, next) => {
             dreports: dReportArray,
         });
     } catch
-        (err) {
+    (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
         }

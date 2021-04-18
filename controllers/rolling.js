@@ -507,11 +507,11 @@ exports.getOutturnForReporting = async (req, res, next) => {
     let batchLeafGrades = {};
 
     try {
-        for (let i = 1; i <= 5; i++) { //Should be 30 days
+        // for (let i = 1; i <= 5; i++) { //Should be 30 days
             allBulks = await Bulk.findAll({
                 attributes: ['bulk_id', 'date'],
                 where: {
-                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000), //THis date should be yesterday
+                    date: new Date(new Date('2021-03-30')), //THis date should be yesterday //date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
                     method: { [Op.notLike]: 'AgentOriginal' },
                 },
             });
@@ -525,13 +525,13 @@ exports.getOutturnForReporting = async (req, res, next) => {
                 for (const box_id of lots) {
                     batches = await box.findAll({
                         attributes: ['BatchBatchNo', 'date'],
-                        where: { box_id: box_id.dataValues.BoxBoxId, date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000) },//THis date should be yesterday
+                        where: { box_id: box_id.dataValues.BoxBoxId, date: new Date(new Date('2021-03-30')) },//THis date should be yesterday //date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
                     });
 
                     for (const batch_id of batches) {
                         outturns = await batch.findAll({
                             attributes: ['batch_no', 'batch_date', 'outturn'],
-                            where: { batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000), batch_no: batch_id.dataValues.BatchBatchNo },//new Date(new Date('2021-03-30') - (i-1) * 24 * 60 * 60 * 1000)
+                            where: { batch_date: new Date(new Date('2021-03-30')), batch_no: batch_id.dataValues.BatchBatchNo },//new Date(new Date('2021-03-30') - (i-1) * 24 * 60 * 60 * 1000) //batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
                         });
                         // outturns.dataValues.leaf_grade = box_id.dataValues.grade_GL;
                         // console.log(outturns);
@@ -561,7 +561,7 @@ exports.getOutturnForReporting = async (req, res, next) => {
                 }
             }
 
-        }
+        // }
 
 
         res.status(200).json({
