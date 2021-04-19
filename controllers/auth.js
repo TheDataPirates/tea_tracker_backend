@@ -9,6 +9,9 @@ const msgs = require("../email/email.msgs");
 const aleaRNGFactory = require("number-generator/lib/aleaRNGFactory");
 const generator1 = aleaRNGFactory(10);
 
+
+let passwordConfirm,nameConfirm,dobConfirm,emailConfirm,user_typeConfirm,telephone_noConfirm,nicConfirm,addressConfirm,imageConfirm='';
+
 exports.signup = async (req, res, next) => {
     const errors = validationResult(req); //this will get errors in validation middleware
     if (!errors.isEmpty()) {
@@ -81,7 +84,7 @@ exports.signup = async (req, res, next) => {
                                 telephone_no: telephone_no,
                                 nic: nic,
                                 address: address,
-                                image: req.file.path //storing image path uploads/images/...
+                                image: imageConfirm //storing image path uploads/images/...
                             });
                             break;
                         default:
@@ -100,6 +103,88 @@ exports.signup = async (req, res, next) => {
             });
         });
     }
+};
+
+exports.signupManager = async (req, res, next) => {
+
+        // const {user_id, password, name, dob, email,user_type, telephone_no, nic, address} = req.body;
+        console.log(passwordConfirm);
+        let hashedpw;
+        await bcrypt.genSalt(8, function (err, salt) {
+            console.log(salt);
+            bcrypt.hash(passwordConfirm, salt, async function (err, hash) {
+                if (err) {
+                    next(err);
+                }
+                hashedpw = hash;
+                console.log(hashedpw);
+                try {
+                    switch (user_typeConfirm) {
+                        case 'Manager':
+                            await User.create({
+                                user_id: `MG${generator1.uInt32()}`,
+                                password: hashedpw,
+                                name: nameConfirm,
+                                email:emailConfirm,
+                                dob: dobConfirm,
+                                user_type: user_typeConfirm,
+                                telephone_no: telephone_noConfirm,
+                                nic: nicConfirm,
+                                address: addressConfirm,
+                                image: imageConfirm //storing image path uploads/images/...
+                            });
+                            break;
+                        default:
+                            break;
+
+                    }
+                    console.log("Manager saved");
+                    res.status(200).json({message: "Manager created"});
+                } catch (err) {
+                    if (!err.statusCode) {
+                        err.statusCode = 500;
+                    }
+                    next(err);
+                }
+                // Store hash in your password DB.
+            });
+        });
+
+};
+exports.signupBeforeConfirm = async (req, res, next) => {
+    const errors = validationResult(req); //this will get errors in validation middleware
+    if (!errors.isEmpty()) {
+        const error = new Error("User already exists !");
+        error.statusCode = 422;
+        error.data = errors.array();
+        next(error);
+    } else {
+        const {user_id, password, name, dob, email,user_type, telephone_no, nic, address} = req.body;
+        passwordConfirm = password;
+        nameConfirm = name;
+        dobConfirm = dob
+        emailConfirm = email;
+        user_typeConfirm = user_type;
+        telephone_noConfirm = telephone_no;
+        nicConfirm = nic;
+        addressConfirm = address;
+        imageConfirm =req.file.path;
+
+                try {
+                    sendEmail('deveenrath@gmail.com', templates.confirm(nameConfirm));
+
+                    console.log("User saved");
+                    res.status(200).json({message: "User created"});
+                } catch (err) {
+                    if (!err.statusCode) {
+                        err.statusCode = 500;
+                    }
+                    next(err);
+                }
+                // Store hash in your password DB.
+            }
+
+
 };
 
 exports.login = async (req, res, next) => {
