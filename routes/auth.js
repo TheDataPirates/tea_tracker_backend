@@ -79,8 +79,8 @@ router.get("/forgetpassword/:email", authController.forgotPassword);
 //POST auth/loginWeb
 router.post("/loginWeb", authController.loginWeb);
 
-//GET auth/resetPassword
-router.get("/resetPassword/:email", authController.resetPassword);
+//PATCH auth/resetPassword
+router.patch("/resetPassword/:email", authController.resetPassword);
 
 //GET auth/users
 router.get("/users",authController.getUsers);

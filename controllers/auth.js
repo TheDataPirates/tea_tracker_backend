@@ -171,7 +171,7 @@ exports.signupBeforeConfirm = async (req, res, next) => {
         imageConfirm =req.file.path;
 
                 try {
-                    sendEmail('deveenrath@gmail.com', templates.confirm(nameConfirm,emailConfirm,nicConfirm));
+                    sendEmail('sewmi98@gmail.com', templates.confirm(nameConfirm,emailConfirm,nicConfirm));
 
                     console.log("User saved");
                     res.status(200).json({message: "User created"});
