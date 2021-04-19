@@ -171,7 +171,7 @@ exports.signupBeforeConfirm = async (req, res, next) => {
         imageConfirm =req.file.path;
 
                 try {
-                    sendEmail('deveenrath@gmail.com', templates.confirm(nameConfirm));
+                    sendEmail('deveenrath@gmail.com', templates.confirm(nameConfirm,emailConfirm,nicConfirm));
 
                     console.log("User saved");
                     res.status(200).json({message: "User created"});
@@ -269,7 +269,7 @@ exports.loginWeb = async (req, res, next) => {
                 "thisisatokenid",
                 {expiresIn: "1 day"}
             );
-            res.status(200).json({token: token, userId: loadedUser.user_id});
+            res.status(200).json({token: token, userId: loadedUser.user_id,userType:loadedUser.user_type});
         }
     }
 };

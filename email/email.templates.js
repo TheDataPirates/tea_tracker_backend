@@ -8,7 +8,7 @@
 // (eg. unsubscribe) in the future.
 module.exports = {
 
-  confirm: (name) => ({
+  confirm: (name,email,nic) => ({
     subject: 'Kudamalana Tea Estate Confirm User',
     html: `
     <div style = "width:70% ;margin: auto; text-align: center;">
@@ -16,8 +16,11 @@ module.exports = {
     <h1 style="font-family:'Trebuchet MS', sans-serif">Welcome to Kudamalana Tea Estate</h1>
     <hr/>
     <button style="background-color: rgb(78, 133, 235); border: none; ;border-radius: 5px; padding: 10px;">
+    <p>name: ${name}</p>
+    <p>email: ${email}</p>
+    <p>NIC: ${nic}</p>
     <a style ="color:white; text-decoration: none;" href="http://localhost:8080/auth/signupmanager">
-    Click to confirm new user - ${name}
+    Click to confirm new manager 
     </a>
     </button>
     <hr/>

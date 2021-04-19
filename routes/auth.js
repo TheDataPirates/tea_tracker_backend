@@ -12,14 +12,14 @@ router.put(
   "/signup",
   fileUpload.single('image'),
   [
-    body("email")
+    body("name")
       .trim()
       .notEmpty()
       .custom((value, { req }) => {
         //these are from express validator and this middleware check user id exist and throw error
-        return User.findOne({ where: { email: value } }).then((userDoc) => {
+        return User.findOne({ where: { name: value } }).then((userDoc) => {
           if (userDoc) {
-            return Promise.reject("Email already exists!");
+            return Promise.reject("User's name already exists!");
           }
         });
       }),
