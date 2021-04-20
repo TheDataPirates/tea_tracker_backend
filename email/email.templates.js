@@ -15,10 +15,10 @@ module.exports = {
 <!--    <img width="350px" height="auto" src ="https://pin.it/2pfdV8w"/> -->
     <h1 style="font-family:'Trebuchet MS', sans-serif">Welcome to Kudamalana Tea Estate</h1>
     <hr/>
-    <button style="background-color: rgb(78, 133, 235); border: none; ;border-radius: 5px; padding: 10px;">
-    <p>name: ${name}</p>
-    <p>email: ${email}</p>
+    <p>Name: ${name}</p>
+    <p>Email: ${email}</p>
     <p>NIC: ${nic}</p>
+    <button style="background-color: rgb(78, 133, 235); border: none; ;border-radius: 5px; padding: 10px;">
     <a style ="color:white; text-decoration: none;" href="http://localhost:8080/auth/signupmanager">
     Click to confirm new manager 
     </a>

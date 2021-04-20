@@ -35,7 +35,8 @@ exports.createSupplier = async (req, res, next) => {
                     type,
                     telephone_no,
                     address,
-                    status
+                    status,
+                    image: req.file === undefined ? null : req.file.path
                 });
                 break;
             case 'Grower through Agent':
@@ -45,7 +46,8 @@ exports.createSupplier = async (req, res, next) => {
                     type,
                     telephone_no,
                     address,
-                    status
+                    status,
+                    image: req.file === undefined ? null : req.file.path
                 });
                 break;
             case 'Dealer':
@@ -55,7 +57,8 @@ exports.createSupplier = async (req, res, next) => {
                     type,
                     telephone_no,
                     address,
-                    status
+                    status,
+                    image: req.file === undefined ? null : req.file.path
                 });
                 break;
             default:
@@ -225,7 +228,7 @@ exports.getSupplierByName = async (req, res, next) => {
 
 exports.updateSupplier = async (req, res, next) => {
     const {supplier_id, name, status, telephone_no, address} = req.body;
-    // console.log(user_id);
+    console.log(supplier_id);
 
     try {
         await Supplier.update(
@@ -234,7 +237,8 @@ exports.updateSupplier = async (req, res, next) => {
                 name,
                 status,
                 telephone_no,
-                address
+                address,
+                image: req.file === undefined ? null : req.file.path
             },
             {
                 where: {
@@ -273,7 +277,7 @@ exports.deleteSupplier = async (req, res, next) => {
 };
 
 exports.getSuppliersuntiltoday = async (req, res, next) => {
-   let supplierCount = 0;
+    let supplierCount = 0;
     try {
         const allSuppliers = await Supplier.findAll();
 
