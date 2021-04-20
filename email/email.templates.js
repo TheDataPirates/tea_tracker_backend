@@ -8,16 +8,19 @@
 // (eg. unsubscribe) in the future.
 module.exports = {
 
-  confirm: id => ({
-    subject: 'Kudamalana Tea Estate Confirm Email',
+  confirm: (name,email,nic) => ({
+    subject: 'Kudamalana Tea Estate Confirm User',
     html: `
     <div style = "width:70% ;margin: auto; text-align: center;">
 <!--    <img width="350px" height="auto" src ="https://pin.it/2pfdV8w"/> -->
     <h1 style="font-family:'Trebuchet MS', sans-serif">Welcome to Kudamalana Tea Estate</h1>
     <hr/>
     <button style="background-color: rgb(78, 133, 235); border: none; ;border-radius: 5px; padding: 10px;">
-    <a style ="color:white; text-decoration: none;" href="http://localhost:3000/email/confirm/${id}">
-    Click to confirm email
+    <p>name: ${name}</p>
+    <p>email: ${email}</p>
+    <p>NIC: ${nic}</p>
+    <a style ="color:white; text-decoration: none;" href="http://localhost:8080/auth/signupmanager">
+    Click to confirm new manager 
     </a>
     </button>
     <hr/>
@@ -30,7 +33,7 @@ module.exports = {
 
 
     `,
-    text: `Copy and paste this link: http://localhost:3000/email/confirm/${id}`
+    text: `Copy and paste this link: http://localhost:8080/auth/signupmanager`
   }),
 
   resetPassword: id => ({

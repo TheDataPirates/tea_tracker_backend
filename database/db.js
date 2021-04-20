@@ -16,7 +16,7 @@ const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, proces
   pool: { maxConnections: 5, maxIdleTime: 30},
   language: 'en'
 });
-// const sequelize = new Sequelize("tea_tracker_db", "root", "damitha123", {
+// const sequelize = new Sequelize("tea_tracker_db", "root", "devin123", {
 //   dialect: "mysql",
 //   host: "localhost",
 // });

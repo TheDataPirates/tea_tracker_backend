@@ -9,6 +9,9 @@ const credentials = {
     // These environment variables will be pulled from the .env file
     user: 'datapirates.info@gmail.com',
     pass: 'datapirates5'
+  },
+  tls: {
+    rejectUnauthorized: false
   }
 }
 
@@ -19,17 +22,17 @@ const transporter = nodemailer.createTransport(credentials)
 // exporting an 'async' function here allows 'await' to be used
 // as the return value of this function.
 module.exports = async (to, content) => {
-  
+
   // The from and to addresses for the email that is about to be sent.
   const contacts = {
     from: 'datapirates.info@gmail.com',
     to
   }
-  
+
   // Combining the content and contacts into a single object that can
   // be passed to Nodemailer.
   const email = Object.assign({}, content, contacts)
-  
+
   // This file is imported into the controller as 'sendEmail'. Because 
   // 'transporter.sendMail()' below returns a promise we can write code like this
   // in the contoller when we are using the sendEmail() function.
