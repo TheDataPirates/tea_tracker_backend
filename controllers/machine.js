@@ -1,13 +1,19 @@
+const Trough = require('../models/trough');
 const Drier = require('../models/drier');
 const Roller = require('../models/roller');
 const Roll_Breaker = require('../models/roll_breaker');
+const aleaRNGFactory = require("number-generator/lib/aleaRNGFactory");
+const generator1 = aleaRNGFactory(10);
+
 
 exports.getMachines = async (req, res, next) => {
     try {
+        const allTroughs = await Trough.findAll();
         const allDriers = await Drier.findAll();
         const allRollers = await Roller.findAll();
         const allRoll_breaker = await Roll_Breaker.findAll();
         res.status(200).json({
+            trough: allTroughs,
             driers: allDriers,
             rollers: allRollers,
             roll_breaker: allRoll_breaker
@@ -22,8 +28,8 @@ exports.getMachines = async (req, res, next) => {
 };
 //
 exports.createMachine = async (req, res, next) => {
-    const {machine_id, modal, machine_purchase_date, power_info, type} = req.body;
-    console.log(machine_id);
+    const {modal, machine_purchase_date, power_info, type,capacity,troughtype} = req.body;
+    // console.log(machine_id);
     console.log(modal);
 
     console.log(type);
@@ -31,7 +37,8 @@ exports.createMachine = async (req, res, next) => {
         switch (type) {
             case 'Drier':
                 await Drier.create({
-                    drier_id: machine_id,
+                   
+                    drier_id:`DM${generator1.uInt32()}`,
                     modal,
                     machine_purchase_date,
                     power_info,
@@ -42,7 +49,7 @@ exports.createMachine = async (req, res, next) => {
                 break;
             case 'Roll Breaker' || 'RB':
                 await Roll_Breaker.create({
-                    roll_breaker_id: machine_id,
+                    roll_breaker_id: `RM${generator1.uInt32()}`,
                     modal,
                     machine_purchase_date,
                     power_info,
@@ -54,7 +61,7 @@ exports.createMachine = async (req, res, next) => {
 
             case 'Roller':
                 await Roller.create({
-                    roller_id: machine_id,
+                    roller_id: `RM${generator1.uInt32()}`,
                     modal,
                     machine_purchase_date,
                     power_info,
@@ -63,7 +70,17 @@ exports.createMachine = async (req, res, next) => {
                 console.log("Roller saved");
                 res.status(200).json({message: "Roller created"});
                 break;
-            default:
+            case'Trough':
+                await Trough.create({
+             trough_id: `TR${generator1.uInt32()}`,
+              type: troughtype,
+              capacity,
+              image: req.file.path
+           });
+           console.log("Trough Saved");
+           res.status(200).json({message: "Trough Created"});
+           break;
+default:
                 const error = new Error("Machine type invalid !");
                 error.statusCode = 422;
                 next(error);
@@ -102,6 +119,13 @@ exports.getMachine = async (req, res, next) => {
                     machine: allRollers,
                 });
                 break;
+                case 'Trough':
+                    const allTroughs = await Trough.findAll({attributes:[['trough_id','id'],'type','capacity'],where: {trough_id:id}});
+    
+                    res.status(200).json({
+                        machine: allTroughs,
+                    });
+                    break;
             default:
                 const error = new Error("Can not do edit in this time !");
                 error.statusCode = 422;
@@ -124,7 +148,7 @@ exports.updateMachine = async (req, res, next) => {
 
     try {
         switch (type) {
-        case 'Drier':
+            case 'Drier':
             await Drier.update(
                 {
                     drier_id: machine_id,
@@ -179,6 +203,24 @@ exports.updateMachine = async (req, res, next) => {
                 message: "ok",
             });
             break;
+            case 'Trough':
+                await Trough.update(
+                    {
+                        trough_id: machine_id,
+                        type,
+                        capacity,
+                    },
+                    {
+                        where: {
+                            trough_id: machine_id,
+                        },
+                    }
+                );
+                res.status(200).json({
+                    message: "ok",
+                });
+                break;
+
         default:
             const error = new Error("Machine type invalid !");
             error.statusCode = 422;
@@ -199,6 +241,23 @@ exports.deleteMachine = async (req, res, next) => {
     console.log(type);
     let machine;
     switch (type) {
+        case 'Trough':
+            machine = await Trough.destroy({ where: {  Trough_id: id, } }).catch((err) => {
+               if (!err.statusCode) {
+                   err.statusCode = 500;
+               }
+               next(err);
+           });
+           if (!machine) {
+               console.log("Trough not found");
+               res.status(500).json({ message: "Trough not found" });
+           } else {
+               res.status(200).json({
+                   user: "Deleted",
+               });
+           }
+           break;
+
         case 'Drier':
              machine = await Drier.destroy({ where: {  drier_id: id, } }).catch((err) => {
                 if (!err.statusCode) {
