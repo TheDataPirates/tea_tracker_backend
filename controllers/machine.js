@@ -2,6 +2,8 @@ const Trough = require('../models/trough');
 const Drier = require('../models/drier');
 const Roller = require('../models/roller');
 const Roll_Breaker = require('../models/roll_breaker');
+const aleaRNGFactory = require("number-generator/lib/aleaRNGFactory");
+const generator1 = aleaRNGFactory(10);
 
 
 exports.getMachines = async (req, res, next) => {
@@ -26,8 +28,8 @@ exports.getMachines = async (req, res, next) => {
 };
 //
 exports.createMachine = async (req, res, next) => {
-    const {machine_id, modal, machine_purchase_date, power_info, type} = req.body;
-    console.log(machine_id);
+    const {modal, machine_purchase_date, power_info, type,capacity,troughtype} = req.body;
+    // console.log(machine_id);
     console.log(modal);
 
     console.log(type);
@@ -35,7 +37,8 @@ exports.createMachine = async (req, res, next) => {
         switch (type) {
             case 'Drier':
                 await Drier.create({
-                    drier_id: machine_id,
+                   
+                    drier_id:`DM${generator1.uInt32()}`,
                     modal,
                     machine_purchase_date,
                     power_info,
@@ -46,7 +49,7 @@ exports.createMachine = async (req, res, next) => {
                 break;
             case 'Roll Breaker' || 'RB':
                 await Roll_Breaker.create({
-                    roll_breaker_id: machine_id,
+                    roll_breaker_id: `RM${generator1.uInt32()}`,
                     modal,
                     machine_purchase_date,
                     power_info,
@@ -58,7 +61,7 @@ exports.createMachine = async (req, res, next) => {
 
             case 'Roller':
                 await Roller.create({
-                    roller_id: machine_id,
+                    roller_id: `RM${generator1.uInt32()}`,
                     modal,
                     machine_purchase_date,
                     power_info,
@@ -68,10 +71,11 @@ exports.createMachine = async (req, res, next) => {
                 res.status(200).json({message: "Roller created"});
                 break;
             case'Trough':
-                await trough.create({
-             trough_id: machine_id,
-              type,
+                await Trough.create({
+             trough_id: `TR${generator1.uInt32()}`,
+              type: troughtype,
               capacity,
+              image: req.file.path
            });
            console.log("Trough Saved");
            res.status(200).json({message: "Trough Created"});
