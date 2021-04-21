@@ -575,6 +575,271 @@ exports.getOutturnForReporting = async (req, res, next) => {
     }
 }
 
+exports.getRollingForReportingWithDate = async (req, res, next) => {
+
+    const dates = req.params.date;
+
+    try {
+        const allRolling = await dhool.findAll({
+            attributes: ['BatchBatchNo', 'RollerRollerId', 'batch_date', 'rolling_turn', 'rolling_in_kg', 'rolling_out_kg'],
+            where: {
+                // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
+                batch_date: dates
+            },
+        });
+        // console.log(allRolling);
+        for (const batch_no_ele of allRolling) {
+
+            const boxID = await Box.findAll({
+                attributes: ['box_id'],
+                // where: {date: new Date()}
+                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
+            });
+            for (const box_no_ele of boxID) {
+                const grade_GL = await Lot.findAll({
+                    attributes: ['grade_GL', 'BoxBoxId'],
+                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
+
+                });
+                if (grade_GL.length !== 0) {
+                    batch_no_ele.dataValues.grade_GL = grade_GL[0].dataValues.grade_GL;
+                    // console.log(grade_GL[0].dataValues.grade_GL);
+                }
+            }
+
+        }
+
+        res.status(200).json({
+            rolling: allRolling,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+
+}
+
+exports.getRollBreakingForReportingWithDate = async (req, res, next) => {
+
+    const dates = req.params.date;
+
+    try {
+        const allRollBreaking = await dhool.findAll({
+            attributes: ['BatchBatchNo', 'RollBreakerRollBreakerId', 'batch_date', 'rolling_turn', 'rolling_out_kg', 'dhool_out_weight', 'dhool_pct'],
+            where: {
+                // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
+                batch_date: dates
+            },
+        });
+        // console.log(allRolling);
+        for (const batch_no_ele of allRollBreaking) {
+
+            const boxID = await Box.findAll({
+                attributes: ['box_id'],
+                // where: {date: new Date()}
+                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
+            });
+            for (const box_no_ele of boxID) {
+                const grade_GL = await Lot.findAll({
+                    attributes: ['grade_GL', 'BoxBoxId'],
+                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
+
+                });
+                if (grade_GL.length !== 0) {
+                    batch_no_ele.dataValues.grade_GL = grade_GL[0].dataValues.grade_GL;
+                    // console.log(grade_GL[0].dataValues.grade_GL);
+                }
+            }
+
+        }
+
+        res.status(200).json({
+            rollBreaking: allRollBreaking,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+
+
+}
+
+exports.getFermentingForReportingWithDate = async (req, res, next) => {
+
+    const dates = req.params.date;
+
+    try {
+        const allFermentings = await dhool.findAll({
+            attributes: ['BatchBatchNo', 'batch_date', 'rolling_turn', 'dhool_out_weight', 'fd_out_kg', 'fd_pct'],
+            where: {
+                // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
+                batch_date: dates
+            },
+        });
+        // console.log(allRolling);
+        for (const batch_no_ele of allFermentings) {
+
+            const boxID = await Box.findAll({
+                attributes: ['box_id'],
+                // where: {date: new Date()}
+                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
+            });
+            for (const box_no_ele of boxID) {
+                const grade_GL = await Lot.findAll({
+                    attributes: ['grade_GL', 'BoxBoxId'],
+                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
+
+                });
+                if (grade_GL.length !== 0) {
+                    batch_no_ele.dataValues.grade_GL = grade_GL[0].dataValues.grade_GL;
+                    // console.log(grade_GL[0].dataValues.grade_GL);
+                }
+            }
+
+        }
+
+        res.status(200).json({
+            fermenting: allFermentings,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+
+
+}
+
+exports.getDryingForReportingWithDate = async (req, res, next) => {
+
+    const dates = req.params.date;
+
+    try {
+        const allDrying = await dhool.findAll({
+            attributes: ['BatchBatchNo', 'batch_date', 'rolling_turn', 'fd_out_kg', 'drier_out_kg'],
+            where: {
+                // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
+                batch_date: dates
+            },
+        });
+        // console.log(allRolling);
+        for (const batch_no_ele of allDrying) {
+
+            const boxID = await Box.findAll({
+                attributes: ['box_id'],
+                // where: {date: new Date()}
+                where: { BatchBatchNo: batch_no_ele.dataValues.BatchBatchNo, date: batch_no_ele.dataValues.batch_date }
+            });
+            for (const box_no_ele of boxID) {
+                const grade_GL = await Lot.findAll({
+                    attributes: ['grade_GL', 'BoxBoxId'],
+                    where: { BoxBoxId: box_no_ele.dataValues.box_id },
+
+                });
+                if (grade_GL.length !== 0) {
+                    batch_no_ele.dataValues.grade_GL = grade_GL[0].dataValues.grade_GL;
+                    // console.log(grade_GL[0].dataValues.grade_GL);
+                }
+            }
+
+        }
+
+        res.status(200).json({
+            drying: allDrying,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+
+
+}
+
+exports.getOutturnForReportingWithDate = async (req, res, next) => {
+    let allBulks = [];
+    let lots = [];
+    let batches = [];
+    let outturns = [];
+    let batchLeafGradesArray = [];
+    let batchLeafGrades = {};
+
+    const dates = req.params.date;
+
+    try {
+        // for (let i = 1; i <= 5; i++) { //Should be 30 days
+            allBulks = await Bulk.findAll({
+                attributes: ['bulk_id', 'date'],
+                where: {
+                    date: dates, 
+                    method: { [Op.notLike]: 'AgentOriginal' },
+                },
+            });
+            for (const bulk_no_ele of allBulks) {
+                lots = await Lot.findAll({
+                    attributes: ['grade_GL', 'BoxBoxId'],
+                    where: { BulkBulkId: bulk_no_ele.dataValues.bulk_id },
+
+                });
+                // console.log(lots);
+                for (const box_id of lots) {
+                    batches = await box.findAll({
+                        attributes: ['BatchBatchNo', 'date'],
+                        where: { box_id: box_id.dataValues.BoxBoxId, date: dates },
+                    });
+
+                    for (const batch_id of batches) {
+                        outturns = await batch.findAll({
+                            attributes: ['batch_no', 'batch_date', 'outturn'],
+                            where: { batch_date: dates, batch_no: batch_id.dataValues.BatchBatchNo },
+                        });
+                        // outturns.dataValues.leaf_grade = box_id.dataValues.grade_GL;
+                        // console.log(outturns);
+                        for (const out_id of outturns) {
+                            batchLeafGrades = { batch_no: out_id.dataValues.batch_no, batch_date: out_id.dataValues.batch_date, outturn: out_id.dataValues.outturn, leafGrade: box_id.dataValues.grade_GL };
+                            // console.log(batches);
+                            // if (batches.length === 0) {
+                            //     break
+                            // }
+                            if (batchLeafGradesArray.length === 0) {
+                                batchLeafGradesArray.push(batchLeafGrades);
+                            } else {
+                                let flag = 0;
+                                for (let batch of batchLeafGradesArray) {
+                                    if (batch.batch_no === batchLeafGrades.batch_no && batch.batch_date === batchLeafGrades.batch_date) {
+                                        flag = 1;
+                                        break;
+                                    }
+                                }
+                                if (flag === 0) {
+                                    batchLeafGradesArray.push(batchLeafGrades);
+                                }
+                            }
+                            // batchLeafGradesArray.push(batchLeafGrades);
+                        }
+                    }
+                }
+            }
+
+        // }
+
+
+        res.status(200).json({
+            dhools: batchLeafGradesArray,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
 
 //Dashboard
 
