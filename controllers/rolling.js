@@ -1358,3 +1358,60 @@ exports.getTodayoutturn = async (req, res, next) => {
         next(err);
     }
 };
+
+function formatDate(date){
+    var dd = date.getDate();
+    var mm = date.getMonth()+1;
+    var yyyy = date.getFullYear();
+    if(dd<10) {dd='0'+dd}
+    if(mm<10) {mm='0'+mm}
+    date = yyyy+'-'+mm+'-'+dd;
+    return date
+ }
+
+function getLastSevenDates () {
+    var result = [];
+    for (var i=0; i<7; i++) {
+        var d = new Date('2021-03-30');
+        d.setDate(d.getDate() - i);
+        result.push( formatDate(d) )
+    }
+    return(result);
+ }
+
+ exports.getTotalOutturn = async (req, res, next) => {
+    let totalDayOutturn = 0;
+    let totalOutturns = [];
+    let batchCount = 0;
+    let dates= getLastSevenDates();
+    let OutturnAvg = 0;
+    try {
+        for(let index in dates){
+            const allBatches = await batch.findAll({
+                attributes: ['batch_no', 'outturn'],
+                where: {
+                    batch_date:  new Date(dates[index])
+                },
+            });
+    
+            for (let batch_id of allBatches) {
+                batchCount = batchCount + 1;
+                totalDayOutturn = totalDayOutturn + batch_id.dataValues.outturn;
+            }
+            OutturnAvg = Math.round((totalDayOutturn/batchCount) * 100) / 100
+            totalOutturns.push(OutturnAvg)
+            totalDayOutturn,OutturnAvg=0;
+        }
+       
+        
+        res.status(200).json({
+            averageOutterns: totalOutturns,
+            dates:dates
+        });
+    } catch (error) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+};

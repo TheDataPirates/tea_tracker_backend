@@ -59,5 +59,8 @@ router.get("/dashboard/todayTotalMadeTea", rollingController.getTodayTotalMadeTe
 //GET rolling/dashboard/todayoutturn
 router.get("/dashboard/todayoutturn", rollingController.getTodayoutturn);
 
+//GET rolling/dashboard/totaloutturn
+router.get("/dashboard/totaloutturn", rollingController.getTotalOutturn);
+
 module.exports = router;
 

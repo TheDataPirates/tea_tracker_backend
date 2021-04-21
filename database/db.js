@@ -16,7 +16,7 @@ const rdsCa = fs.readFileSync(__dirname + '/rds-combined-ca-bundle.pem');
 //   pool: { maxConnections: 5, maxIdleTime: 30},
 //   language: 'en'
 // });
-const sequelize = new Sequelize("tea_tracker_db", "root", "devin123", {
+const sequelize = new Sequelize("tea_tracker_db", "root", "damitha123", {
   dialect: "mysql",
   host: "localhost",
 });
