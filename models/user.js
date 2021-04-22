@@ -11,7 +11,7 @@ module.exports= sequelize.define('User', {
     email:Sequelize.STRING,
     password:Sequelize.STRING,
     name: Sequelize.STRING,
-    dob: Sequelize.STRING,
+    dob: Sequelize.DATEONLY,
     user_type: Sequelize.STRING,
     telephone_no:Sequelize.STRING,
     nic:Sequelize.STRING,
