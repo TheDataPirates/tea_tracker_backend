@@ -44,16 +44,31 @@ router.post("/batch", isAuth, loftController.createBatch);
 //GET loft/reports/loading
 router.get("/reports/loading", loftController.getLoftLoadingForReporting);
 
+//GET loft/reports/loadings/:date
+router.get("/reports/loadings/:date", loftController.getLoftLoadingsForReportingWithDate);
+
 //GET loft/reports/unloading
 router.get("/reports/unloading", loftController.getLoftUnloadingForReporting);
+
+//GET loft/reports/unloadings/:date
+router.get("/reports/unloadings/:date", loftController.getLoftUnloadingForReportingWithDate);
 
 //GET loft/reports/starting
 router.get("/reports/starting", loftController.getLoftStartingForReporting);
 
+//GET loft/reports/startings/:date
+router.get("/reports/startings/:date", loftController.getLoftStartingForReportingWithDate);
+
 //GET loft/reports/finishing
 router.get("/reports/finishing", loftController.getLoftFinishingForReporting);
 
+//GET loft/reports/finishings/:date
+router.get("/reports/finishings/:date", loftController.getLoftFinishingForReportingWithDate);
+
 //GET loft/reports/mixing
 router.get("/reports/mixing", loftController.getLoftMixingForReporting);
+
+//GET loft/reports/mixings/:date
+router.get("/reports/mixings/:date", loftController.getLoftMixingForReportingWithDate);
 
 module.exports = router;

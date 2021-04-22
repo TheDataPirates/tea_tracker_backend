@@ -30,17 +30,32 @@ router.patch("/drying", isAuth, rollingController.createDrying);
 //GET rolling/reports/rollings
 router.get("/reports/rollings", rollingController.getRollingForReporting);
 
+//GET rolling/reports/rollingss/:date
+router.get("/reports/rollingss/:date", rollingController.getRollingForReportingWithDate);
+
 //GET rolling/reports/rollings
 router.get("/reports/rbreakings", rollingController.getRollBreakingForReporting);
 
+//GET rolling/reports/rollingss/:date
+router.get("/reports/rbreakingss/:date", rollingController.getRollBreakingForReportingWithDate);
+
 //GET rolling/reports/rollings
-router.get("/reports/fermentings", rollingController.getFermentingForReporting );
+router.get("/reports/fermentings", rollingController.getFermentingForReporting);
+
+//GET rolling/reports/rollingss/:date
+router.get("/reports/fermentingss/:date", rollingController.getFermentingForReportingWithDate);
 
 //GET rolling/reports/dryings
 router.get("/reports/dryings", rollingController.getDryingForReporting);
 
+//GET rolling/reports/dryingss/:date
+router.get("/reports/dryingss/:date", rollingController.getDryingForReportingWithDate);
+
 //GET rolling/reports/outturn
 router.get("/reports/outturn", rollingController.getOutturnForReporting);
+
+//GET rolling/reports/outturns/:date
+router.get("/reports/outturnss/:date", rollingController.getOutturnForReportingWithDate);
 
 //Dashboard
 

@@ -13,7 +13,8 @@ module.exports = sequelize.define("Supplier", {
   address:Sequelize.STRING,
   status:Sequelize.STRING,
   gps_location:Sequelize.STRING,
-  image:Sequelize.STRING
+  image:Sequelize.STRING,
+  date_joined:Sequelize.DATEONLY
 
 },{
   timestamps: false,

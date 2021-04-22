@@ -22,7 +22,7 @@ exports.getSuppliers = async (req, res, next) => {
 };
 
 exports.createSupplier = async (req, res, next) => {
-    const {name, type, telephone_no, address, status} = req.body;
+    const {name, type, telephone_no, address, status, date_joined} = req.body;
     // console.log(supplier_id);
     console.log(name);
     console.log(type);
@@ -36,6 +36,7 @@ exports.createSupplier = async (req, res, next) => {
                     telephone_no,
                     address,
                     status,
+                    date_joined,
                     image: req.file === undefined ? null : req.file.path
                 });
                 break;
@@ -47,6 +48,7 @@ exports.createSupplier = async (req, res, next) => {
                     telephone_no,
                     address,
                     status,
+                    date_joined,
                     image: req.file === undefined ? null : req.file.path
                 });
                 break;
@@ -58,6 +60,7 @@ exports.createSupplier = async (req, res, next) => {
                     telephone_no,
                     address,
                     status,
+                    date_joined,
                     image: req.file === undefined ? null : req.file.path
                 });
                 break;
@@ -227,7 +230,7 @@ exports.getSupplierByName = async (req, res, next) => {
 };
 
 exports.updateSupplier = async (req, res, next) => {
-    const {supplier_id, name, status, telephone_no, address} = req.body;
+    const {supplier_id, name, status, telephone_no, address, date_joined, image} = req.body;
     console.log(supplier_id);
 
     try {
@@ -238,7 +241,8 @@ exports.updateSupplier = async (req, res, next) => {
                 status,
                 telephone_no,
                 address,
-                image: req.file === undefined ? null : req.file.path
+                date_joined,
+                image: req.file === undefined ? image : req.file.path
             },
             {
                 where: {
