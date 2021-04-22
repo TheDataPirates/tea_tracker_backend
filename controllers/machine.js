@@ -3,6 +3,7 @@ const Drier = require('../models/drier');
 const Roller = require('../models/roller');
 const Roll_Breaker = require('../models/roll_breaker');
 const aleaRNGFactory = require("number-generator/lib/aleaRNGFactory");
+const trough = require('../models/trough');
 const generator1 = aleaRNGFactory(10);
 
 
@@ -142,7 +143,7 @@ exports.getMachine = async (req, res, next) => {
 exports.updateMachine = async (req, res, next) => {
     // const {id, type} = req.query;
     const type = req.params.type;
-    const {machine_id, modal, machine_purchase_date, power_info} = req.body;
+    const {machine_id, modal, machine_purchase_date, power_info,capacity,trough_id,troughtype} = req.body;
 
     console.log(machine_id);
 
@@ -206,13 +207,13 @@ exports.updateMachine = async (req, res, next) => {
             case 'Trough':
                 await Trough.update(
                     {
-                        trough_id: machine_id,
-                        type,
+                        trough_id: trough_id,
+                        type: troughtype,
                         capacity,
                     },
                     {
                         where: {
-                            trough_id: machine_id,
+                            trough_id: trough_id,
                         },
                     }
                 );
