@@ -3,7 +3,6 @@ const Drier = require('../models/drier');
 const Roller = require('../models/roller');
 const Roll_Breaker = require('../models/roll_breaker');
 const aleaRNGFactory = require("number-generator/lib/aleaRNGFactory");
-const trough = require('../models/trough');
 const generator1 = aleaRNGFactory(10);
 
 
