@@ -4,7 +4,7 @@ const sequelize = require("../database/db");
 
 module.exports = sequelize.define("Trough", {
   trough_id: {
-    type: Sequelize.INTEGER,
+    type: Sequelize.STRING,
     primaryKey: true,
   },
   type: Sequelize.STRING,

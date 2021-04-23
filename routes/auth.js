@@ -12,14 +12,14 @@ router.put(
   "/signup",
   fileUpload.single('image'),
   [
-    body("user_id")
+    body("name")
       .trim()
       .notEmpty()
       .custom((value, { req }) => {
         //these are from express validator and this middleware check user id exist and throw error
-        return User.findOne({ where: { user_id: value } }).then((userDoc) => {
+        return User.findOne({ where: { name: value } }).then((userDoc) => {
           if (userDoc) {
-            return Promise.reject("User Id already exists!");
+            return Promise.reject("User's name already exists!");
           }
         });
       }),
@@ -28,9 +28,59 @@ router.put(
   authController.signup
 );
 
+//PUT auth/signupbeforeconfirm
+router.put(
+    //why use put? -- PUT method requests for the enclosed entity be stored under the supplied Request & refers to an already existing resource – an update operation will happen, otherwise create operation should happen
+    "/signupbeforeconfirm",
+    fileUpload.single('image'),
+    [
+        body("email")
+            .trim()
+            .notEmpty()
+            .custom((value, { req }) => {
+                //these are from express validator and this middleware check user id exist and throw error
+                return User.findOne({ where: { email: value } }).then((userDoc) => {
+                    if (userDoc) {
+                        return Promise.reject("Email already exists!");
+                    }
+                });
+            }),
+        body("password").trim().notEmpty(),
+    ],
+    authController.signupBeforeConfirm
+);
+
+//GET auth/signupmanager
+router.get(
+    //why use put? -- PUT method requests for the enclosed entity be stored under the supplied Request & refers to an already existing resource – an update operation will happen, otherwise create operation should happen
+    "/signupmanager",
+    // [
+    //     body("email")
+    //         .trim()
+    //         .notEmpty()
+    //         .custom((value, { req }) => {
+    //             //these are from express validator and this middleware check user id exist and throw error
+    //             return User.findOne({ where: { email: value } }).then((userDoc) => {
+    //                 if (userDoc) {
+    //                     return Promise.reject("Email already exists!");
+    //                 }
+    //             });
+    //         }),
+    //     body("password").trim().notEmpty(),
+    // ],
+    authController.signupManager
+);
+
 //POST auth/login
 router.post("/login", authController.login);
 
+//GET auth/forgetpassword
+router.get("/forgetpassword/:email", authController.forgotPassword);
+//POST auth/loginWeb
+router.post("/loginWeb", authController.loginWeb);
+
+//PATCH auth/resetPassword
+router.patch("/resetPassword/:email", authController.resetPassword);
 
 //GET auth/users
 router.get("/users",authController.getUsers);

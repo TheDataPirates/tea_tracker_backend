@@ -13,4 +13,8 @@ router.post("/dreport", isAuth, differenceReportController.createDreport);
 // POST /diff/dreport
 router.patch("/dreport", isAuth, differenceReportController.updateDreport);
 
+//Reporting
+//GET /diff/reports//dreports
+router.get("/reports/dreports", differenceReportController.getDreportsForReporting);
+
 module.exports = router;

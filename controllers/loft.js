@@ -327,7 +327,7 @@ exports.getLoftLoadingForReporting = async (req, res, next) => {
         let boxesArray = [];
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: new Date('2021-03-20'),method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
+            where: {date: new Date('2021-03-30'),method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
         });
         if (bulkID.length === 0) {
             console.log('empty bulks');
@@ -417,7 +417,7 @@ exports.getLoftUnloadingForReporting = async (req, res, next) => {
         const boxID = await Box.findAll({
             attributes: ['box_id', 'withered_pct', 'unloading_weight', 'BatchBatchNo', 'date'],
             // where: {date: new Date()}
-            where:{date:new Date('2021-03-20')}
+            where:{date:new Date('2021-03-30')}
         });
         // console.log(boxID);
         const bulkID = await Bulk.findAll({
@@ -506,6 +506,233 @@ exports.getLoftMixingForReporting = async (req, res, next) => {
             where: {
                 // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
                 date: new Date('2021-03-30'),
+                ProcessProcessName: {[Op.like]: 'mixing%'}
+            } // this should be update as previous 30 days
+        });
+        res.status(200).json({
+            mixing: tpID,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+exports.getLoftLoadingsForReportingWithDate = async (req, res, next) => {
+
+    const dates = req.params.date;
+    // console.log("date");
+    // console.log(dates);
+
+    try {
+
+        let boxWiseTotalNetWeight;
+        let boxWiseWitheringPct;
+        let date;
+        let boxesArray = [];
+        const bulkID = await Bulk.findAll({
+            attributes: ['bulk_id', 'date'],
+            where: {date: dates,method: {[Op.notLike]: 'AgentOriginal'}} 
+        });
+        if (bulkID.length === 0) {
+            console.log('empty bulks');
+        }
+        for (const bulk_id_ele of bulkID) {
+
+            boxWiseTotalNetWeight = await Lot.findAll({
+                attributes: ['grade_GL', 'BoxBoxId', [sequelize.fn('sum', sequelize.col('net_weight')), 'total_Net_weight'],],
+                where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id},
+                group: ['BoxBoxId']
+//date:{$between: [dateString, endDate]
+            });
+            date = bulk_id_ele.dataValues.date;
+            // console.log(boxWiseTotalNetWeight);
+            for (let lots_ele of boxWiseTotalNetWeight) {
+
+//                 boxWiseWitheringPct = await Box.findAll({
+//                     attributes: ['withered_pct'],
+//                     where: {box_id: lots_ele.dataValues.BoxBoxId}
+// //date:{$between: [dateString, endDate]
+//                 });
+//                 lots_ele.dataValues.withered_pct = boxWiseWitheringPct[0].dataValues.withered_pct;
+
+
+                // console.log(boxWiseWitheringPct);
+                if (boxesArray.length === 0) {
+                    // console.log(lots_ele.dataValues);
+                    boxesArray.push(lots_ele.dataValues);
+                    continue;
+                }
+                // console.log(boxesArray.length);
+                // console.log('before for');
+                let flag = 0; // used to identify existing box and push new boxes to array
+                for (let lot of boxesArray) {
+                    // console.log("inside for");
+                    if (lot.BoxBoxId === lots_ele.dataValues.BoxBoxId) {
+                        // console.log("inside if");
+                        // console.log(parseInt(lot.total_Net_weight));
+                        // console.log(parseInt(lots_ele.dataValues.total_Net_weight));
+                        let newWeight = parseInt(lot.total_Net_weight) + parseInt(lots_ele.dataValues.total_Net_weight);
+
+                        lot.total_Net_weight = newWeight.toString();
+                        lot.date = date;
+
+
+                        // console.log(lot);
+                        flag = 1;
+
+                        break;
+                    }
+                    lot.date = date;
+
+                }
+                if (flag === 0) {
+                    // console.log("outside for");
+                    lots_ele.dataValues.date = date;
+
+                    // console.log(lots_ele.dataValues);
+                    boxesArray.push(lots_ele.dataValues);
+                }
+            }
+            // console.log(boxesArray);
+
+            //
+            // gradeWiseLotTotalArray.push(lotWithDate);
+            // lotWithDate = {};
+
+        }
+
+        res.status(200).json({
+            loading: boxesArray,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+exports.getLoftUnloadingForReportingWithDate = async (req, res, next) => {
+
+    const dates = req.params.date;
+
+    try {
+
+        let boxWiseGradeLeaf;
+
+
+        const boxID = await Box.findAll({
+            attributes: ['box_id', 'withered_pct', 'unloading_weight', 'BatchBatchNo', 'date'],
+            // where: {date: new Date()}
+            where:{date:dates}
+        });
+        // console.log(boxID);
+        const bulkID = await Bulk.findAll({
+            attributes: ['bulk_id', 'date'],
+            where: {date: dates,method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
+        });
+        // console.log(bulkID);
+        for (const bulk_id_ele of bulkID) {
+            for (const box_id_ele of boxID) {
+                boxWiseGradeLeaf = await Lot.findAll({
+                    attributes: ['grade_GL'],
+                    where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id, BoxBoxId: box_id_ele.dataValues.box_id},
+//date:{$between: [dateString, endDate]
+                });
+                // console.log(boxWiseGradeLeaf);
+                if (boxWiseGradeLeaf.length !== 0) {
+                    box_id_ele.dataValues.grade_GL = boxWiseGradeLeaf[0].dataValues.grade_GL;
+                }
+            }
+
+
+        }
+
+        res.status(200).json({
+            unloading: boxID,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+};
+
+function convert(str) {
+    var date = new Date(str),
+      mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+      day = ("0" + date.getDate()).slice(-2);
+    return [date.getFullYear(), mnth, day].join("-");
+  }
+
+exports.getLoftStartingForReportingWithDate = async (req, res, next) => {
+
+    const dates = req.params.date;
+    // const dateStr = dates.toString;
+    // console.log("date");
+    // console.log(convert(dates));
+
+    
+    try {
+        const tpID = await Trough_process.findAll({
+            attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
+            where: {
+                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+                date: new Date(convert(dates)),
+                ProcessProcessName: 'starting',
+
+            } // this should be update as previous 30 days
+        });
+        res.status(200).json({
+            starting: tpID,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+
+};
+
+exports.getLoftFinishingForReportingWithDate = async (req, res, next) => {
+
+    const dates = req.params.date;
+
+    try {
+        const tpID = await Trough_process.findAll({
+            attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
+            where: {
+                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+                date: new Date(convert(dates)),
+                ProcessProcessName: 'finishing'
+            } // this should be update as previous 30 days
+        });
+        res.status(200).json({
+            finishing: tpID,
+        });
+    } catch (error) {
+        if (!error.statusCode) {
+            error.statusCode = 500;
+        }
+        next(error);
+    }
+}
+
+exports.getLoftMixingForReportingWithDate = async (req, res, next) => {
+
+    const dates = req.params.date;
+
+    try {
+        const tpID = await Trough_process.findAll({
+            attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
+            where: {
+                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+                date: new Date(convert(dates)),
                 ProcessProcessName: {[Op.like]: 'mixing%'}
             } // this should be update as previous 30 days
         });
