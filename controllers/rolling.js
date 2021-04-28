@@ -575,6 +575,13 @@ exports.getOutturnForReporting = async (req, res, next) => {
     }
 }
 
+function convert(str) {
+    let date = new Date(str),
+        mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+        day = ("0" + date.getDate()).slice(-2);
+    return [date.getFullYear(), mnth, day].join("-");
+}
+
 exports.getRollingForReportingWithDate = async (req, res, next) => {
 
     const dates = req.params.date;
@@ -584,7 +591,7 @@ exports.getRollingForReportingWithDate = async (req, res, next) => {
             attributes: ['BatchBatchNo', 'RollerRollerId', 'batch_date', 'rolling_turn', 'rolling_in_kg', 'rolling_out_kg'],
             where: {
                 // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
-                batch_date: dates
+                batch_date: new Date(convert(dates))
             },
         });
         // console.log(allRolling);
@@ -630,7 +637,7 @@ exports.getRollBreakingForReportingWithDate = async (req, res, next) => {
             attributes: ['BatchBatchNo', 'RollBreakerRollBreakerId', 'batch_date', 'rolling_turn', 'rolling_out_kg', 'dhool_out_weight', 'dhool_pct'],
             where: {
                 // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
-                batch_date: dates
+                batch_date: new Date(convert(dates))
             },
         });
         // console.log(allRolling);
@@ -677,7 +684,7 @@ exports.getFermentingForReportingWithDate = async (req, res, next) => {
             attributes: ['BatchBatchNo', 'batch_date', 'rolling_turn', 'dhool_out_weight', 'fd_out_kg', 'fd_pct'],
             where: {
                 // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
-                batch_date: dates
+                batch_date: new Date(convert(dates))
             },
         });
         // console.log(allRolling);
@@ -724,7 +731,7 @@ exports.getDryingForReportingWithDate = async (req, res, next) => {
             attributes: ['BatchBatchNo', 'batch_date', 'rolling_turn', 'fd_out_kg', 'drier_out_kg'],
             where: {
                 // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
-                batch_date: dates
+                batch_date: new Date(convert(dates))
             },
         });
         // console.log(allRolling);
@@ -777,7 +784,7 @@ exports.getOutturnForReportingWithDate = async (req, res, next) => {
             allBulks = await Bulk.findAll({
                 attributes: ['bulk_id', 'date'],
                 where: {
-                    date: dates, 
+                    date: new Date(convert(dates)),
                     method: { [Op.notLike]: 'AgentOriginal' },
                 },
             });
@@ -791,13 +798,13 @@ exports.getOutturnForReportingWithDate = async (req, res, next) => {
                 for (const box_id of lots) {
                     batches = await box.findAll({
                         attributes: ['BatchBatchNo', 'date'],
-                        where: { box_id: box_id.dataValues.BoxBoxId, date: dates },
+                        where: { box_id: box_id.dataValues.BoxBoxId, date: new Date(convert(dates)) },
                     });
 
                     for (const batch_id of batches) {
                         outturns = await batch.findAll({
                             attributes: ['batch_no', 'batch_date', 'outturn'],
-                            where: { batch_date: dates, batch_no: batch_id.dataValues.BatchBatchNo },
+                            where: { batch_date: new Date(convert(dates)), batch_no: batch_id.dataValues.BatchBatchNo },
                         });
                         // outturns.dataValues.leaf_grade = box_id.dataValues.grade_GL;
                         // console.log(outturns);

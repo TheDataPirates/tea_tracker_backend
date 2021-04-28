@@ -9,7 +9,10 @@ const {Op} = require("sequelize");
 exports.getStartings = async (req, res, next) => {
     try {
         const allStartings = await Trough_process.findAll({
-            where: {ProcessProcessName: "starting"},
+            where: {
+                ProcessProcessName: "starting",
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+            },
         });
 
         res.status(200).json({
@@ -30,11 +33,12 @@ exports.createStarting = async (req, res, next) => {
     const temp = req.body.temperature;
     const humid = req.body.humidity;
     const proc_name = req.body.process_name;
+    console.log(date);
     try {
         await Trough_process.create({
             tp_id: id,
             TroughTroughId: trough_no,
-            date: date,
+            date: new Date(date),
             temperature: temp,
             humidity: humid,
             ProcessProcessName: proc_name,
@@ -60,6 +64,7 @@ exports.getMixings = async (req, res, next) => {
                     {ProcessProcessName: "mixing2"},
                     {ProcessProcessName: "mixing3"},
                 ],
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
             },
         });
         res.status(200).json({
@@ -103,7 +108,10 @@ exports.createMixing = async (req, res, next) => {
 exports.getFinishings = async (req, res, next) => {
     try {
         const allFinishings = await Trough_process.findAll({
-            where: {ProcessProcessName: "finishing"},
+            where: {
+                ProcessProcessName: "finishing",
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+            },
         });
         res.status(200).json({
             finishings: allFinishings,
@@ -146,9 +154,24 @@ exports.createFinishing = async (req, res, next) => {
 
 exports.getLoadings = async (req, res, next) => {
     try {
-        const allLoadings = await Lot.findAll();
+        let allLoadingsArray = [];
+        const bulksForToday = await Bulk.findAll({
+            attributes: ['bulk_id'],
+            where: {method: {[Op.notLike]: 'AgentOriginal'}, date: new Date(),},
+        });
+
+        for (let bulkid of bulksForToday) {
+            let allLoadings = await Lot.findAll({
+                attributes: ['lot_id', 'grade_GL', 'gross_weight', 'no_of_container', 'water', 'course_leaf', 'other', 'net_weight', 'deduction', 'container_type', 'BulkBulkId', 'BoxBoxId'],
+                where: {BulkBulkId: bulkid.dataValues.bulk_id}
+            });
+            allLoadingsArray.push(allLoadings[0]);
+
+        }
+        // console.log(allLoadingsArray);
+
         res.status(200).json({
-            loadings: allLoadings,
+            loadings: allLoadingsArray,
         });
     } catch (error) {
         if (!error.statusCode) {
@@ -171,20 +194,24 @@ exports.createLoading = async (req, res, next) => {
 
     const box_id = "T" + trough_no + "B" + box_no;//T+trough_no+B+box_no
     try {
-        const loading = await Box.findAll({where:{box_id
-        ,date}});
+        const loading = await Box.findAll({
+            where: {
+                box_id
+                , date
+            }
+        });
 
-        if (loading.length===0){
+        if (loading.length === 0) {
             await Box.create({
                 box_id: box_id,
                 date: date,
-                loading_time:time,
-                loading_weight:net_weight
+                loading_time: time,
+                loading_weight: net_weight
             });
-        }else{
+        } else {
             await Box.update({
                 loading_weight: sequelize.literal(`loading_weight +${net_weight}`),
-                loading_time:time,
+                loading_time: time,
             }, {
                 where: {
                     box_id: box_id,
@@ -214,9 +241,13 @@ exports.createLoading = async (req, res, next) => {
 
 exports.getUnloadings = async (req, res, next) => {
     try {
-        const allUnloadings = await Box.findAll({where:{withered_pct:{
+        const allUnloadings = await Box.findAll({
+            where: {
+                withered_pct: {
                     [Op.ne]: null
-                }}});
+                }
+            }
+        });
         res.status(200).json({
             unloadings: allUnloadings,
         });
@@ -242,11 +273,11 @@ exports.createUnloading = async (req, res, next) => {
     const box_id = "T" + trough_no + "B" + box_no;//T+trough_no+B+box_no
     try {
         await Box.update({
-            
+
             withered_pct: withering_pct,
             unloading_weight: lot_weight,
             date: date,
-            unloading_time:time,
+            unloading_time: time,
             TroughTroughId: trough_no,
             BatchBatchNo: batch_no,
         }, {
@@ -327,7 +358,7 @@ exports.getLoftLoadingForReporting = async (req, res, next) => {
         let boxesArray = [];
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: new Date('2021-03-30'),method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
+            where: {date: new Date('2021-03-30'), method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
         });
         if (bulkID.length === 0) {
             console.log('empty bulks');
@@ -417,12 +448,12 @@ exports.getLoftUnloadingForReporting = async (req, res, next) => {
         const boxID = await Box.findAll({
             attributes: ['box_id', 'withered_pct', 'unloading_weight', 'BatchBatchNo', 'date'],
             // where: {date: new Date()}
-            where:{date:new Date('2021-03-30')}
+            where: {date: new Date('2021-03-30')}
         });
         // console.log(boxID);
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: new Date('2021-03-29'),method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
+            where: {date: new Date('2021-03-29'), method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
         });
         // console.log(bulkID);
         for (const bulk_id_ele of bulkID) {
@@ -458,8 +489,8 @@ exports.getLoftStartingForReporting = async (req, res, next) => {
         const tpID = await Trough_process.findAll({
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
-                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
-                date: new Date('2021-03-30'),
+                date: {[Op.between]: [new Date('2021-03-30').setHours(0, 0, 0, 0), new Date(new Date('2021-03-30') + 24 * 60 * 60 * 1000)]},
+                // date: new Date('2021-03-30'),
                 ProcessProcessName: 'starting',
 
             } // this should be update as previous 30 days
@@ -481,8 +512,8 @@ exports.getLoftFinishingForReporting = async (req, res, next) => {
         const tpID = await Trough_process.findAll({
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
-                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
-                date: new Date('2021-03-30'),
+                date: {[Op.between]: [new Date('2021-03-30').setHours(0, 0, 0, 0), new Date(new Date('2021-03-30') + 24 * 60 * 60 * 1000)]},
+                // date: new Date('2021-03-30'),
                 ProcessProcessName: 'finishing'
             } // this should be update as previous 30 days
         });
@@ -504,8 +535,8 @@ exports.getLoftMixingForReporting = async (req, res, next) => {
         const tpID = await Trough_process.findAll({
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
-                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
-                date: new Date('2021-03-30'),
+                date: {[Op.between]: [new Date('2021-03-30').setHours(0, 0, 0, 0), new Date(new Date('2021-03-30') + 24 * 60 * 60 * 1000)]},
+                // date: new Date('2021-03-30'),
                 ProcessProcessName: {[Op.like]: 'mixing%'}
             } // this should be update as previous 30 days
         });
@@ -534,7 +565,7 @@ exports.getLoftLoadingsForReportingWithDate = async (req, res, next) => {
         let boxesArray = [];
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: dates,method: {[Op.notLike]: 'AgentOriginal'}} 
+            where: {date: new Date(convert(dates)), method: {[Op.notLike]: 'AgentOriginal'}}
         });
         if (bulkID.length === 0) {
             console.log('empty bulks');
@@ -627,12 +658,12 @@ exports.getLoftUnloadingForReportingWithDate = async (req, res, next) => {
         const boxID = await Box.findAll({
             attributes: ['box_id', 'withered_pct', 'unloading_weight', 'BatchBatchNo', 'date'],
             // where: {date: new Date()}
-            where:{date:dates}
+            where: {date: new Date(convert(dates))}
         });
         // console.log(boxID);
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: dates,method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
+            where: {date: new Date(convert(dates)), method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
         });
         // console.log(bulkID);
         for (const bulk_id_ele of bulkID) {
@@ -663,26 +694,27 @@ exports.getLoftUnloadingForReportingWithDate = async (req, res, next) => {
 };
 
 function convert(str) {
-    var date = new Date(str),
-      mnth = ("0" + (date.getMonth() + 1)).slice(-2),
-      day = ("0" + date.getDate()).slice(-2);
+    let date = new Date(str),
+        mnth = ("0" + (date.getMonth() + 1)).slice(-2),
+        day = ("0" + date.getDate()).slice(-2);
     return [date.getFullYear(), mnth, day].join("-");
-  }
+}
 
 exports.getLoftStartingForReportingWithDate = async (req, res, next) => {
 
     const dates = req.params.date;
     // const dateStr = dates.toString;
+    // console.log(dates);
     // console.log("date");
     // console.log(convert(dates));
 
-    
+
     try {
         const tpID = await Trough_process.findAll({
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
-                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
-                date: new Date(convert(dates)),
+                date: {[Op.between]: [new Date(convert(dates)).setHours(0, 0, 0, 0), new Date(new Date(convert(dates)) + 24 * 60 * 60 * 1000)]},
+                // date: new Date(convert(dates)),
                 ProcessProcessName: 'starting',
 
             } // this should be update as previous 30 days
@@ -707,8 +739,8 @@ exports.getLoftFinishingForReportingWithDate = async (req, res, next) => {
         const tpID = await Trough_process.findAll({
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
-                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
-                date: new Date(convert(dates)),
+                date: {[Op.between]: [new Date(convert(dates)).setHours(0, 0, 0, 0), new Date(new Date(convert(dates)) + 24 * 60 * 60 * 1000)]},
+                // date: new Date(convert(dates)),
                 ProcessProcessName: 'finishing'
             } // this should be update as previous 30 days
         });
@@ -731,8 +763,8 @@ exports.getLoftMixingForReportingWithDate = async (req, res, next) => {
         const tpID = await Trough_process.findAll({
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
-                // date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
-                date: new Date(convert(dates)),
+                date: {[Op.between]: [new Date(convert(dates)).setHours(0, 0, 0, 0), new Date(new Date(convert(dates)) + 24 * 60 * 60 * 1000)]},
+                // date: new Date(convert(dates)),
                 ProcessProcessName: {[Op.like]: 'mixing%'}
             } // this should be update as previous 30 days
         });
