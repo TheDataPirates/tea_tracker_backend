@@ -165,10 +165,13 @@ exports.getLoadings = async (req, res, next) => {
                 attributes: ['lot_id', 'grade_GL', 'gross_weight', 'no_of_container', 'water', 'course_leaf', 'other', 'net_weight', 'deduction', 'container_type', 'BulkBulkId', 'BoxBoxId'],
                 where: {BulkBulkId: bulkid.dataValues.bulk_id}
             });
-            allLoadingsArray.push(allLoadings[0]);
+            for (let lot_ele of allLoadings){
+                allLoadingsArray.push(lot_ele.dataValues);
+
+            }
 
         }
-        // console.log(allLoadingsArray);
+        console.log(allLoadingsArray);
 
         res.status(200).json({
             loadings: allLoadingsArray,
