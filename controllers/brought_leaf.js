@@ -58,7 +58,7 @@ exports.createLots = async (req, res, next) => {
       net_weight: netWeight,
       deduction: deductions,
       BulkBulkId: bulk_id,
-      container_type: contType
+      container_type: contType,
     });
     // await Lot_Container({
     //   LotLotId:lotId,
@@ -122,7 +122,8 @@ exports.createBulks = async (req, res, next) => {
 };
 
 exports.createLotFromLocalDb = async (req, res, next) => {
-  const { lotId, no_of_containers, container_type, grade_GL, g_weight, water, course_leaf, other, bulkId, method, date, suppId, deduction, net_weight, user_Id, container1, container2, container3, container4, container5 } = req.body;
+
+  const { lotId, no_of_containers, container_type, grade_GL, g_weight, water, course_leaf, other, bulkId, method, date, suppId, deduction, net_weight, user_Id, is_deleted,container1, container2, container3, container4, container5 } = req.body;
 
 
   try {
@@ -135,6 +136,8 @@ exports.createLotFromLocalDb = async (req, res, next) => {
         next(err);
       }
     );
+    console.log(is_deleted);
+
     if (!bulkExist) {
       await Bulk.create({
         bulk_id: bulkId,
@@ -155,8 +158,8 @@ exports.createLotFromLocalDb = async (req, res, next) => {
       deduction,
       net_weight,
       container_type,
-      BulkBulkId: bulkId
-
+      BulkBulkId: bulkId,
+      is_deleted
     });
     // console.log(box_no);
     console.log("Lot saved from local db");

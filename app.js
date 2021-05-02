@@ -11,11 +11,8 @@ const rollingRoutes = require("./routes/rolling");
 const supplyRoutes = require("./routes/supplier");
 const machineRoutes = require("./routes/machine");
 const differenceReportRoutes = require("./routes/difference_report");
-
-
 const sequelize = require("./database/db");
 //define db models
-
 const User = require("./models/user");
 const Bulk = require("./models/bulk");
 const Container = require("./models/container");

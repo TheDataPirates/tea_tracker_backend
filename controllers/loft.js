@@ -171,7 +171,7 @@ exports.getLoadings = async (req, res, next) => {
             }
 
         }
-        console.log(allLoadingsArray);
+        // console.log(allLoadingsArray);
 
         res.status(200).json({
             loadings: allLoadingsArray,
