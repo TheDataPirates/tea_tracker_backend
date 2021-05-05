@@ -73,7 +73,7 @@ exports.createMachine = async (req, res, next) => {
                 break;
             case'Trough':
                 await Trough.create({
-             trough_id: `TR${generator1.uInt32()}`,
+            //  trough_id: `TR${generator1.uInt32()}`,
               type: troughtype,
               capacity,
               image: req.file.path
