@@ -9,9 +9,10 @@ const {Op} = require("sequelize");
 exports.getStartings = async (req, res, next) => {
     try {
         const allStartings = await Trough_process.findAll({
+            attributes: ['tp_id', 'TroughTroughId', 'date', 'temperature', 'humidity'],
             where: {
                 ProcessProcessName: "starting",
-                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000)]},
             },
         });
 
@@ -58,13 +59,14 @@ exports.createStarting = async (req, res, next) => {
 exports.getMixings = async (req, res, next) => {
     try {
         const allMixings = await Trough_process.findAll({
+            attributes: ['tp_id', 'TroughTroughId', 'date', 'ProcessProcessName', 'temperature', 'humidity'],
             where: {
                 [Op.or]: [
                     {ProcessProcessName: "mixing1"},
                     {ProcessProcessName: "mixing2"},
                     {ProcessProcessName: "mixing3"},
                 ],
-                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000)]},
             },
         });
         res.status(200).json({
@@ -108,9 +110,10 @@ exports.createMixing = async (req, res, next) => {
 exports.getFinishings = async (req, res, next) => {
     try {
         const allFinishings = await Trough_process.findAll({
+            attributes: ['tp_id', 'TroughTroughId', 'date', 'temperature', 'humidity'],
             where: {
                 ProcessProcessName: "finishing",
-                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000)]},
             },
         });
         res.status(200).json({
