@@ -3,6 +3,7 @@ const Op = Sequelize.Op;
 const Supplier = require('../models/supplier');
 const Bulk = require('../models/bulk');
 const Lot = require('../models/lot');
+const User = require("../models/user");
 const aleaRNGFactory = require("number-generator/lib/aleaRNGFactory");
 const generator1 = aleaRNGFactory(2);
 
@@ -228,6 +229,53 @@ exports.getSupplierByName = async (req, res, next) => {
         next(err);
     }
 };
+exports.getAgentSupplierInfoForReporting = async (req, res, next) => {
+
+    let allUsers;
+    let bulkID;
+    let allSupplier;
+    let bulkWiseTotalLots;
+    try {
+        bulkID = await Bulk.findAll({
+            attributes: ['bulk_id', 'date', 'UserUserId', 'SupplierSupplierId'],
+            where: {
+                method: {[Op.Like]: 'AgentOriginal'},
+                date: {[Op.between]: [new Date(new Date() - 7 * 24 * 60 * 60 * 1000), new Date()]}
+            }
+        });
+        for (const bulk_id_ele of bulkID) {
+            allUsers = await User.findAll({where: {user_id: bulk_id_ele.dataValues.UserUserId}});
+            // bulk_id_ele.dataValues.userName = allUsers[0].dataValues.name;
+            allSupplier = await Supplier.findAll({where: {supplier_id: bulk_id_ele.dataValues.SupplierSupplierId}});
+            // bulk_id_ele.dataValues.userName = allUsers[0].dataValues.name;
+
+            bulkWiseTotalLots = await Lot.findAll({
+                attributes: ['grade_GL', 'gross_weight', 'total_Gross_weight', 'no_of_container', 'water', 'course_leaf', 'other', 'net_weight', 'deduction', 'container_type', 'is_deleted'],
+                where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id,},
+//date:{$between: [dateString, endDate]
+            });
+            for (const lot_ele of bulkWiseTotalLots) {
+                lot_ele.dataValues.userId = bulk_id_ele.dataValues.UserUserId
+                lot_ele.dataValues.userName = allUsers[0].dataValues.name;
+                lot_ele.dataValues.suppId=  bulk_id_ele.dataValues.SupplierSupplierId
+                lot_ele.dataValues.suppName = allSupplier[0].dataValues.name;
+
+            }
+
+        }
+
+
+        res.status(200).json({
+            suppliers: bulkWiseTotalLots,
+        });
+    } catch (err) {
+        if (!err.statusCode) {
+            err.statusCode = 500;
+        }
+        next(err);
+    }
+
+}
 
 exports.updateSupplier = async (req, res, next) => {
     const {supplier_id, name, status, telephone_no, address, date_joined, image} = req.body;

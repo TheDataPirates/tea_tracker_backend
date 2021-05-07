@@ -27,6 +27,10 @@ router.patch("/suppliers",fileUpload.single('image'),isAuth,supplyingController.
 //DELETE supp/user/:suppId
 router.delete("/supplier/:suppId",isAuth,supplyingController.deleteSupplier);
 
+//Reporting
+//GET supp/suppliers
+router.get('/agentsupplies',supplyingController.getAgentSupplierInfoForReporting);
+
 //Dashboard
 //GET supp/dashboard/suppliersuntiltoday
 router.get("/dashboard/suppliersuntiltoday", supplyingController.getSuppliersuntiltoday);
