@@ -29,7 +29,7 @@ router.delete("/supplier/:suppId",isAuth,supplyingController.deleteSupplier);
 
 //Reporting
 //GET supp/suppliers
-router.get('/agentsupplies',supplyingController.getAgentSupplierInfoForReporting);
+router.get('/reports/agentsupplies',supplyingController.getAgentSupplierInfoForReporting);
 
 //Dashboard
 //GET supp/dashboard/suppliersuntiltoday

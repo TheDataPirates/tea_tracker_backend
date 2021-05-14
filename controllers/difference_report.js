@@ -2,11 +2,13 @@ const Bulk = require("../models/bulk");
 const Lot = require("../models/lot");
 const Supplier = require("../models/supplier");
 const DifferenceReport = require("../models/difference_report");
-const { SSL_OP_SSLEAY_080_CLIENT_DH_BUG } = require("constants");
+const {SSL_OP_SSLEAY_080_CLIENT_DH_BUG} = require("constants");
 
 exports.getDreports = async (req, res, next) => {
     try {
-        const allDreports = await DifferenceReport.findAll();
+        const allDreports = await DifferenceReport.findAll({
+            where: {date: new Date()}
+        });
         res.status(200).json({
             dreports: allDreports,
         });
@@ -282,7 +284,7 @@ exports.getDreportsForReporting = async (req, res, next) => {
             dreports: dReportArray,
         });
     } catch
-    (err) {
+        (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
         }

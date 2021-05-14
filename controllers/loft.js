@@ -251,7 +251,8 @@ exports.getUnloadings = async (req, res, next) => {
             where: {
                 withered_pct: {
                     [Op.ne]: null
-                }
+                },
+                date: new Date(),
             }
         });
         res.status(200).json({

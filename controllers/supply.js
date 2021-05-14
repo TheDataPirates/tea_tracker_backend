@@ -239,7 +239,7 @@ exports.getAgentSupplierInfoForReporting = async (req, res, next) => {
         bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date', 'UserUserId', 'SupplierSupplierId'],
             where: {
-                method: {[Op.Like]: 'AgentOriginal'},
+                method: {[Op.like]: 'AgentOriginal'},
                 date: {[Op.between]: [new Date(new Date() - 7 * 24 * 60 * 60 * 1000), new Date()]}
             }
         });
@@ -250,14 +250,14 @@ exports.getAgentSupplierInfoForReporting = async (req, res, next) => {
             // bulk_id_ele.dataValues.userName = allUsers[0].dataValues.name;
 
             bulkWiseTotalLots = await Lot.findAll({
-                attributes: ['grade_GL', 'gross_weight', 'total_Gross_weight', 'no_of_container', 'water', 'course_leaf', 'other', 'net_weight', 'deduction', 'container_type', 'is_deleted'],
+                attributes: ['grade_GL', 'gross_weight', 'no_of_container', 'water', 'course_leaf', 'other', 'net_weight', 'deduction', 'container_type', 'is_deleted'],
                 where: {BulkBulkId: bulk_id_ele.dataValues.bulk_id,},
 //date:{$between: [dateString, endDate]
             });
             for (const lot_ele of bulkWiseTotalLots) {
-                lot_ele.dataValues.userId = bulk_id_ele.dataValues.UserUserId
+                lot_ele.dataValues.userId = bulk_id_ele.dataValues.UserUserId;
                 lot_ele.dataValues.userName = allUsers[0].dataValues.name;
-                lot_ele.dataValues.suppId=  bulk_id_ele.dataValues.SupplierSupplierId
+                lot_ele.dataValues.suppId=  bulk_id_ele.dataValues.SupplierSupplierId;
                 lot_ele.dataValues.suppName = allSupplier[0].dataValues.name;
 
             }

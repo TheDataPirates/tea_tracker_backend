@@ -4,6 +4,13 @@ const broughtLeafController = require("../controllers/brought_leaf");
 const isAuth = require("../middleware/is-auth");
 const router = express.Router();
 
+
+//GET /bleaf/lots/remeasuring
+router.get("/lots/remeasuring", broughtLeafController.getRemeasureLots);
+
+//GET /bleaf/lots
+router.get("/lots", isAuth, broughtLeafController.getAllLots);
+
 //GET /bleaf/lots
 router.get("/lots/:Bulkid", isAuth, broughtLeafController.getLots);
 
@@ -21,6 +28,8 @@ router.post("/supp", isAuth, broughtLeafController.createBulks);
 
 //POST /bleaf/sync
 router.post('/sync',broughtLeafController.createLotFromLocalDb);
+
+//GET /bleaf/lots/remeasuring
 
 //For Dashboard
 
