@@ -234,7 +234,7 @@ exports.getDreportsForReporting = async (req, res, next) => {
             allDreports = await DifferenceReport.findAll({
                 attributes: ['report_id', 'original_weight', 'remeasuring_weight', 'weight_difference', 'supplier_id', 'date', 'BulkBulkId'],
                 where: {
-                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000), // This date should be today
+                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000), // This date should be today
                 }
             });
             // console.log(allDreports);
@@ -261,7 +261,7 @@ exports.getDreportsForReporting = async (req, res, next) => {
                             where: {
                                 SupplierSupplierId: user_id_ele.dataValues.SupplierSupplierId,
                                 method: 'AgentOriginal',
-                                date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
                             },
                         });
                     // console.log(agentID);

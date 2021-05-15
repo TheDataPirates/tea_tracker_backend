@@ -159,24 +159,73 @@ exports.createBulks = async (req, res, next) => {
     const supid = req.body.supplier_id;
     const date = req.body.date;
     const method = req.body.method;
+    try {
+        if(method ==="Remeasuring"){
+            const bulkExist = await Bulk.findOne({where: {date: new Date(),method: {[Op.like]: 'AgentOriginal'},SupplierSupplierId:supid}}).catch(
+                (err) => {
+                    //check network failures
+                    if (!err.statusCode) {
+                        err.statusCode = 500;
+                    }
+                    next(err);
+                }
+            );
+            if (!bulkExist) {
+                const error = new Error("Agent could not found !");
+                error.message = "Agent could not found !";
+                next(error);
+            }else {
+                await Bulk.create({
+                    bulk_id: bulkid,
+                    UserUserId: userid,
+                    SupplierSupplierId: supid,
+                    date: date,
+                    method: method,
+                });
+                console.log("bulk saved");
 
-    await Bulk.create({
-        bulk_id: bulkid,
-        UserUserId: userid,
-        SupplierSupplierId: supid,
-        date: date,
-        method: method,
-    }).catch((err) => {
+                res.status(200).json({
+                    lots: "saved",
+                });
+            }
+
+        }else {
+            await Bulk.create({
+                bulk_id: bulkid,
+                UserUserId: userid,
+                SupplierSupplierId: supid,
+                date: date,
+                method: method,
+            });
+            console.log("bulk saved");
+
+            res.status(200).json({
+                lots: "saved",
+            });
+        }
+
+    } catch (err) {
         if (!err.statusCode) {
             err.statusCode = 500;
         }
         next(err);
-    });
-    res.status(200).json({
-        lots: "saved",
-    });
+    }
+    // await Bulk.create({
+    //     bulk_id: bulkid,
+    //     UserUserId: userid,
+    //     SupplierSupplierId: supid,
+    //     date: date,
+    //     method: method,
+    // }).catch((err) => {
+    //     if (!err.statusCode) {
+    //         err.statusCode = 500;
+    //     }
+    //     next(err);
+    // });
+    // res.status(200).json({
+    //     lots: "saved",
+    // });
 
-    console.log("bulk saved");
 };
 
 exports.createLotFromLocalDb = async (req, res, next) => {
