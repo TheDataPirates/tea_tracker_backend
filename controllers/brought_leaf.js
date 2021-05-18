@@ -292,7 +292,7 @@ exports.getSupplierLotsFirstWeek = async (req, res, next) => {
             attributes: ['SupplierSupplierId'],
             where: {
                 method: {[Op.notLike]: 'AgentOriginal'},
-                date: {[Op.between]: [new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000), new Date('2021-03-30')]},
+                date: {[Op.between]: [new Date(new Date() - 7 * 24 * 60 * 60 * 1000), new Date()]},
             }, // Should retrieve bulks for last seven days
             group: ['SupplierSupplierId']
         });
@@ -302,7 +302,7 @@ exports.getSupplierLotsFirstWeek = async (req, res, next) => {
                 attributes: ['bulk_id', 'SupplierSupplierId'],
                 where: {
                     SupplierSupplierId: sup_id.dataValues.SupplierSupplierId,
-                    date: {[Op.between]: [new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000), new Date('2021-03-30')]}
+                    date: {[Op.between]: [new Date(new Date() - 7 * 24 * 60 * 60 * 1000), new Date()]}
                 },
             });
             // console.log(bulksForLastWeek);
@@ -346,7 +346,7 @@ exports.getSupplierLotsSecondWeek = async (req, res, next) => {
             attributes: ['SupplierSupplierId'],
             where: {
                 method: {[Op.notLike]: 'AgentOriginal'},
-                date: {[Op.between]: [new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date(new Date() - 14 * 24 * 60 * 60 * 1000), new Date(new Date() - 7 * 24 * 60 * 60 * 1000)]},
             }, // Should retrieve bulks from last seven days to last fourteen days
             group: ['SupplierSupplierId']
         });
@@ -356,7 +356,7 @@ exports.getSupplierLotsSecondWeek = async (req, res, next) => {
                 attributes: ['bulk_id', 'SupplierSupplierId'],
                 where: {
                     SupplierSupplierId: sup_id.dataValues.SupplierSupplierId,
-                    date: {[Op.between]: [new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 7 * 24 * 60 * 60 * 1000)]}
+                    date: {[Op.between]: [new Date(new Date() - 14 * 24 * 60 * 60 * 1000), new Date(new Date() - 7 * 24 * 60 * 60 * 1000)]}
                 },
             });
             // console.log(bulksForLastWeek);
@@ -400,7 +400,7 @@ exports.getSupplierLotsThirdWeek = async (req, res, next) => {
             attributes: ['SupplierSupplierId'],
             where: {
                 method: {[Op.notLike]: 'AgentOriginal'},
-                date: {[Op.between]: [new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date(new Date() - 21 * 24 * 60 * 60 * 1000), new Date(new Date() - 14 * 24 * 60 * 60 * 1000)]},
             }, // Should retrieve bulks from fourteen days days to last twentyone days
             group: ['SupplierSupplierId']
         });
@@ -410,7 +410,7 @@ exports.getSupplierLotsThirdWeek = async (req, res, next) => {
                 attributes: ['bulk_id', 'SupplierSupplierId'],
                 where: {
                     SupplierSupplierId: sup_id.dataValues.SupplierSupplierId,
-                    date: {[Op.between]: [new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 14 * 24 * 60 * 60 * 1000)]}
+                    date: {[Op.between]: [new Date(new Date() - 21 * 24 * 60 * 60 * 1000), new Date(new Date() - 14 * 24 * 60 * 60 * 1000)]}
                 },
             });
             // console.log(bulksForLastWeek);
@@ -454,7 +454,7 @@ exports.getSupplierLotsFourthWeek = async (req, res, next) => {
             attributes: ['SupplierSupplierId'],
             where: {
                 method: {[Op.notLike]: 'AgentOriginal'},
-                date: {[Op.between]: [new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date(new Date() - 30 * 24 * 60 * 60 * 1000), new Date(new Date() - 21 * 24 * 60 * 60 * 1000)]},
             }, // Should retrieve bulks from last twentyone days to last thirty days
             group: ['SupplierSupplierId']
         });
@@ -464,7 +464,7 @@ exports.getSupplierLotsFourthWeek = async (req, res, next) => {
                 attributes: ['bulk_id', 'SupplierSupplierId'],
                 where: {
                     SupplierSupplierId: sup_id.dataValues.SupplierSupplierId,
-                    date: {[Op.between]: [new Date(new Date('2021-03-30') - 30 * 24 * 60 * 60 * 1000), new Date(new Date('2021-03-30') - 21 * 24 * 60 * 60 * 1000)]}
+                    date: {[Op.between]: [new Date(new Date() - 30 * 24 * 60 * 60 * 1000), new Date(new Date() - 21 * 24 * 60 * 60 * 1000)]}
                 },
             });
             // console.log(bulksForLastWeek);
@@ -505,7 +505,7 @@ exports.getTodayPurchasedTea = async (req, res, next) => {
     try {
         const todayBulks = await Bulk.findAll({
             attributes: ['bulk_id'],
-            where: {method: {[Op.notLike]: 'AgentOriginal'}, date: new Date('2021-03-30')}, // This should be today's date
+            where: {method: {[Op.notLike]: 'AgentOriginal'}, date: new Date('2021-05-10')}, // This should be today's date
         });
 
         for (let bulk_id of todayBulks) {

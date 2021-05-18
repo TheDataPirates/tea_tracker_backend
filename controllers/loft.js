@@ -365,7 +365,7 @@ exports.getLoftLoadingForReporting = async (req, res, next) => {
         let boxesArray = [];
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: new Date('2021-03-30'), method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
+            where: {date: new Date(), method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
         });
         if (bulkID.length === 0) {
             console.log('empty bulks');
@@ -455,12 +455,12 @@ exports.getLoftUnloadingForReporting = async (req, res, next) => {
         const boxID = await Box.findAll({
             attributes: ['box_id', 'withered_pct', 'unloading_weight', 'BatchBatchNo', 'date'],
             // where: {date: new Date()}
-            where: {date: new Date('2021-03-30')}
+            where: {date: new Date()}
         });
         // console.log(boxID);
         const bulkID = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
-            where: {date: new Date('2021-03-29'), method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
+            where: {date: new Date() - 24 * 60 * 60 * 1000, method: {[Op.notLike]: 'AgentOriginal'}} // date should be yesterday not today
         });
         // console.log(bulkID);
         for (const bulk_id_ele of bulkID) {
@@ -496,7 +496,7 @@ exports.getLoftStartingForReporting = async (req, res, next) => {
         const tpID = await Trough_process.findAll({
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
-                date: {[Op.between]: [new Date('2021-03-30').setHours(0, 0, 0, 0), new Date(new Date('2021-03-30') + 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
                 // date: new Date('2021-03-30'),
                 ProcessProcessName: 'starting',
 
@@ -519,7 +519,7 @@ exports.getLoftFinishingForReporting = async (req, res, next) => {
         const tpID = await Trough_process.findAll({
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
-                date: {[Op.between]: [new Date('2021-03-30').setHours(0, 0, 0, 0), new Date(new Date('2021-03-30') + 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
                 // date: new Date('2021-03-30'),
                 ProcessProcessName: 'finishing'
             } // this should be update as previous 30 days
@@ -542,7 +542,7 @@ exports.getLoftMixingForReporting = async (req, res, next) => {
         const tpID = await Trough_process.findAll({
             attributes: ['humidity', 'temperature', 'date', 'ProcessProcessName', 'TroughTroughId'],
             where: {
-                date: {[Op.between]: [new Date('2021-03-30').setHours(0, 0, 0, 0), new Date(new Date('2021-03-30') + 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date() + 24 * 60 * 60 * 1000)]},
                 // date: new Date('2021-03-30'),
                 ProcessProcessName: {[Op.like]: 'mixing%'}
             } // this should be update as previous 30 days

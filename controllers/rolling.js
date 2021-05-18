@@ -341,7 +341,7 @@ exports.getRollingForReporting = async (req, res, next) => {
             attributes: ['BatchBatchNo', 'RollerRollerId', 'batch_date', 'rolling_turn', 'rolling_in_kg', 'rolling_out_kg'],
             where: {
                 // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
-                batch_date: new Date('2021-03-30')
+                batch_date: new Date()
             },
         });
         // console.log(allRolling);
@@ -384,7 +384,7 @@ exports.getRollBreakingForReporting = async (req, res, next) => {
             attributes: ['BatchBatchNo', 'RollBreakerRollBreakerId', 'batch_date', 'rolling_turn', 'rolling_out_kg', 'dhool_out_weight', 'dhool_pct'],
             where: {
                 // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
-                batch_date: new Date('2021-03-30')
+                batch_date: new Date()
             },
         });
         // console.log(allRolling);
@@ -428,7 +428,7 @@ exports.getFermentingForReporting = async (req, res, next) => {
             attributes: ['BatchBatchNo', 'batch_date', 'rolling_turn', 'dhool_out_weight', 'fd_out_kg', 'fd_pct'],
             where: {
                 // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
-                batch_date: new Date('2021-03-30')
+                batch_date: new Date()
             },
         });
         // console.log(allRolling);
@@ -472,7 +472,7 @@ exports.getDryingForReporting = async (req, res, next) => {
             attributes: ['BatchBatchNo', 'batch_date', 'rolling_turn', 'fd_out_kg', 'drier_out_kg'],
             where: {
                 // batch_date: {[Op.between]: [ new Date(new Date() - 30 * 24 * 60 * 60 * 1000),new Date()]},
-                batch_date: new Date('2021-03-30')
+                batch_date: new Date()
             },
         });
         // console.log(allRolling);
@@ -523,7 +523,7 @@ exports.getOutturnForReporting = async (req, res, next) => {
         allBulks = await Bulk.findAll({
             attributes: ['bulk_id', 'date'],
             where: {
-                date: new Date(new Date('2021-03-30')), //THis date should be yesterday //date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                date: new Date(new Date()), //THis date should be yesterday //date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
                 method: {[Op.notLike]: 'AgentOriginal'},
             },
         });
@@ -537,14 +537,14 @@ exports.getOutturnForReporting = async (req, res, next) => {
             for (const box_id of lots) {
                 batches = await box.findAll({
                     attributes: ['BatchBatchNo', 'date'],
-                    where: {box_id: box_id.dataValues.BoxBoxId, date: new Date(new Date('2021-03-30'))},//THis date should be yesterday //date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                    where: {box_id: box_id.dataValues.BoxBoxId, date: new Date(new Date())},//THis date should be yesterday //date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
                 });
 
                 for (const batch_id of batches) {
                     outturns = await batch.findAll({
                         attributes: ['batch_no', 'batch_date', 'outturn'],
                         where: {
-                            batch_date: new Date(new Date('2021-03-30')),
+                            batch_date: new Date(new Date()),
                             batch_no: batch_id.dataValues.BatchBatchNo
                         },//new Date(new Date('2021-03-30') - (i-1) * 24 * 60 * 60 * 1000) //batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
                     });
@@ -956,7 +956,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
             allBulks = await Bulk.findAll({
                 attributes: ['bulk_id', 'date'],
                 where: {
-                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000),
+                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000),
                     method: {[Op.notLike]: 'AgentOriginal'},
                 },
             });
@@ -975,7 +975,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                                 // where: {date: new Date()}
                                 where: {
                                     box_id: lot_no_ele.dataValues.BoxBoxId,
-                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
                                 }
                             });
                             if (boxID.length === 0) {
@@ -1002,7 +1002,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                                 // where: {date: new Date()}
                                 where: {
                                     box_id: lot_no_ele.dataValues.BoxBoxId,
-                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
                                 }
                             });
                             if (boxIDForB.length === 0) {
@@ -1029,7 +1029,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                                 // where: {date: new Date()}
                                 where: {
                                     box_id: lot_no_ele.dataValues.BoxBoxId,
-                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
                                 }
                             });
                             if (boxIDForC.length === 0) {
@@ -1062,7 +1062,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                     where: {
                         rolling_turn: {[Op.notLike]: "BB"},
                         BatchBatchNo: batch,
-                        batch_date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                        batch_date: new Date(new Date() - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                     },
                 });
 
@@ -1080,7 +1080,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                     where: {
                         rolling_turn: {[Op.notLike]: "BB"},
                         BatchBatchNo: batch,
-                        batch_date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                        batch_date: new Date(new Date() - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                     },
                 });
 
@@ -1098,7 +1098,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
                     where: {
                         rolling_turn: {[Op.notLike]: "BB"},
                         BatchBatchNo: batch,
-                        batch_date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                        batch_date: new Date(new Date() - (i - 1) * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                     },
                 });
 
@@ -1112,7 +1112,7 @@ exports.getDailyDhoolPct = async (req, res, next) => {
 
 
             dhoolele = {
-                date: new Date(new Date('2021-03-30') - (i - 1) * 24 * 60 * 60 * 1000),
+                date: new Date(new Date() - (i - 1) * 24 * 60 * 60 * 1000),
                 a: avgGLA,
                 b: avgGLB,
                 c: avgGLC
@@ -1172,7 +1172,7 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
             allBulks = await Bulk.findAll({
                 attributes: ['bulk_id', 'date'],
                 where: {
-                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000),
+                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000),
                     method: {[Op.notLike]: 'AgentOriginal'},
                 },
             });
@@ -1191,7 +1191,7 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
                                 // where: {date: new Date()}
                                 where: {
                                     box_id: lot_no_ele.dataValues.BoxBoxId,
-                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
                                 }
                             });
                             if (boxID.length === 0) {
@@ -1218,7 +1218,7 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
                                 // where: {date: new Date()}
                                 where: {
                                     box_id: lot_no_ele.dataValues.BoxBoxId,
-                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
                                 }
                             });
                             if (boxIDForB.length === 0) {
@@ -1245,7 +1245,7 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
                                 // where: {date: new Date()}
                                 where: {
                                     box_id: lot_no_ele.dataValues.BoxBoxId,
-                                    date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                    date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
                                 }
                             });
                             if (boxIDForC.length === 0) {
@@ -1278,7 +1278,7 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
                     where: {
                         // rolling_turn: {[Op.notLike]: "BB"},
                         BatchBatchNo: batch,
-                        batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                        batch_date: new Date(new Date() - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                     },
                 });
 
@@ -1295,7 +1295,7 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
                     attributes: ['fd_pct'],
                     where: {
                         BatchBatchNo: batch,
-                        batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                        batch_date: new Date(new Date() - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                     },
                 });
 
@@ -1313,7 +1313,7 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
                     where: {
                         // rolling_turn: {[Op.notLike]: "BB"},
                         BatchBatchNo: batch,
-                        batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                        batch_date: new Date(new Date() - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                     },
                 });
 
@@ -1327,7 +1327,7 @@ exports.getDailyFermentingDhoolPct = async (req, res, next) => {
 
 
             dhoolele = {
-                date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000), //this should be i - 1 not i
+                date: new Date(new Date() - i * 24 * 60 * 60 * 1000), //this should be i - 1 not i
                 a: avgGLA,
                 b: avgGLB,
                 c: avgGLC
@@ -1390,7 +1390,7 @@ exports.getRollerWiseDhoolPct = async (req, res, next) => {
                 allBulks = await Bulk.findAll({
                     attributes: ['bulk_id', 'date'],
                     where: {
-                        date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000),
+                        date: new Date(new Date() - i * 24 * 60 * 60 * 1000),
                         method: {[Op.notLike]: 'AgentOriginal'},
                     },
                 });
@@ -1409,7 +1409,7 @@ exports.getRollerWiseDhoolPct = async (req, res, next) => {
                                     // where: {date: new Date()}
                                     where: {
                                         box_id: lot_no_ele.dataValues.BoxBoxId,
-                                        date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                        date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
                                     }
                                 });
                                 if (boxID.length === 0) {
@@ -1436,7 +1436,7 @@ exports.getRollerWiseDhoolPct = async (req, res, next) => {
                                     // where: {date: new Date()}
                                     where: {
                                         box_id: lot_no_ele.dataValues.BoxBoxId,
-                                        date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                        date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
                                     }
                                 });
                                 if (boxIDForB.length === 0) {
@@ -1463,7 +1463,7 @@ exports.getRollerWiseDhoolPct = async (req, res, next) => {
                                     // where: {date: new Date()}
                                     where: {
                                         box_id: lot_no_ele.dataValues.BoxBoxId,
-                                        date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)
+                                        date: new Date(new Date() - i * 24 * 60 * 60 * 1000)
                                     }
                                 });
                                 if (boxIDForC.length === 0) {
@@ -1497,7 +1497,7 @@ exports.getRollerWiseDhoolPct = async (req, res, next) => {
                             rolling_turn: {[Op.notLike]: "BB"},
                             RollerRollerId: j,
                             BatchBatchNo: batch,
-                            batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                            batch_date: new Date(new Date() - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                         },
                     });
 
@@ -1516,7 +1516,7 @@ exports.getRollerWiseDhoolPct = async (req, res, next) => {
                             rolling_turn: {[Op.notLike]: "BB"},
                             RollerRollerId: j,
                             BatchBatchNo: batch,
-                            batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                            batch_date: new Date(new Date() - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                         },
                     });
 
@@ -1535,7 +1535,7 @@ exports.getRollerWiseDhoolPct = async (req, res, next) => {
                             rolling_turn: {[Op.notLike]: "BB"},
                             RollerRollerId: j,
                             BatchBatchNo: batch,
-                            batch_date: new Date(new Date('2021-03-30') - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
+                            batch_date: new Date(new Date() - i * 24 * 60 * 60 * 1000)//this should be i - 1 not i
                         },
                     });
 
@@ -1600,7 +1600,7 @@ exports.getTodayTotalMadeTea = async (req, res, next) => {
     try {
         const todayDhools = await dhool.findAll({
             attributes: ['id', 'drier_out_kg'],
-            where: {batch_date: new Date('2021-03-30')}, // This should be today's date
+            where: {batch_date: new Date('2021-05-10')}, // This should be today's date
         });
 
         for (let dhool_id of todayDhools) {
@@ -1629,7 +1629,7 @@ exports.getTodayoutturn = async (req, res, next) => {
         const allBatches = await batch.findAll({
             attributes: ['batch_no', 'outturn'],
             where: {
-                batch_date: new Date('2021-03-30')
+                batch_date: new Date()
             },
         });
 
@@ -1670,7 +1670,7 @@ function formatDate(date) {
 function getLastSevenDates() {
     var result = [];
     for (var i = 0; i < 7; i++) {
-        var d = new Date('2021-03-30');
+        var d = new Date();
         d.setDate(d.getDate() - i);
         result.push(formatDate(d))
     }
