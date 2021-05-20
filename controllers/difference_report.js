@@ -93,6 +93,8 @@ exports.updateDreport = async (req, res, next) => {
                 group: ['BulkBulkId'],
                 where: {
                     BulkBulkId: bulk_id_ele.dataValues.bulk_id,
+                    is_deleted:0
+
                 }
             });
             // console.log('bulk id of remeasured weight');
@@ -124,6 +126,7 @@ exports.updateDreport = async (req, res, next) => {
                 group: ['BulkBulkId'],
                 where: {
                     BulkBulkId: bulk_id_ele.dataValues.bulk_id,
+                    is_deleted:0
                 }
             });
             // console.log(original_bulk_weight);
