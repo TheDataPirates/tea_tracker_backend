@@ -12,7 +12,7 @@ exports.getStartings = async (req, res, next) => {
             attributes: ['tp_id', 'TroughTroughId', 'date', 'temperature', 'humidity'],
             where: {
                 ProcessProcessName: "starting",
-                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date().setHours(0, 0, 0, 0) + 23 * 59 * 60 * 1000)]},
             },
         });
 
@@ -66,7 +66,7 @@ exports.getMixings = async (req, res, next) => {
                     {ProcessProcessName: "mixing2"},
                     {ProcessProcessName: "mixing3"},
                 ],
-                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date().setHours(0, 0, 0, 0) + 23 * 59 * 60 * 1000)]},
             },
         });
         res.status(200).json({
@@ -113,7 +113,7 @@ exports.getFinishings = async (req, res, next) => {
             attributes: ['tp_id', 'TroughTroughId', 'date', 'temperature', 'humidity'],
             where: {
                 ProcessProcessName: "finishing",
-                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date().setHours(0, 0, 0, 0) + 24 * 60 * 60 * 1000)]},
+                date: {[Op.between]: [new Date().setHours(0, 0, 0, 0), new Date(new Date().setHours(0, 0, 0, 0) + 23 * 59 * 60 * 1000)]},
             },
         });
         res.status(200).json({

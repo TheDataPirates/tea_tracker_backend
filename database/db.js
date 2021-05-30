@@ -19,9 +19,9 @@ const rdsCa = fs.readFileSync(__dirname + '/rds-combined-ca-bundle.pem');
 //     pool: {maxConnections: 5, maxIdleTime: 30},
 //     language: 'en'
 // });
-const sequelize = new Sequelize("tea_tracker_db", "root", "damitha123", {
+const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
   dialect: "mysql",
-  host: "localhost",
+  host: process.env.DB_HOST_ADDRESS,
   dialectOptions: {
     useUTC: false, //for reading from database
     dateStrings: true,

@@ -1600,7 +1600,7 @@ exports.getTodayTotalMadeTea = async (req, res, next) => {
     try {
         const todayDhools = await dhool.findAll({
             attributes: ['id', 'drier_out_kg'],
-            where: {batch_date: new Date('2021-05-10')}, // This should be today's date
+            where: {batch_date: new Date()}, // This should be today's date
         });
 
         for (let dhool_id of todayDhools) {

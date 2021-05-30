@@ -1,9 +1,9 @@
 {
   "env": {
-    "DB_USER": "admin",
-    "DB_PASSWORD": "#Makara*1",
-    "DB_NAME": "tea_tracker_db",
-    "DB_HOST_ADDRESS": "database-1.czagwwbsmjkc.ap-southeast-1.rds.amazonaws.com",
+    "DB_USER": "kudamala_root",
+    "DB_PASSWORD": "Kudamalana2021",
+    "DB_NAME": "kudamala_tea_tracker_db",
+    "DB_HOST_ADDRESS": "localhost",
     "CLIENT_ORIGIN": "http://localhost:3000/"
   }
 }

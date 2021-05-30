@@ -505,7 +505,7 @@ exports.getTodayPurchasedTea = async (req, res, next) => {
     try {
         const todayBulks = await Bulk.findAll({
             attributes: ['bulk_id'],
-            where: {method: {[Op.notLike]: 'AgentOriginal'}, date: new Date('2021-05-10')}, // This should be today's date
+            where: {method: {[Op.notLike]: 'AgentOriginal'}, date: new Date()}, // This should be today's date
         });
 
         for (let bulk_id of todayBulks) {
