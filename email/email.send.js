@@ -2,13 +2,14 @@ const nodemailer = require('nodemailer')
 
 // The credentials for the email account you want to send mail from. 
 const credentials = {
-  host: 'smtp.gmail.com',
+    // service: 'gmail',
+  host: 'mail.kudamalana.lk',
   port: 465,
   secure: true,
   auth: {
     // These environment variables will be pulled from the .env file
-    user: 'datapirates.info@gmail.com',
-    pass: 'datapirates5'
+    user: 'kudamalana.info@kudamalana.lk',
+    pass: 'Kudamalana2021'
   },
   tls: {
     rejectUnauthorized: false
@@ -25,7 +26,7 @@ module.exports = async (to, content) => {
 
   // The from and to addresses for the email that is about to be sent.
   const contacts = {
-    from: 'datapirates.info@gmail.com',
+    from: 'kudamalana.info@kudamalana.lk',
     to
   }
 

@@ -1,7 +1,7 @@
-const {validationResult} = require("express-validator");
+const { validationResult } = require("express-validator");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const {Op} = require("sequelize");
+const { Op } = require("sequelize");
 const User = require("../models/user");
 const templates = require("../email/email.templates");
 const sendEmail = require("../email/email.send");
@@ -10,7 +10,7 @@ const aleaRNGFactory = require("number-generator/lib/aleaRNGFactory");
 const generator1 = aleaRNGFactory(10);
 
 
-let passwordConfirm,nameConfirm,dobConfirm,emailConfirm,user_typeConfirm,telephone_noConfirm,nicConfirm,addressConfirm,imageConfirm='';
+let passwordConfirm, nameConfirm, dobConfirm, emailConfirm, user_typeConfirm, telephone_noConfirm, nicConfirm, addressConfirm, imageConfirm = '';
 
 exports.signup = async (req, res, next) => {
     const errors = validationResult(req); //this will get errors in validation middleware
@@ -20,7 +20,7 @@ exports.signup = async (req, res, next) => {
         error.data = errors.array();
         next(error);
     } else {
-        const {user_id, password, name, dob, email,user_type, telephone_no, nic, address} = req.body;
+        const { user_id, password, name, dob, email, user_type, telephone_no, nic, address } = req.body;
         let hashedpw;
         await bcrypt.genSalt(8, function (err, salt) {
             console.log(salt);
@@ -94,7 +94,7 @@ exports.signup = async (req, res, next) => {
 
                     }
                     console.log("User saved");
-                    res.status(200).json({message: "User created"});
+                    res.status(200).json({ message: "User created" });
                 } catch (err) {
                     if (!err.statusCode) {
                         err.statusCode = 500;
@@ -109,48 +109,48 @@ exports.signup = async (req, res, next) => {
 
 exports.signupManager = async (req, res, next) => {
 
-        // const {user_id, password, name, dob, email,user_type, telephone_no, nic, address} = req.body;
-        console.log(passwordConfirm);
-        let hashedpw;
-        await bcrypt.genSalt(8, function (err, salt) {
-            console.log(salt);
-            bcrypt.hash(passwordConfirm, salt, async function (err, hash) {
-                if (err) {
-                    next(err);
-                }
-                hashedpw = hash;
-                console.log(hashedpw);
-                try {
-                    switch (user_typeConfirm) {
-                        case 'Manager':
-                            await User.create({
-                                user_id: `MG${generator1.uInt32()}`,
-                                password: hashedpw,
-                                name: nameConfirm,
-                                email:emailConfirm,
-                                dob: dobConfirm,
-                                user_type: user_typeConfirm,
-                                telephone_no: telephone_noConfirm,
-                                nic: nicConfirm,
-                                address: addressConfirm,
-                                image: imageConfirm //storing image path uploads/images/...
-                            });
-                            break;
-                        default:
-                            break;
+    // const {user_id, password, name, dob, email,user_type, telephone_no, nic, address} = req.body;
+    console.log(passwordConfirm);
+    let hashedpw;
+    await bcrypt.genSalt(8, function (err, salt) {
+        console.log(salt);
+        bcrypt.hash(passwordConfirm, salt, async function (err, hash) {
+            if (err) {
+                next(err);
+            }
+            hashedpw = hash;
+            console.log(hashedpw);
+            try {
+                switch (user_typeConfirm) {
+                    case 'Manager':
+                        await User.create({
+                            user_id: `MG${generator1.uInt32()}`,
+                            password: hashedpw,
+                            name: nameConfirm,
+                            email: emailConfirm,
+                            dob: dobConfirm,
+                            user_type: user_typeConfirm,
+                            telephone_no: telephone_noConfirm,
+                            nic: nicConfirm,
+                            address: addressConfirm,
+                            image: imageConfirm //storing image path uploads/images/...
+                        });
+                        break;
+                    default:
+                        break;
 
-                    }
-                    console.log("Manager saved");
-                    res.status(200).json({message: "Manager created"});
-                } catch (err) {
-                    if (!err.statusCode) {
-                        err.statusCode = 500;
-                    }
-                    next(err);
                 }
-                // Store hash in your password DB.
-            });
+                console.log("Manager saved");
+                res.status(200).json({ message: "Manager created" });
+            } catch (err) {
+                if (!err.statusCode) {
+                    err.statusCode = 500;
+                }
+                next(err);
+            }
+            // Store hash in your password DB.
         });
+    });
 
 };
 exports.signupBeforeConfirm = async (req, res, next) => {
@@ -161,7 +161,7 @@ exports.signupBeforeConfirm = async (req, res, next) => {
         error.data = errors.array();
         next(error);
     } else {
-        const {user_id, password, name, dob, email,user_type, telephone_no, nic, address} = req.body;
+        const { user_id, password, name, dob, email, user_type, telephone_no, nic, address } = req.body;
         passwordConfirm = password;
         nameConfirm = name;
         dobConfirm = dob
@@ -170,21 +170,21 @@ exports.signupBeforeConfirm = async (req, res, next) => {
         telephone_noConfirm = telephone_no;
         nicConfirm = nic;
         addressConfirm = address;
-        imageConfirm =req.file.path;
+        imageConfirm = req.file.path;
 
-                try {
-                    sendEmail('sewmi98@gmail.com', templates.confirm(nameConfirm,emailConfirm,nicConfirm));
+        try {
+            sendEmail('damnera@gmail.com', templates.confirm(nameConfirm, emailConfirm, nicConfirm));
 
-                    console.log("User saved");
-                    res.status(200).json({message: "User created"});
-                } catch (err) {
-                    if (!err.statusCode) {
-                        err.statusCode = 500;
-                    }
-                    next(err);
-                }
-                // Store hash in your password DB.
+            console.log("User saved");
+            res.status(200).json({ message: "User created" });
+        } catch (err) {
+            if (!err.statusCode) {
+                err.statusCode = 500;
             }
+            next(err);
+        }
+        // Store hash in your password DB.
+    }
 
 
 };
@@ -196,9 +196,9 @@ exports.login = async (req, res, next) => {
     const user = await User.findOne({
         where: {
             user_id: userid, [Op.or]: [
-                {user_type: "Manager"},
-                {user_type: "Admin"},
-                {user_type: "Officer"},
+                { user_type: "Manager" },
+                { user_type: "Admin" },
+                { user_type: "Officer" },
             ],
         }
     }).catch(
@@ -224,11 +224,11 @@ exports.login = async (req, res, next) => {
         } else {
             const token = jwt.sign(
                 //genarate token and send back to user,token includes userid & fname
-                {user_id: loadedUser.user_id, name: loadedUser.fname},
+                { user_id: loadedUser.user_id, name: loadedUser.fname },
                 "thisisatokenid",
-                {expiresIn: "1 day"}
+                { expiresIn: "1 day" }
             );
-            res.status(200).json({token: token, userId: loadedUser.user_id});
+            res.status(200).json({ token: token, userId: loadedUser.user_id });
         }
     }
 };
@@ -240,8 +240,8 @@ exports.loginWeb = async (req, res, next) => {
     const user = await User.findOne({
         where: {
             email: email, [Op.or]: [
-                {user_type: "Manager"},
-                {user_type: "Admin"},
+                { user_type: "Manager" },
+                { user_type: "Admin" },
             ],
         }
     }).catch(
@@ -267,11 +267,11 @@ exports.loginWeb = async (req, res, next) => {
         } else {
             const token = jwt.sign(
                 //genarate token and send back to user,token includes userid & fname
-                {user_id: loadedUser.user_id, name: loadedUser.fname},
+                { user_id: loadedUser.user_id, name: loadedUser.fname },
                 "thisisatokenid",
-                {expiresIn: "1 day"}
+                { expiresIn: "1 day" }
             );
-            res.status(200).json({token: token, userId: loadedUser.user_id,userType:loadedUser.user_type});
+            res.status(200).json({ token: token, userId: loadedUser.user_id, userType: loadedUser.user_type });
         }
     }
 };
@@ -280,44 +280,44 @@ exports.loginWeb = async (req, res, next) => {
 exports.forgotPassword = function (req, res, next) {
 
     const email = req.params.email;
-    // console.log(email);
-    User.findOne({
+    const user = await User.findOne({
         where: {
             email: email, [Op.or]: [
-                {user_type: "Manager"},
-                {user_type: "Admin"},
+                { user_type: "Manager" },
+                { user_type: "Admin" },
             ],
         }
-    })
-        .then((user) => {
-            if (!user) {
-                err = "User Not Found !!!";
-                console.log("No User");
-                // console.log(user.email);
-                const error = new Error(err);
-                error.statusCode = 404;
-                next(error);
-
-            } else if (user) {
-                sendEmail(user.email, templates.resetPassword(user.user_id));
-                console.log("Has User");
-                console.log(user.email);
-                // console.log(user.email);
-                // console.log(user.user_id);
-                // console.log(msgs.forgotPassword);
-                return res.status(200).json(msgs.forgotPassword);
-            } else {
-                console.log("Else User");
-                // console.log(user.email);
-                err = "Cannot send email to this address";
-                return res.status(404).json(err);
+    }).catch(
+        (err) => {
+            //check network failures
+            if (!err.statusCode) {
+                err.statusCode = 500;
             }
-        }).catch(err => {
-        if (!err.statusCode) {
-            err.statusCode = 500;
+            next(err);
         }
-        next(err);
-    });
+    );
+    if (!user) {
+        err = "User Not Found !!!";
+        console.log("No User");
+        // console.log(user.email);
+        const error = new Error(err);
+        error.statusCode = 404;
+        next(error);
+
+    } else if (user) {
+        await sendEmail(user.email, templates.resetPassword(user.user_id));
+        console.log("Has User");
+        console.log(user.email);
+        // console.log(user.email);
+        // console.log(user.user_id);
+        // console.log(msgs.forgotPassword);
+        return res.status(200).json(msgs.forgotPassword);
+    } else {
+        console.log("Else User");
+        // console.log(user.email);
+        err = "Cannot send email to this address";
+        return res.status(404).json(err);
+    }
 }
 
 //reset password
@@ -335,15 +335,15 @@ exports.resetPassword = (req, res, next) => {
     //     passerr = "Passwords must match!";
     //     return res.status(400).json(passerr);
     // } else {
-    User.findOne({where: {email}})
+    User.findOne({ where: { email } })
         .then(user => {
             // A user with that id does not exist in the DB. Perhaps some tricky
             // user tried to go to a different url than the one provided in the
             // confirmation email.
             if (!user) {
-                res.json({msg: msgs.couldNotFind});
+                res.json({ msg: msgs.couldNotFind });
             }
-                // The user exists but has not been confirmed. We need to confirm this
+            // The user exists but has not been confirmed. We need to confirm this
             // user and let them know their email address has been confirmed.
             else if (user) {
                 bcrypt.genSalt(8, function (err, salt) {
@@ -354,7 +354,7 @@ exports.resetPassword = (req, res, next) => {
                             {
                                 password: hash,
                             },
-                            {where: {email}}
+                            { where: { email } }
                         ).then((user) => {
                             if (!user) {
                                 err = "User not found";
@@ -389,7 +389,7 @@ exports.resetPassword = (req, res, next) => {
             }
             // The user has already confirmed this email address.
             else {
-                res.json({msg: msgs.errorPassword})
+                res.json({ msg: msgs.errorPassword })
             }
         })
         .catch(err => {
@@ -417,7 +417,7 @@ exports.getUsers = async (req, res, next) => {
 exports.getUser = async (req, res, next) => {
     const user_id = req.params.userId;
     try {
-        const allUsers = await User.findAll({where: {user_id}});
+        const allUsers = await User.findAll({ where: { user_id } });
         res.status(200).json({
             user: allUsers,
         });
@@ -429,7 +429,7 @@ exports.getUser = async (req, res, next) => {
     }
 };
 exports.updateUser = async (req, res, next) => {
-    const {user_id, password, name, dob, user_type, telephone_no, nic, address} = req.body;
+    const { user_id, password, name, dob, user_type, telephone_no, nic, address } = req.body;
     console.log(user_id);
 
     const hashedpw = await bcrypt.hash(password, 8).catch((err) => {
@@ -472,7 +472,7 @@ exports.updateUser = async (req, res, next) => {
 exports.deleteUser = async (req, res, next) => {
     const user_id = req.params.userId;
 
-    let user = await User.destroy({where: {user_id}}).catch((err) => {
+    let user = await User.destroy({ where: { user_id } }).catch((err) => {
         if (!err.statusCode) {
             err.statusCode = 500;
         }
@@ -480,7 +480,7 @@ exports.deleteUser = async (req, res, next) => {
     });
     if (!user) {
         console.log("user not found");
-        res.status(500).json({message: "user not found"});
+        res.status(500).json({ message: "user not found" });
     } else {
         res.status(200).json({
             user: "Deleted",

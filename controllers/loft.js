@@ -1,4 +1,4 @@
-const Trough_process = require("../models/Trough_process");
+const Trough_process = require("../models/trough_process");
 const Lot = require("../models/lot");
 const Batch = require("../models/batch");
 const Bulk = require('../models/bulk');

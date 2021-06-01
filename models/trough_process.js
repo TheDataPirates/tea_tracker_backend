@@ -1,5 +1,4 @@
 const Sequelize = require("sequelize");
-
 const sequelize = require("../database/db");
 const Trough = require("./trough");
 const Process = require("./process");
