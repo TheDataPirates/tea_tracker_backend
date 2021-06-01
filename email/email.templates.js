@@ -19,7 +19,7 @@ module.exports = {
     <p>Email: ${email}</p>
     <p>NIC: ${nic}</p>
     <button style="background-color: rgb(78, 133, 235); border: none; ;border-radius: 5px; padding: 10px;">
-    <a style ="color:white; text-decoration: none;" href="http://localhost:8080/auth/signupmanager">
+    <a style ="color:white; text-decoration: none;" href="http://backend.kudamalana.lk/auth/signupmanager">
     Click to confirm new manager 
     </a>
     </button>
@@ -33,7 +33,7 @@ module.exports = {
 
 
     `,
-    text: `Copy and paste this link: http://localhost:8080/auth/signupmanager`
+    text: `Copy and paste this link: http://backend.kudamalana.lk/auth/signupmanager`
   }),
 
   resetPassword: id => ({
@@ -44,7 +44,7 @@ module.exports = {
     <h1 style="font-family:'Trebuchet MS', sans-serif">Password Reset</h1>
     <hr/>
     <button style="background-color: rgb(78, 133, 235); border: none; ;border-radius: 5px; padding: 10px;">
-    <a style ="color:white; text-decoration: none;" href="http://localhost:3000/auth/resetpassword">
+    <a style ="color:white; text-decoration: none;" href="http://backend.kudamalana.lk/auth/resetpassword">
     Click to reset password
     </a>
     </button>
@@ -53,7 +53,7 @@ module.exports = {
     <p>Sent by Kudamalana Tea Estate &nbsp; • &nbsp; <a href="">Privacy policy</a>&nbsp; • &nbsp; <a href="">Terms of service </a></p>
    </span>
     `,
-    text: `Copy and paste this link: http://localhost:3000//auth/resetpassword`
+    text: `Copy and paste this link: http://backend.kudamalana.lk/auth/resetpassword`
   })
 
 }

@@ -36,15 +36,16 @@ router.put(
     [
         body("email")
             .trim()
-            .notEmpty()
-            .custom((value, { req }) => {
-                //these are from express validator and this middleware check user id exist and throw error
-                return User.findOne({ where: { email: value } }).then((userDoc) => {
-                    if (userDoc) {
-                        return Promise.reject("Email already exists!");
-                    }
-                });
-            }),
+            .notEmpty(),
+            // .custom((value, { req }) => {
+            //     //these are from express validator and this middleware check user id exist and throw error
+            //     // return User.findOne({ where: { email: value } }).then((userDoc) => {
+            //     //     if (userDoc) {
+            //     //         return Promise.reject("Email already exists!");
+            //     //     }
+            //     // });
+            //
+            // }),
         body("password").trim().notEmpty(),
     ],
     authController.signupBeforeConfirm

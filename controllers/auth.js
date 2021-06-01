@@ -155,8 +155,10 @@ exports.signupManager = async (req, res, next) => {
 };
 exports.signupBeforeConfirm = async (req, res, next) => {
     const errors = validationResult(req); //this will get errors in validation middleware
+
+
     if (!errors.isEmpty()) {
-        const error = new Error("User already exists !");
+        const error = new Error("Sign up failed !");
         error.statusCode = 422;
         error.data = errors.array();
         next(error);
@@ -172,11 +174,30 @@ exports.signupBeforeConfirm = async (req, res, next) => {
         addressConfirm = address;
         imageConfirm = req.file.path;
 
-        try {
-            sendEmail('damnera@gmail.com', templates.confirm(nameConfirm, emailConfirm, nicConfirm));
+        const user = await User.findOne({
+            where: {
+                email
+            }
+        }).catch(
+            (err) => {
+                //check network failures
+                if (!err.statusCode) {
+                    err.statusCode = 500;
+                }
+                next(err);
+            }
+        );
+        if (!user) {
+            const error = new Error("Email already exists !!!");
+            error.statusCode = 400;
+            next(error);
+        }
 
-            console.log("User saved");
-            res.status(200).json({ message: "User created" });
+        try {
+           await sendEmail('damnera@gmail.com', templates.confirm(nameConfirm, emailConfirm, nicConfirm));
+
+            console.log("Email is sent to admin");
+            res.status(200).json({ message: "Email is sent to admin" });
         } catch (err) {
             if (!err.statusCode) {
                 err.statusCode = 500;
@@ -277,14 +298,14 @@ exports.loginWeb = async (req, res, next) => {
 };
 
 //forgotPassowrd
-exports.forgotPassword = function (req, res, next) {
+exports.forgotPassword = async function (req, res, next) {
 
     const email = req.params.email;
     const user = await User.findOne({
         where: {
             email: email, [Op.or]: [
-                { user_type: "Manager" },
-                { user_type: "Admin" },
+                {user_type: "Manager"},
+                {user_type: "Admin"},
             ],
         }
     }).catch(
