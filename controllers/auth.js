@@ -7,7 +7,8 @@ const templates = require("../email/email.templates");
 const sendEmail = require("../email/email.send");
 const msgs = require("../email/email.msgs");
 const aleaRNGFactory = require("number-generator/lib/aleaRNGFactory");
-const generator1 = aleaRNGFactory(10);
+const generator1 = aleaRNGFactory(4836325);
+const random = require('random')
 
 
 let passwordConfirm, nameConfirm, dobConfirm, emailConfirm, user_typeConfirm, telephone_noConfirm, nicConfirm, addressConfirm, imageConfirm = '';
@@ -34,7 +35,7 @@ exports.signup = async (req, res, next) => {
                     switch (user_type) {
                         case 'Agent':
                             await User.create({
-                                user_id: `AG${generator1.uInt32()}`,
+                                user_id: `AG${random.int(10000, 99999)}`,
                                 password: hashedpw,
                                 name: name,
                                 dob: dob,
@@ -49,7 +50,7 @@ exports.signup = async (req, res, next) => {
                             break;
                         case 'Officer':
                             await User.create({
-                                user_id: `OF${generator1.uInt32()}`,
+                                user_id: `OF${random.int(10000, 99999)}`,
                                 password: hashedpw,
                                 name: name,
                                 dob: dob,
@@ -59,34 +60,6 @@ exports.signup = async (req, res, next) => {
                                 nic: nic,
                                 address: address,
                                 image: req.file.path //storing image path uploads/images/...
-                            });
-                            break;
-                        case 'Admin':
-                            await User.create({
-                                user_id: `AD${generator1.uInt32()}`,
-                                password: hashedpw,
-                                name: name,
-                                email,
-                                dob: dob,
-                                user_type: user_type,
-                                telephone_no: telephone_no,
-                                nic: nic,
-                                address: address,
-                                image: req.file.path //storing image path uploads/images/...
-                            });
-                            break;
-                        case 'Manager':
-                            await User.create({
-                                user_id: `MG${generator1.uInt32()}`,
-                                password: hashedpw,
-                                name: name,
-                                email,
-                                dob: dob,
-                                user_type: user_type,
-                                telephone_no: telephone_no,
-                                nic: nic,
-                                address: address,
-                                image: imageConfirm //storing image path uploads/images/...
                             });
                             break;
                         default:
@@ -121,25 +94,18 @@ exports.signupManager = async (req, res, next) => {
             hashedpw = hash;
             console.log(hashedpw);
             try {
-                switch (user_typeConfirm) {
-                    case 'Manager':
-                        await User.create({
-                            user_id: `MG${generator1.uInt32()}`,
-                            password: hashedpw,
-                            name: nameConfirm,
-                            email: emailConfirm,
-                            dob: dobConfirm,
-                            user_type: user_typeConfirm,
-                            telephone_no: telephone_noConfirm,
-                            nic: nicConfirm,
-                            address: addressConfirm,
-                            image: imageConfirm //storing image path uploads/images/...
-                        });
-                        break;
-                    default:
-                        break;
-
-                }
+                await User.create({
+                    user_id: `MG${generator1.uInt32()}`,
+                    password: hashedpw,
+                    name: nameConfirm,
+                    email: emailConfirm,
+                    dob: dobConfirm,
+                    user_type: "Manager",
+                    telephone_no: telephone_noConfirm,
+                    nic: nicConfirm,
+                    address: addressConfirm,
+                    image: imageConfirm //storing image path uploads/images/...
+                });
                 console.log("Manager saved");
                 res.status(200).json({ message: "Manager created" });
             } catch (err) {
@@ -187,14 +153,14 @@ exports.signupBeforeConfirm = async (req, res, next) => {
                 next(err);
             }
         );
-        if (!user) {
+        if (user) {
             const error = new Error("Email already exists !!!");
             error.statusCode = 400;
             next(error);
         }
 
         try {
-           await sendEmail('damnera@gmail.com', templates.confirm(nameConfirm, emailConfirm, nicConfirm));
+            await sendEmail('damnera@gmail.com', templates.confirm(nameConfirm, emailConfirm, nicConfirm));
 
             console.log("Email is sent to admin");
             res.status(200).json({ message: "Email is sent to admin" });
@@ -304,8 +270,8 @@ exports.forgotPassword = async function (req, res, next) {
     const user = await User.findOne({
         where: {
             email: email, [Op.or]: [
-                {user_type: "Manager"},
-                {user_type: "Admin"},
+                { user_type: "Manager" },
+                { user_type: "Admin" },
             ],
         }
     }).catch(

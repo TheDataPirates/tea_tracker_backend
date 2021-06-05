@@ -4,6 +4,6 @@
     "DB_PASSWORD": "Kudamalana2021",
     "DB_NAME": "kudamala_tea_tracker_db",
     "DB_HOST_ADDRESS": "localhost",
-    "CLIENT_ORIGIN": "http://localhost:3000/"
+    "URL": "http://localhost:8080"
   }
 }
