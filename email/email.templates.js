@@ -44,7 +44,7 @@ module.exports = {
     <h1 style="font-family:'Trebuchet MS', sans-serif">Password Reset</h1>
     <hr/>
     <button style="background-color: rgb(78, 133, 235); border: none; ;border-radius: 5px; padding: 10px;">
-    <a style ="color:white; text-decoration: none;" href="http://backend.kudamalana.lk/auth/resetpassword">
+    <a style ="color:white; text-decoration: none;" href="http://kudamalana.lk/#/auth/resetpassword">
     Click to reset password
     </a>
     </button>
@@ -53,7 +53,7 @@ module.exports = {
     <p>Sent by Kudamalana Tea Estate &nbsp; • &nbsp; <a href="">Privacy policy</a>&nbsp; • &nbsp; <a href="">Terms of service </a></p>
    </span>
     `,
-    text: `Copy and paste this link: http://backend.kudamalana.lk/auth/resetpassword`
+    text: `Copy and paste this link: http://kudamalana.lk/#/auth/resetpassword`
   })
 
 }
